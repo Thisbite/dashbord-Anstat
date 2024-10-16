@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau croisé dynamique en français</title>
+
+    <!-- Inclusion de jQuery et jQuery UI -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/i18n/jquery-ui-i18n.min.js"></script> <!-- Localisation jQuery UI -->
+
+    <!-- Inclusion de PivotTable.js et du fichier CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='pivottable/dist/pivot.min.css') }}">
+  
+    <script src=" {{ url_for('static', filename='pivottable/dist/pivot.js') }}"></script>
+   
+    
+    <!-- Fichier de localisation français pour PivotTable -->
+    <script src="{{ url_for('static', filename='pivottable/dist/pivot.fr.js') }}"></script>
+
+    <style>
+        /* Vos styles CSS */
+    </style>
+</head>
+<body>
+
+    <h2>Tableau croisé dynamique en français</h2>
+
+    <!-- Conteneur pour le tableau croisé -->
+    <div id="output"></div>
+
+    <script>
+        $(document).ready(function() {
+            // Charger les données depuis l'API
+            fetch('/get_data')
+                .then(response => response.json())
+                .then(data => {
+                    // Transformer les données (plus flexible)
+                    const transformedData = data.map(item => {
+                        return {
+                            region: item.region,
+                            departement: item.departement,
+                            sousprefecture: item.sousprefecture,
+                            indicateur: item.indicateur,
+                            sexe: item.sexe,
+                            ma_valeur: item.valeur,
+                            annee: item.annee // Ajoutez 'annee' ici si nécessaire
+                        };
+                    });
+
+                    // Charger les paramètres de localisation
+                    $.pivotUtilities.locales.fr = {
+                       
+                        selectAll: "Tout sélectionner",
+                        selectNone: "Aucun",
+                        tooMany: "(trop de valeurs à afficher)",
+                        filterResults: "Filtrer les valeurs",
+                        apply: "Appliquer",
+                        cancel: "Annuler"
+                    };
+    
+                    // Initialisation du tableau croisé dynamique avec localisation en français
+                    try {
+                        $("#output").pivotUI(transformedData, {
+                            rows: ["annee"],  // Remplacez par les colonnes que vous souhaitez
+                            cols: ["sexe"],
+                            rendererOptions: {
+                                localeStrings: $.pivotUtilities.locales.fr // Utilisez les libellés français
+                            },
+                            locale: "fr" // Configuration pour la localisation en français
+                        });
+                    } catch (error) {
+                        console.error("Une erreur est survenue lors du rendu de PivotTable:", error);
+                    }
+                })
+                .catch(error => {
+                    console.error("Erreur lors du chargement des données :", error);
+                });
+        });
+    </script>
+</body>
+</html>

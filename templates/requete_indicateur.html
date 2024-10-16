@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultat de l'Indicateur</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/request_indicateur.css') }}">
+    <style>
+        /* Style basique pour les listes déroulantes */
+        select {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1> {{ indicateur2 }}</h1>
+
+        <!-- Table des résultats filtrés avec listes déroulantes dans l'en-tête -->
+        <table id="filterTable">
+            <thead>
+                <tr>
+                    <!-- Générer l'en-tête du tableau avec les listes déroulantes -->
+                    {% for col in df_filtered.columns %}
+                    <th>
+                        {{ col }}
+                        <br>
+                        <select onchange="filterTable()">
+                            <option value="">--Sélectionner--</option>
+                            <!-- Générer les options de la liste déroulante avec les valeurs uniques de la colonne -->
+                            {% set unique_values = df_filtered.data|map(attribute=loop.index0)|unique %}
+                            {% for value in unique_values %}
+                                <option value="{{ value }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                    </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Boucle pour afficher les données de chaque ligne -->
+                {% for row in df_filtered.data %}
+                <tr>
+                    {% for cell in row %}
+                    <td>{{ cell }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+    // Fonction de filtrage par colonne basée sur la sélection des listes déroulantes
+    function filterTable() {
+        const table = document.getElementById('filterTable');
+        const rows = table.getElementsByTagName('tr');
+        const filters = [];
+
+        // Récupérer les valeurs sélectionnées de toutes les listes déroulantes
+        const selects = document.querySelectorAll('thead select');
+        selects.forEach(select => {
+            filters.push(select.value.toLowerCase());
+        });
+
+        // Boucle à travers chaque ligne du tableau (sauter l'en-tête)
+        for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let shouldDisplay = true;
+
+            // Vérifier chaque colonne pour voir si la valeur de la cellule correspond à la sélection
+            for (let colIndex = 0; colIndex < filters.length; colIndex++) {
+                const cell = cells[colIndex];
+                if (cell) {
+                    const textValue = cell.textContent || cell.innerText;
+
+                    // Si le filtre est vide, afficher la ligne si la cellule est vide
+                    if (filters[colIndex] === "") {
+                        // Afficher la ligne si la cellule est vide ou si le filtre est vide
+                        if (textValue.trim() === "") {
+                            continue; // Afficher la ligne si la cellule est vide
+                        }
+                    } else if (textValue.toLowerCase() !== filters[colIndex]) {
+                        shouldDisplay = false; // Si une colonne ne correspond pas, ne pas afficher la ligne
+                        break; // Sortir de la boucle si une colonne ne correspond pas
+                    }
+                }
+            }
+
+            // Afficher ou masquer la ligne en fonction des correspondances
+            rows[i].style.display = shouldDisplay ? "" : "none";
+        }
+    }
+    </script>
+</body>
+</html>

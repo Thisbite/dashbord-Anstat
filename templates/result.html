@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Résultats de l'indicateur</title>
+</head>
+<body>
+    <h2>Résultats pour l'indicateur: {{ indicateur2 }}</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                {% for column in df_filtered['columns'] %}
+                <th>{{ column }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in df_filtered['data'] %}
+            <tr>
+                {% for value in row %}
+                <td>{{ value }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
