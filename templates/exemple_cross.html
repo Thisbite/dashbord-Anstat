@@ -8,75 +8,105 @@
     <!-- Inclusion de jQuery et jQuery UI -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.2/i18n/jquery-ui-i18n.min.js"></script> <!-- Localisation jQuery UI -->
 
     <!-- Inclusion de PivotTable.js et du fichier CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='pivottable/dist/pivot.min.css') }}">
-  
-    <script src=" {{ url_for('static', filename='pivottable/dist/pivot.js') }}"></script>
-   
-    
-    <!-- Fichier de localisation français pour PivotTable -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
+    <script src="{{ url_for('static', filename='pivottable/dist/pivot.js') }}"></script>
     <script src="{{ url_for('static', filename='pivottable/dist/pivot.fr.js') }}"></script>
 
     <style>
-        /* Vos styles CSS */
+        :root {
+            --orange: #ff7f27;
+            --blanc: #ffffff;
+            --vert: #001639;
+            --noir: #000000;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--blanc);
+            color: var(--noir);
+            margin: 0;
+            padding: 20px;
+        }
+        h2 {
+            color: var(--red);
+            text-align: center;
+        }
+        #output {
+            margin: 20px auto;
+            padding: 15px;
+            border: 2px solid var(--orange);
+            border-radius: 8px;
+            background-color: var(--blanc);
+        }
+        .pvtTable th {
+            background-color: var(--orange);
+            color: var(--red);
+            padding: 10px;
+        }
+        .pvtTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .pvtTable td:hover {
+            background-color: var(--vert);
+            color: var(--blanc);
+        }
+        .pvtBtn {
+            background-color: var(--orange);
+            color: var(--blanc);
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .pvtBtn:hover {
+            background-color: var(--vert);
+        }
     </style>
 </head>
 <body>
+    <div class="parent-frame">
+ 
+    <h3>{{indicateur2}}</h3>
+    <p><strong>Définitions de l'indicateur :</strong> <span>{{defintions}}</span></p>
+    <p><strong>Mode de calcul :</strong> <span>{{mode_calcul}}</span></p>
 
-    <h2>Tableau croisé dynamique en français</h2>
-
-    <!-- Conteneur pour le tableau croisé -->
-    <div id="output"></div>
-
+    <div id="output"></div>  
+</div>    
     <script>
-        $(document).ready(function() {
-            // Charger les données depuis l'API
-            fetch('/get_data')
-                .then(response => response.json())
-                .then(data => {
-                    // Transformer les données (plus flexible)
-                    const transformedData = data.map(item => {
-                        return {
-                            region: item.region,
-                            departement: item.departement,
-                            sousprefecture: item.sousprefecture,
-                            indicateur: item.indicateur,
-                            sexe: item.sexe,
-                            ma_valeur: item.valeur,
-                            annee: item.annee // Ajoutez 'annee' ici si nécessaire
-                        };
-                    });
+        $(document).ready(async function() {
+            try {
+                const response = await fetch('/get_data');
+                const data = await response.json();
+                
+                if (!data.length) {
+                    console.error("Les données sont vides.");
+                    return;
+                }
 
-                    // Charger les paramètres de localisation
-                    $.pivotUtilities.locales.fr = {
-                       
-                        selectAll: "Tout sélectionner",
-                        selectNone: "Aucun",
-                        tooMany: "(trop de valeurs à afficher)",
-                        filterResults: "Filtrer les valeurs",
-                        apply: "Appliquer",
-                        cancel: "Annuler"
-                    };
-    
-                    // Initialisation du tableau croisé dynamique avec localisation en français
-                    try {
-                        $("#output").pivotUI(transformedData, {
-                            rows: ["annee"],  // Remplacez par les colonnes que vous souhaitez
-                            cols: ["sexe"],
-                            rendererOptions: {
-                                localeStrings: $.pivotUtilities.locales.fr // Utilisez les libellés français
-                            },
-                            locale: "fr" // Configuration pour la localisation en français
-                        });
-                    } catch (error) {
-                        console.error("Une erreur est survenue lors du rendu de PivotTable:", error);
-                    }
-                })
-                .catch(error => {
-                    console.error("Erreur lors du chargement des données :", error);
+                const columns = Object.keys(data[0]);
+
+                const valeurIndex = columns.indexOf('valeur');
+                const regionIndex = columns.indexOf('region');
+
+                if (valeurIndex === -1 || regionIndex === -1) {
+                    console.error("Les colonnes 'valeur' ou 'region' sont manquantes.");
+                    return;
+                }
+
+                $("#output").pivotUI(data, {
+                    rows: [columns[valeurIndex]],
+                    cols: [columns[regionIndex]],
+                    rendererOptions: {
+                        localeStrings: $.pivotUtilities.locales.fr
+                    },
+                    locale: "fr"
                 });
+            } catch (error) {
+                console.error("Erreur lors du chargement des données :", error);
+            }
         });
     </script>
 </body>

@@ -398,25 +398,34 @@
     };
     aggregators = (function(tpl) {
       return {
-        "Compter": tpl.count(usFmtInt),
-       // "Count Unique Values": tpl.countUnique(usFmtInt),
-       // "List Unique Values": tpl.listUnique(", "),
-       // "Sum": tpl.sum(usFmt),
-        "Somme": tpl.sum(usFmtInt),
-        "Moyenne": tpl.average(usFmt),
-       // "Median": tpl.median(usFmt),
-        //"Sample Variance": tpl["var"](1, usFmt),
-       // "Sample Standard Deviation": tpl.stdev(1, usFmt),
+        "Count": tpl.count(usFmtInt),
+        "Count Unique Values": tpl.countUnique(usFmtInt),
+        "List Unique Values": tpl.listUnique(", "),
+        "Sum": tpl.sum(usFmt),
+        "Integer Sum": tpl.sum(usFmtInt),
+        "Average": tpl.average(usFmt),
+        "Median": tpl.median(usFmt),
+        "Sample Variance": tpl["var"](1, usFmt),
+        "Sample Standard Deviation": tpl.stdev(1, usFmt),
         "Minimum": tpl.min(usFmt),
         "Maximum": tpl.max(usFmt),
-     
+        "First": tpl.first(usFmt),
+        "Last": tpl.last(usFmt),
+        "Sum over Sum": tpl.sumOverSum(usFmt),
+        "80% Upper Bound": tpl.sumOverSumBound80(true, usFmt),
+        "80% Lower Bound": tpl.sumOverSumBound80(false, usFmt),
+        "Sum as Fraction of Total": tpl.fractionOf(tpl.sum(), "total", usFmtPct),
+        "Sum as Fraction of Rows": tpl.fractionOf(tpl.sum(), "row", usFmtPct),
+        "Sum as Fraction of Columns": tpl.fractionOf(tpl.sum(), "col", usFmtPct),
+        "Count as Fraction of Total": tpl.fractionOf(tpl.count(), "total", usFmtPct),
+        "Count as Fraction of Rows": tpl.fractionOf(tpl.count(), "row", usFmtPct),
+        "Count as Fraction of Columns": tpl.fractionOf(tpl.count(), "col", usFmtPct)
       };
     })(aggregatorTemplates);
     renderers = {
-      "Tableaux": function(data, opts) {
+      "Table": function(data, opts) {
         return pivotTableRenderer(data, opts);
-      }
-      /*,
+      },
       "Table Barchart": function(data, opts) {
         return $(pivotTableRenderer(data, opts)).barchart();
       },
@@ -428,7 +437,7 @@
       },
       "Col Heatmap": function(data, opts) {
         return $(pivotTableRenderer(data, opts)).heatmap("colheatmap", opts);
-      }*/
+      }
     };
     locales = {
       en: {
@@ -438,12 +447,13 @@
           renderError: "An error occurred rendering the PivotTable results.",
           computeError: "An error occurred computing the PivotTable results.",
           uiRenderError: "An error occurred rendering the PivotTable UI.",
-          selectAll: "Tout selectionné",
-          selectNone: "Aucun",
+          selectAll: "Select All",
+          selectNone: "Select None",
           tooMany: "(too many to list)",
-          filterResults: "Filtrer",
-          apply: "Appliquer",
-          cancel: "Annuler",
+          filterResults: "Filter values",
+          apply: "Apply",
+          cancel: "Cancel",
+          totals: "Totals",
           vs: "vs",
           by: "by"
         }
@@ -904,8 +914,11 @@
       defaults = {
         table: {
           clickCallback: null,
-        
-        
+          rowTotals: true,
+          colTotals: true
+        },
+        localeStrings: {
+          totals: "Totals"
         }
       };
       opts = $.extend(true, {}, defaults, opts);

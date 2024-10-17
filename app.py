@@ -23,6 +23,8 @@ from flask_session import Session
 import redis
 #https://colab.research.google.com/drive/1oBqwcSMb4YTrn0NFUiQzJCiZ65uIay_S?hl=fr#scrollTo=CJAQGVAWNNPw
 #brew services restart elastic/tap/elasticsearch-full
+#redis-server
+
 app = Flask(__name__)
 # Configuration du logger pour le débogage
 logging.basicConfig(level=logging.DEBUG)
@@ -34,7 +36,8 @@ app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_REDIS'] = redis.Redis(host='localhost', port=6379)
 
 Session(app)
-app.secret_key = os.urandom(24)
+app.secret_key = 'podmqjx128979po098RnhTRDX(7809908765bT'
+
 # Configuration de la base de données
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     f"mysql+pymysql://{os.getenv('MYSQL_USER', 'root')}:{os.getenv('MYSQL_PASSWORD', '')}@"
@@ -108,17 +111,11 @@ def index_data_from_excel():
     
 
 
-@app.route('/get_data', methods=['GET'])
-def get_data():
-    try:
-        df = qr.get_data_from_mysql()
-        df=df.fillna('-')
-        print(df.columns)
-        data = df.to_dict(orient='records')
-        return jsonify(data)
-    except Exception as e:
-        print(f"Une erreur est survenue : {e}")  # Affichez l'erreur dans les logs
-        return jsonify({"error": "Une erreur est survenue lors du chargement des données."}), 500
+    
+
+
+
+
 
 #index_data_from_excel()
 #index_data_from_excel()
@@ -198,12 +195,7 @@ es.indices.put_settings(index='requete_elastic', body={
 
 
 
-#Pour afficher le cross table
-@app.route('/requete')
-def crosstable():
-    return render_template('exemple_cross.html')
-
-
+    
 
 
 
@@ -569,23 +561,71 @@ def request_indicateur():
 
         # Remplacer les valeurs manquantes par des chaînes vides
         df_filtered = df_filtered.fillna('-')
-
-        # Vérifier si la colonne 'valeur' existe avant de la déplacer
-        if 'valeur' in df_filtered.columns:
-            df_filtered = df_filtered[[col for col in df_filtered.columns if col != 'valeur'] + ['valeur']]
-        else:
-            print("La colonne 'valeur' n'existe pas dans le DataFrame filtré.")
-
         # Stocker le DataFrame filtré dans la session pour l'afficher
-        df_filtered_json = df_filtered.to_dict(orient='split')
+        df_filtered_json = df_filtered.to_json(orient='split')  # Utiliser to_json pour obtenir un format JSON compatible
+        
         session['df_filtered'] = df_filtered_json
-
+        print("Données filtrées stockées dans la session :", session.get('df_filtered'))
+        print('indicateur :',indicateur_SELECT)
+        
+        #print(df_filtered_json)
     return render_template(
-        'result.html',
+        'exemple_cross.html',
         indicateurs=indicateurs_options,
         indicateur2=indicateur_SELECT,
         df_filtered=df_filtered_json  # Assurez-vous que df_filtered_json est correctement passé au template
     )
+    
+    
+    
+
+
+
+
+#Pour afficher le cross table
+@app.route('/requete')
+def crosstable():
+    return render_template('exemple_cross.html')
+
+# Données de test
+@app.route('/get_data', methods=['GET'])
+def get_data():
+    try:
+        # Charger les données filtrées depuis la session
+        df_filtered_json = session.get('df_filtered', None)
+        
+        if df_filtered_json is None:
+            return jsonify({"error": "Aucune donnée filtrée disponible."}), 404
+
+        # Convertir le JSON en DataFrame et ensuite en dictionnaire
+        df_filtered = pd.read_json(df_filtered_json, orient='split')
+        data = df_filtered.to_dict(orient='records')
+        
+        # Affichage pour vérifier le contenu
+        print(data)  # Ceci va afficher les données récupérées dans le terminal
+        
+        return jsonify(data)
+    except Exception as e:
+        print(f"Une erreur est survenue : {e}")
+        return jsonify({"error": "Une erreur est survenue lors du chargement des données."}), 500
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @app.route('/search_boostrap', methods=['GET', 'POST'])
@@ -723,7 +763,6 @@ def domaines_indicateur():
         departements=departements,
         sous_prefectures=sous_prefectures
     )
-
 
 
 

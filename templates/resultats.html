@@ -64,13 +64,13 @@
            <!-- Pagination -->
         <div class="pagination">
             {% if page > 1 %}
-                <a href="{{ url_for('search', query=query, page=page-1) }}">Précédent</a>
+                <a href="{{ url_for('crosstable', query=query, page=page-1) }}">Précédent</a>
             {% endif %}
             
             <span>Page {{ page }} sur {{ total_pages }}</span>
 
             {% if page < total_pages %}
-                <a href="{{ url_for('search', query=query, page=page+1) }}">Suivant</a>
+                <a href="{{ url_for('crosstable', query=query, page=page+1) }}">Suivant</a>
             {% endif %}
         </div>
 
