@@ -56,7 +56,8 @@ migrate = Migrate(app, db)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    colonne_valable=['region', 'age', 'sexe', 'departement', 'commune', 'milieu']
+    return render_template('index.html',colonne_valable=colonne_valable)
 
 
 
@@ -197,15 +198,24 @@ def process_columns():
         {'region': 'PORO', 'age': 60,  'total_population': 800},
         {'region': 'PORO', 'sexe': 'Femme', 'total_population': 1200},
         {'region': 'PORO', 'total_population': 600},
-        {'region': 'PORO', 'sexe': 'Homme', 'departement': 'Boundiali', 'total_population': 1500}
+        {'region': 'PORO', 'sexe': 'Homme', 'departement': 'Boundiali', 'total_population': 1500},
+         {'region': 'PORO', 'commune': 'Kong', 'departement': 'Boundiali', 'total_population': 10},
+          {'region': 'PORO', 'milieu': 'Urbain', 'departement': 'Boundiali', 'total_population': 45}
+        
     ]
 
     # Convertir les données en DataFrame pour faciliter le traitement
     df = pd.DataFrame(mock_data)
 
     # Colonnes de désagrégation que l'on veut ignorer si elles sont nulles ou vides, sauf 'sexe'
-    desaggregation_columns = ['groupe_age', 'departement', 'age', 'sexe', 'sousprefecture']
 
+    # Filtrer les colonnes pour créer desaggregation_columns
+    #desaggregation_columns =['region','sexe','commune','departement','milieu','age']
+    existing_columns = df.columns.tolist()
+    desaggregation_columns = [col for col in existing_columns if col != 'total_population']
+    #desaggregation_columns=df.columns.tolist()
+    
+ 
     # Initialiser les conditions pour ignorer les colonnes non pertinentes
     conditions = df['region'].notnull()  # Condition obligatoire sur 'region'
 
