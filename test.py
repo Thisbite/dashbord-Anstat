@@ -1,155 +1,75 @@
-from flask import Flask, render_template,jsonify
-import random
+import pymysql  # Ou tout autre connecteur de base de données
+import config as cf
 
-app = Flask(__name__)
+# Chemin vers le fichier texte de sortie
+output_file = "resultats_population.txt"
 
-@app.route('/')
-def index():
-    min_year = 2019
-    max_year = 2040
+# Créer la connexion à la base de données
+try:
+    connection = cf.create_connection()
 
-    # Initialisation des listes de données
-    data_commercants = []
-    data_esperance_vie = []
-    data_ratio_eleve_primaire = []
+    # Créer un curseur à partir de la connexion
+    cursor = connection.cursor()
 
-    # Générer les valeurs pour chaque année
-    annees = list(range(min_year, max_year + 1))
-    for annee in annees:
-        data_commercants.append({
-            'indicateur': 'Nombre de commerçants',
-            'annee': annee,
-            'valeur': round(random.randint(200, 2000))
-        })
+    # Requête pour obtenir les colonnes de la table
+    cursor.execute("SHOW COLUMNS FROM annuaire.valeur_indicateur_libelle_ok")
+    columns = cursor.fetchall()
 
-        data_esperance_vie.append({
-            'indicateur': 'Espérance de vie à la naissance',
-            'annee': annee,
-            'valeur': round(random.randint(40, 130))
-        })
+    # Liste des colonnes que l'on veut ignorer si elles sont nulles ou vides, sauf 'sexe'
+    desaggregation_columns = ['groupe_age', 'departement', 'age', 'sexe']
 
-        data_ratio_eleve_primaire.append({
-            'indicateur': 'Ratio élève par salle primaire',
-            'annee': annee,
-            'valeur': round(random.uniform(20, 80), 2)
-        })
+    # Initialiser les conditions pour ignorer les colonnes non pertinentes
+    conditions = ["region = 'PORO'"]  # Toujours avoir la région dans les conditions
+    #conditions.append("sexe = 'T'")  # Condition pour le sexe masculin
+    #conditions.append("age = '17'")  # Condition explicite pour l'âge 17
 
-    # Passer les données au template
-    return render_template('test.html', min=min_year, max=max_year, 
-                           data_commercants=data_commercants, 
-                           data_esperance_vie=data_esperance_vie,
-                           data_ratio_eleve_primaire=data_ratio_eleve_primaire
-                           )
+    # Sélectionner les colonnes pour l'agrégation (par exemple, 'region' et 'sousprefecture')
+    aggregation_columns = ['region','age']
 
+    # Boucler sur les autres colonnes et ajouter des conditions dynamiques, sauf celles déjà explicitement fixées
+    for column in desaggregation_columns:
+        if column in [col[0] for col in columns]:  # Vérifier si la colonne existe dans la table
+            if column not in ['age']:  # Ignorer 'sexe' et 'age' pour les conditions null/vides
+                conditions.append(f"({column} IS NULL OR {column} = '')")
 
+    # Construire la requête SQL avec agrégation
+    # Utiliser les colonnes d'agrégation dans la clause SELECT et GROUP BY
+    aggregation_columns_str = ', '.join(aggregation_columns)  # Utilisation de virgules pour la sélection
+    sql_query = f"""
+        SELECT {aggregation_columns_str}, SUM(valeur) AS total_population 
+        FROM annuaire.valeur_indicateur_libelle_ok 
+        WHERE {' AND '.join(conditions)} 
+        GROUP BY {aggregation_columns_str}
+    """
 
+    # Exécuter la requête
+    cursor.execute(sql_query)
+    results = cursor.fetchall()
 
+    # Ouvrir le fichier texte pour écrire les résultats
+    with open(output_file, 'w') as file:
+        # Écrire l'en-tête du tableau dans le fichier
+        file.write(f"{aggregation_columns_str}, Total_population\n")
+        file.write("=" * 50 + "\n")  # Séparateur
 
+        # Afficher les résultats et les écrire dans le fichier
+        if results:
+            for row in results:
+                aggregation_values = ', '.join([str(value) for value in row[:-1]])  # Valeurs des colonnes d'agrégation
+                line = f"{aggregation_values}, {row[-1]}\n"
+                file.write(line)  # Écrire chaque ligne dans le fichier
+                print(line.strip())  # Afficher la même ligne dans la console
 
+            print(f"Résultats sauvegardés dans '{output_file}'")
+        else:
+            print("Aucun résultat trouvé.")
+            file.write("Aucun résultat trouvé.\n")
 
-
-
-
-# Route pour servir les données en format JSON
-@app.route('/data')
-def get_data():
-    data = []
-    
-    min_year = 2019
-    max_year = 2040
-
-  
-
-    # Générer les valeurs pour chaque année
-    annees = list(range(min_year, max_year + 1))
-    
-    # Générer les données pour l'indicateur "Production de cultures"
-    cultures = ['Cacao', 'Café', 'Coton']
-
-
-    for annee in annees:
-        for culture in cultures:
-            data.append({
-                'indicateur': 'Production',
-                'produit': culture,
-                'annee': annee,
-                'valeur': random.randint(1000, 5000)  # Production en tonnes, valeur aléatoire
-            })
-            
-    # Générer les données pour l'indicateur "Effectif de la population"
-    sexes = ['M', 'F']
-    groupes_age = ['0-4', '5-9', '10-14', '15-19', '20-24','25-29','30-34','35-39','40-44','45-49','50-54','55-59','60-64']
-
-    for annee in annees:
-        for groupe in groupes_age:
-            data.append({
-                'indicateur': 'Effectif de la population',
-                'annee': annee,
-              
-                'groupe_age': groupe,
-                'valeur': random.randint(50000, 150000)  # Génération aléatoire d'effectif
-            })
-    
-    # Générer les données pour un autre indicateur "Effectif de la population 1"
-    for annee in annees:
-        for sexe in sexes:
-            data.append({
-                'indicateur': 'Effectif de la population1',
-                'annee': annee,
-                'sexe': sexe,
-                'valeur': random.randint(1000000, 8000000)  # Génération aléatoire d'effectif
-            })
-            
-    #Generer le taux de mortalité
-
-    zones= ['Régional','National']
-
-    for annee in annees:
- 
-        for zone in zones:
-            data.append({
-                'indicateur': 'Taux de mortalité',
-                'annee': annee,
-                'zone':zone,
-                'valeur': round(random.uniform(60, 100), 2)  # Taux entre 60% et 100%
-            })
-            
-            
-    # Générer les données pour le taux de pauvreté
-    zones = ['Régional','National']
-    
-    for annee in annees:
-        for zone in zones:
-            data.append({
-                'indicateur': 'Taux de pauvreté',
-                'annee': annee,
-                'zone': zone,
-                'valeur': round(random.uniform(0, 100), 2)  # Taux entre 0% et 100%
-            })
-                
-    # Générer les données pour l'indicateur "Taux de scolarisation"
-    cycles_scolaires = ['préscolaire', 'primaire', 'secondaire 1er cycle', 'secondaire 2ème cycle']
-
-    for annee in annees:
-    
-            for cycle in cycles_scolaires:
-                data.append({
-                    'indicateur': 'Taux de scolarisation',
-                    'annee': annee,
-                   
-                    'cycle_scolaire': cycle,
-                    'valeur': round(random.uniform(60, 100), 2)  # Taux entre 60% et 100%
-                })
-    #Nombre de commercant 
-    for annee in annees:
-        data.append({
-            'indicateur': 'Nombre de commerçants',
-            'annee': annee,
-            'valeur': round(random.uniform(60, 100), 2)  # Taux entre 60% et 100%
-        })
-
-
-    return jsonify(data)
-
-if __name__ == '__main__':
-    app.run(debug=True)
+except pymysql.MySQLError as e:
+    print(f"Erreur MySQL : {e}")
+finally:
+    # Fermer le curseur et la connexion si elles sont ouvertes
+    if cursor:
+        cursor.close()
+    if connection:
+        connection.close()

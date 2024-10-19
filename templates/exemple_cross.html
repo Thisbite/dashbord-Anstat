@@ -3,111 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau croisé dynamique en français</title>
-
-    <!-- Inclusion de jQuery et jQuery UI -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-
-    <!-- Inclusion de PivotTable.js et du fichier CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='pivottable/dist/pivot.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
-    <script src="{{ url_for('static', filename='pivottable/dist/pivot.js') }}"></script>
-    <script src="{{ url_for('static', filename='pivottable/dist/pivot.fr.js') }}"></script>
-
-    <style>
-        :root {
-            --orange: #ff7f27;
-            --blanc: #ffffff;
-            --vert: #001639;
-            --noir: #000000;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: var(--blanc);
-            color: var(--noir);
-            margin: 0;
-            padding: 20px;
-        }
-        h2 {
-            color: var(--red);
-            text-align: center;
-        }
-        #output {
-            margin: 20px auto;
-            padding: 15px;
-            border: 2px solid var(--orange);
-            border-radius: 8px;
-            background-color: var(--blanc);
-        }
-        .pvtTable th {
-            background-color: var(--orange);
-            color: var(--red);
-            padding: 10px;
-        }
-        .pvtTable td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        .pvtTable td:hover {
-            background-color: var(--vert);
-            color: var(--blanc);
-        }
-        .pvtBtn {
-            background-color: var(--orange);
-            color: var(--blanc);
-            border: none;
-            padding: 10px 15px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .pvtBtn:hover {
-            background-color: var(--vert);
-        }
-    </style>
+    <title>Glisser-Déposer pour Table</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+  
 </head>
 <body>
-    <div class="parent-frame">
- 
-    <h3>{{indicateur2}}</h3>
-    <p><strong>Définitions de l'indicateur :</strong> <span>{{defintions}}</span></p>
-    <p><strong>Mode de calcul :</strong> <span>{{mode_calcul}}</span></p>
+<h3 > Données pour {{indicateur2.capitalize()}}</h3>
+<div class="container">
+    <!-- Liste des colonnes à glisser -->
+    <div>
+        <h3>Niveau désagrégation</h3>
+        {% for colonne in colonne_valable %}
+            <div class="draggable-item" data-column="{{ colonne }}" draggable="true">{{ colonne.capitalize() }}</div>
+        {% endfor %}
+        <!-- Ajoute ici d'autres colonnes selon ton besoin -->
+    </div>
 
-    <div id="output"></div>  
-</div>    
-    <script>
-        $(document).ready(async function() {
-            try {
-                const response = await fetch('/get_data');
-                const data = await response.json();
-                
-                if (!data.length) {
-                    console.error("Les données sont vides.");
-                    return;
-                }
+   <!-- Zone contenant le dépôt et les filtres -->
+<div id="depot-filter-container">
+    <!-- Zone de dépôt -->
+    <div>
+        <h3>Zone de dépôt</h3>
+        <div id="droppable-area">
+            <span id="placeholder-text">Glissez et déposez les niveaux de désagrégation ici</span>
+        </div>
+    </div>
 
-                const columns = Object.keys(data[0]);
+    <!-- Zone des filtres -->
+    <div>
+        <h3>Zone de filtre</h3>
+        <div id="filter-container">
+            <!-- Les filtres seront générés ici -->
+        </div>
+    </div>
+</div>
+</div>
+<!-- Conteneur pour afficher le tableau généré -->
+<div id="table-container"></div>
 
-                const valeurIndex = columns.indexOf('valeur');
-                const regionIndex = columns.indexOf('region');
+<script>
+    // Variables pour gérer le glisser-déposer
+ // Variables pour gérer le glisser-déposer
+const draggableItems = document.querySelectorAll('.draggable-item');
+const droppableArea = document.getElementById('droppable-area');
+const tableContainer = document.getElementById('table-container');
+const filterContainer = document.getElementById('filter-container'); // Conteneur pour les filtres
+let selectedColumns = [];
+let tableData = []; // Pour stocker les données reçues du serveur
 
-                if (valeurIndex === -1 || regionIndex === -1) {
-                    console.error("Les colonnes 'valeur' ou 'region' sont manquantes.");
-                    return;
-                }
+// Gérer l'événement 'dragstart' pour chaque élément glissable
+draggableItems.forEach(item => {
+    item.addEventListener('dragstart', function (e) {
+        e.dataTransfer.setData('text', e.target.getAttribute('data-column'));
+    });
+});
 
-                $("#output").pivotUI(data, {
-                    rows: [columns[valeurIndex]],
-                    cols: [columns[regionIndex]],
-                    rendererOptions: {
-                        localeStrings: $.pivotUtilities.locales.fr
-                    },
-                    locale: "fr"
-                });
-            } catch (error) {
-                console.error("Erreur lors du chargement des données :", error);
-            }
+// Autoriser le dépôt dans la zone de dépôt
+droppableArea.addEventListener('dragover', function (e) {
+    e.preventDefault();
+});
+
+// Gérer l'événement 'drop' dans la zone de dépôt
+droppableArea.addEventListener('drop', function (e) {
+    e.preventDefault();
+    const column = e.dataTransfer.getData('text');
+
+    // Vérifier si la colonne n'est pas déjà sélectionnée
+    if (!selectedColumns.includes(column)) {
+        selectedColumns.push(column);
+        
+        // Créer un nouvel élément et appliquer la classe 'draggable-item' pour conserver le style
+        const newItem = document.createElement('div');
+        newItem.classList.add('draggable-item'); // Appliquer la classe pour maintenir le style
+        newItem.setAttribute('draggable', 'true'); // Rendre le nouvel élément glissable si nécessaire
+        newItem.setAttribute('data-column', column); // Ajouter l'attribut 'data-column'
+        newItem.textContent = column;
+
+        // Ajouter l'élément dans la zone de dépôt
+        droppableArea.appendChild(newItem);
+    }
+
+    // Envoyer une requête AJAX au serveur pour traiter les colonnes sélectionnées
+    sendColumnsToServer();
+});
+
+// Fonction pour envoyer les colonnes sélectionnées au serveur Flask
+function sendColumnsToServer() {
+    fetch('/process_columns', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ columns: selectedColumns })
+    })
+    .then(response => response.json())  // Convertir la réponse en JSON
+    .then(data => {
+        tableData = data;  // Stocker les données reçues
+        generateTable(tableData);
+        generateFilters(); // Générer les filtres pour chaque colonne
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+    });
+}
+
+// Fonction pour générer les filtres
+// Fonction pour générer les filtres
+function generateFilters() {
+    filterContainer.innerHTML = ''; // Nettoyer le conteneur de filtres
+
+    selectedColumns.forEach(col => {
+        const label = document.createElement('label');
+        label.textContent = `Filtrer par ${col}:`;
+        const select = document.createElement('select');
+        select.setAttribute('data-column', col);
+
+        // Ajouter une option par défaut
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Tous';
+        select.appendChild(defaultOption);
+
+        // Obtenir des valeurs uniques pour cette colonne
+        const uniqueValues = [...new Set(tableData.map(row => row[col]))];
+
+        uniqueValues.forEach(value => {
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = value;
+            select.appendChild(option);
         });
-    </script>
+
+        // Écouter le changement pour filtrer les données
+        select.addEventListener('change', applyFilters);
+
+        filterContainer.appendChild(label);
+        filterContainer.appendChild(select);
+    });
+}
+
+
+// Fonction pour appliquer les filtres
+function applyFilters() {
+    let filteredData = tableData;
+
+    const selects = filterContainer.querySelectorAll('select');
+    selects.forEach(select => {
+        const column = select.getAttribute('data-column');
+        const value = select.value;
+        if (value) {
+            filteredData = filteredData.filter(row => row[column] == value);
+        }
+    });
+
+    generateTable(filteredData);
+}
+
+// Fonction pour générer le tableau à partir des données renvoyées par le serveur
+function generateTable(data) {
+    tableContainer.innerHTML = ''; // Nettoyer la zone d'affichage du tableau
+
+    // Créer un tableau HTML
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    const tbody = document.createElement('tbody');
+
+    // Créer l'en-tête du tableau
+    const headerRow = document.createElement('tr');
+    selectedColumns.forEach(col => {
+        const th = document.createElement('th');
+        th.textContent = col;
+        headerRow.appendChild(th);
+    });
+    const totalTh = document.createElement('th');
+    totalTh.textContent = 'Valeur';
+    headerRow.appendChild(totalTh);
+    thead.appendChild(headerRow);
+
+    // Créer le corps du tableau avec les données filtrées
+    data.forEach(row => {
+        const tr = document.createElement('tr');
+        selectedColumns.forEach(col => {
+            const td = document.createElement('td');
+            td.textContent = row[col] || 'N/A';
+            tr.appendChild(td);
+        });
+        const totalTd = document.createElement('td');
+        totalTd.textContent = row.valeur;
+        tr.appendChild(totalTd);
+        tbody.appendChild(tr);
+    });
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    tableContainer.appendChild(table);
+}
+droppableArea.addEventListener('drop', function (e) {
+    e.preventDefault();
+    const column = e.dataTransfer.getData('text');
+
+    // Cache le texte placeholder s'il y a un élément déposé
+    const placeholder = document.getElementById('placeholder-text');
+    if (placeholder) {
+        placeholder.style.display = 'none';
+    }
+
+    if (!selectedColumns.includes(column)) {
+        selectedColumns.push(column);
+        const newItem = document.createElement('div');
+        newItem.classList.add('droppable-item');
+        newItem.textContent = column;
+        droppableArea.appendChild(newItem);
+    }
+
+    sendColumnsToServer();
+});
+
+// Si vous souhaitez réafficher le placeholder lorsque la zone est vide
+function checkDroppableArea() {
+    if (droppableArea.children.length === 0) {
+        const placeholder = document.getElementById('placeholder-text');
+        placeholder.style.display = 'block';
+    }
+}
+
+
+</script>
+
 </body>
 </html>

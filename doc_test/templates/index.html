@@ -13,12 +13,9 @@
     <!-- Liste des colonnes à glisser -->
     <div>
         <h3>Niveau désagrégation</h3>
-        <div class="draggable-item" data-column="region" draggable="true">Région</div>
-        <div class="draggable-item" data-column="age" draggable="true">Âge</div>
-        <div class="draggable-item" data-column="sexe" draggable="true">Sexe</div>
-        <div class="draggable-item" data-column="departement" draggable="true">Departement</div>
-        <div class="draggable-item" data-column="commune" draggable="true">commune</div>
-        <div class="draggable-item" data-column="milieu" draggable="true">milieu</div>
+        {% for colonne in colonne_valable %}
+        <div class="draggable-item" data-column="{{ colonne }}" draggable="true">{{ colonne.capitalize() }}</div>
+    {% endfor %}
         <!-- Ajoute ici d'autres colonnes selon ton besoin -->
     </div>
 

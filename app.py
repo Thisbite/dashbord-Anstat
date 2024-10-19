@@ -532,7 +532,7 @@ def get_sous_prefectures():
 
 
 
-# Page de requete
+# Page de requête
 @app.route('/request_indicateur', methods=['GET', 'POST'])
 def request_indicateur():
     # Charger les données depuis MySQL
@@ -548,34 +548,118 @@ def request_indicateur():
         
         # Appliquer les filtres (indicateur, etc.)
         df_filtered = df.drop(columns=['statut_approbation', 'id'], errors='ignore')
-        
+
+        # Appliquer le filtre si 'indicateur' existe et que la sélection d'indicateur est présente
         if indicateur_SELECT and 'indicateur' in df_filtered.columns:
             # Convertir la colonne 'indicateur' en chaînes de caractères
             df_filtered['indicateur'] = df_filtered['indicateur'].astype(str).str.strip().str.lower()
             
             # Appliquer le filtre sur la colonne 'indicateur'
             df_filtered = df_filtered[df_filtered['indicateur'] == indicateur_SELECT.strip().lower()]
-
+        else:
+            print("Aucun filtre appliqué sur l'indicateur")
+        
         # Supprimer les colonnes contenant uniquement des NaN
         df_filtered = df_filtered.dropna(axis=1, how='all')
 
         # Remplacer les valeurs manquantes par des chaînes vides
-        df_filtered = df_filtered.fillna('-')
-        # Stocker le DataFrame filtré dans la session pour l'afficher
-        df_filtered_json = df_filtered.to_json(orient='split')  # Utiliser to_json pour obtenir un format JSON compatible
+        df_filtered = df_filtered.fillna('')
+
+        # Stocker le DataFrame filtré dans la session pour une utilisation ultérieure
+        df_filtered_json = df_filtered.to_json(orient='split')  # Convertir en JSON pour le stockage
         
         session['df_filtered'] = df_filtered_json
         print("Données filtrées stockées dans la session :", session.get('df_filtered'))
-        print('indicateur :',indicateur_SELECT)
-        
-        #print(df_filtered_json)
+        print('Indicateur sélectionné :', indicateur_SELECT)
+
+        # Obtenir les colonnes valables pour les désagrégations
+        existing_columns = df_filtered.columns.tolist()
+        columns_to_exclude = ['valeur', 'indicateur']
+        desaggregation_columns = [col for col in existing_columns if col not in columns_to_exclude]
+        print("Colonnes valables pour désagrégation :", desaggregation_columns)
+
     return render_template(
         'exemple_cross.html',
-        indicateurs=indicateurs_options,
-        indicateur2=indicateur_SELECT,
-        df_filtered=df_filtered_json  # Assurez-vous que df_filtered_json est correctement passé au template
+        colonne_valable=desaggregation_columns,  # Colonnes à utiliser pour désagréger les données
+        indicateurs=indicateurs_options,  # Options d'indicateurs pour le dropdown
+        indicateur2=indicateur_SELECT,  # Indicateur sélectionné
+        df_filtered=df_filtered_json  # Data JSON pour le filtrage
     )
+
     
+    
+@app.route('/process_columns', methods=['POST'])
+def process_columns():
+    # Récupérer les colonnes envoyées par la requête AJAX
+    data = request.get_json()
+    columns = data.get('columns', [])
+
+    # Charger les données réelles depuis la session ou depuis MySQL si nécessaire
+    df_filtered_json = session.get('df_filtered', None)
+    if df_filtered_json:
+        # Convertir le JSON en DataFrame
+        df_filtered = pd.read_json(df_filtered_json, orient='split')
+
+    # Filtrer les colonnes pour créer desaggregation_columns, sauf 'valeur'
+    existing_columns = df_filtered.columns.tolist()
+    # Liste des colonnes à exclure
+    columns_to_exclude = ['valeur', 'indicateur']
+
+    # Créer une liste des colonnes de désagrégation en excluant celles de columns_to_exclude
+    desaggregation_columns = [col for col in existing_columns if col not in columns_to_exclude]
+
+    print('Dans process columns:', desaggregation_columns)
+
+
+    # Initialiser les conditions pour filtrer les colonnes non pertinentes, avec 'region' obligatoire
+    conditions = df_filtered['region'].notnull()
+
+    # Appliquer les conditions dynamiques pour ignorer certaines colonnes
+    for column in desaggregation_columns:
+        if column in df_filtered.columns and column not in columns:
+            # Filtrer sur les colonnes qui ne sont pas sélectionnées et qui sont vides
+            conditions &= (df_filtered[column].isnull() | (df_filtered[column] == ''))
+
+    # Filtrer les données en fonction des conditions appliquées
+    filtered_df = df_filtered[conditions]
+
+    # Vérifier si la colonne 'valeur' est dans les colonnes d'agrégation
+    if 'valeur' not in columns:
+        columns.append('valeur')
+
+    # Vérifier si la colonne 'valeur' est numérique
+    if 'valeur' in filtered_df.columns:
+        try:
+            # Tenter de convertir la colonne 'valeur' en numérique
+            filtered_df['valeur'] = pd.to_numeric(filtered_df['valeur'], errors='coerce')
+            
+            # Si certaines valeurs ne peuvent pas être converties, elles deviennent NaN (grâce à errors='coerce')
+            # Vous pouvez ensuite filtrer ces lignes ou gérer ces NaN selon vos besoins
+            filtered_df = filtered_df.dropna(subset=['valeur'])  # Supprime les lignes où 'valeur' est NaN
+        except Exception as e:
+            print(f"Erreur lors de la conversion de 'valeur' en numérique : {e}")
+            return jsonify({"error": "La colonne 'valeur' contient des données non numériques"}), 400
+
+    # Afficher les colonnes d'agrégation
+    print('Notre agrégation somme:', columns)
+
+    # Effectuer l'agrégation par somme des valeurs sur les colonnes sélectionnées
+    try:
+        # Effectuer la somme uniquement pour les colonnes numériques
+        aggregated_data = filtered_df.groupby(columns).sum(numeric_only=True).reset_index()
+    except KeyError as e:
+        print(f"Erreur: {e}. Assurez-vous que les colonnes suivantes existent dans les données: {columns}")
+        return jsonify({"error": f"Colonne manquante: {str(e)}"}), 400
+
+
+    # Transformer les données en dictionnaire pour les envoyer au format JSON
+    result_data = aggregated_data.to_dict(orient='records')
+
+    # Retourner les données sous forme de JSON
+    return jsonify(result_data)
+
+
+
     
     
 

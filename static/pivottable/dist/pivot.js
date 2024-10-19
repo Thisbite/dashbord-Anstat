@@ -398,45 +398,15 @@
     };
     aggregators = (function(tpl) {
       return {
-        "Count": tpl.count(usFmtInt),
-        "Count Unique Values": tpl.countUnique(usFmtInt),
-        "List Unique Values": tpl.listUnique(", "),
-        "Sum": tpl.sum(usFmt),
-        "Integer Sum": tpl.sum(usFmtInt),
-        "Average": tpl.average(usFmt),
-        "Median": tpl.median(usFmt),
-        "Sample Variance": tpl["var"](1, usFmt),
-        "Sample Standard Deviation": tpl.stdev(1, usFmt),
-        "Minimum": tpl.min(usFmt),
-        "Maximum": tpl.max(usFmt),
-        "First": tpl.first(usFmt),
-        "Last": tpl.last(usFmt),
-        "Sum over Sum": tpl.sumOverSum(usFmt),
-        "80% Upper Bound": tpl.sumOverSumBound80(true, usFmt),
-        "80% Lower Bound": tpl.sumOverSumBound80(false, usFmt),
-        "Sum as Fraction of Total": tpl.fractionOf(tpl.sum(), "total", usFmtPct),
-        "Sum as Fraction of Rows": tpl.fractionOf(tpl.sum(), "row", usFmtPct),
-        "Sum as Fraction of Columns": tpl.fractionOf(tpl.sum(), "col", usFmtPct),
-        "Count as Fraction of Total": tpl.fractionOf(tpl.count(), "total", usFmtPct),
-        "Count as Fraction of Rows": tpl.fractionOf(tpl.count(), "row", usFmtPct),
-        "Count as Fraction of Columns": tpl.fractionOf(tpl.count(), "col", usFmtPct)
+        "Valeur": tpl.count(usFmtInt),
+        "Compter": tpl.countUnique(usFmtInt),
+        "Première valeur": tpl.listUnique(", "),
+      
       };
     })(aggregatorTemplates);
     renderers = {
-      "Table": function(data, opts) {
+      "Tableau": function(data, opts) {
         return pivotTableRenderer(data, opts);
-      },
-      "Table Barchart": function(data, opts) {
-        return $(pivotTableRenderer(data, opts)).barchart();
-      },
-      "Heatmap": function(data, opts) {
-        return $(pivotTableRenderer(data, opts)).heatmap("heatmap", opts);
-      },
-      "Row Heatmap": function(data, opts) {
-        return $(pivotTableRenderer(data, opts)).heatmap("rowheatmap", opts);
-      },
-      "Col Heatmap": function(data, opts) {
-        return $(pivotTableRenderer(data, opts)).heatmap("colheatmap", opts);
       }
     };
     locales = {
@@ -447,12 +417,12 @@
           renderError: "An error occurred rendering the PivotTable results.",
           computeError: "An error occurred computing the PivotTable results.",
           uiRenderError: "An error occurred rendering the PivotTable UI.",
-          selectAll: "Select All",
-          selectNone: "Select None",
+          selectAll: "Tout",
+          selectNone: "Aucun",
           tooMany: "(too many to list)",
           filterResults: "Filter values",
-          apply: "Apply",
-          cancel: "Cancel",
+          apply: "Appliquer",
+          cancel: "Annuler",
           totals: "Totals",
           vs: "vs",
           by: "by"
@@ -848,7 +818,7 @@
             this.rowKeys.push(rowKey);
             this.rowTotals[flatRowKey] = this.aggregator(this, rowKey, []);
           }
-          this.rowTotals[flatRowKey].push(record);
+        
         }
         if (colKey.length !== 0) {
           if (!this.colTotals[flatColKey]) {
@@ -916,9 +886,6 @@
           clickCallback: null,
           rowTotals: true,
           colTotals: true
-        },
-        localeStrings: {
-          totals: "Totals"
         }
       };
       opts = $.extend(true, {}, defaults, opts);
@@ -1009,13 +976,7 @@
             tr.appendChild(th);
           }
         }
-        if (parseInt(j) === 0 && opts.table.rowTotals) {
-          th = document.createElement("th");
-          th.className = "pvtTotalLabel pvtRowTotalLabel";
-          th.innerHTML = opts.localeStrings.totals;
-          th.setAttribute("rowspan", colAttrs.length + (rowAttrs.length === 0 ? 0 : 1));
-          tr.appendChild(th);
-        }
+      
         thead.appendChild(tr);
       }
       if (rowAttrs.length !== 0) {
@@ -1029,11 +990,8 @@
           tr.appendChild(th);
         }
         th = document.createElement("th");
-        if (colAttrs.length === 0) {
-          th.className = "pvtTotalLabel pvtRowTotalLabel";
-          th.innerHTML = opts.localeStrings.totals;
-        }
-        tr.appendChild(th);
+        
+        //tr.appendChild(th);
         thead.appendChild(tr);
       }
       result.appendChild(thead);
@@ -1071,59 +1029,11 @@
           }
           tr.appendChild(td);
         }
-        if (opts.table.rowTotals || colAttrs.length === 0) {
-          totalAggregator = pivotData.getAggregator(rowKey, []);
-          val = totalAggregator.value();
-          td = document.createElement("td");
-          td.className = "pvtTotal rowTotal";
-          td.textContent = totalAggregator.format(val);
-          td.setAttribute("data-value", val);
-          if (getClickHandler != null) {
-            td.onclick = getClickHandler(val, rowKey, []);
-          }
-          td.setAttribute("data-for", "row" + i);
-          tr.appendChild(td);
-        }
+       
+
         tbody.appendChild(tr);
       }
-      if (opts.table.colTotals || rowAttrs.length === 0) {
-        tr = document.createElement("tr");
-        if (opts.table.colTotals || rowAttrs.length === 0) {
-          th = document.createElement("th");
-          th.className = "pvtTotalLabel pvtColTotalLabel";
-          th.innerHTML = opts.localeStrings.totals;
-          th.setAttribute("colspan", rowAttrs.length + (colAttrs.length === 0 ? 0 : 1));
-          tr.appendChild(th);
-        }
-        for (j in colKeys) {
-          if (!hasProp.call(colKeys, j)) continue;
-          colKey = colKeys[j];
-          totalAggregator = pivotData.getAggregator([], colKey);
-          val = totalAggregator.value();
-          td = document.createElement("td");
-          td.className = "pvtTotal colTotal";
-          td.textContent = totalAggregator.format(val);
-          td.setAttribute("data-value", val);
-          if (getClickHandler != null) {
-            td.onclick = getClickHandler(val, [], colKey);
-          }
-          td.setAttribute("data-for", "col" + j);
-          tr.appendChild(td);
-        }
-        if (opts.table.rowTotals || colAttrs.length === 0) {
-          totalAggregator = pivotData.getAggregator([], []);
-          val = totalAggregator.value();
-          td = document.createElement("td");
-          td.className = "pvtGrandTotal";
-          td.textContent = totalAggregator.format(val);
-          td.setAttribute("data-value", val);
-          if (getClickHandler != null) {
-            td.onclick = getClickHandler(val, [], []);
-          }
-          tr.appendChild(td);
-        }
-        tbody.appendChild(tr);
-      }
+   
       result.appendChild(tbody);
       result.setAttribute("data-numrows", rowKeys.length);
       result.setAttribute("data-numcols", colKeys.length);
