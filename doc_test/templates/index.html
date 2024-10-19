@@ -79,7 +79,7 @@
         </div>
     </div>
 </div>
-
+<div id="filter-container"></div> 
 <!-- Conteneur pour afficher le tableau généré -->
 <div id="table-container"></div>
 
@@ -88,7 +88,9 @@
     const draggableItems = document.querySelectorAll('.draggable-item');
     const droppableArea = document.getElementById('droppable-area');
     const tableContainer = document.getElementById('table-container');
+    const filterContainer = document.getElementById('filter-container'); // Conteneur pour les filtres
     let selectedColumns = [];
+    let tableData = []; // Pour stocker les données reçues du serveur
 
     draggableItems.forEach(item => {
         item.addEventListener('dragstart', function (e) {
@@ -103,7 +105,7 @@
     droppableArea.addEventListener('drop', function (e) {
         e.preventDefault();
         const column = e.dataTransfer.getData('text');
-        
+
         if (!selectedColumns.includes(column)) {
             selectedColumns.push(column);
             const newItem = document.createElement('div');
@@ -111,14 +113,13 @@
             newItem.textContent = column;
             droppableArea.appendChild(newItem);
         }
-        
+
         // Envoyer une requête AJAX au serveur pour traiter les colonnes sélectionnées
         sendColumnsToServer();
     });
 
     // Fonction pour envoyer les colonnes sélectionnées au serveur Flask
     function sendColumnsToServer() {
-        // Envoyer une requête POST à Flask avec les colonnes sélectionnées
         fetch('/process_columns', {
             method: 'POST',
             headers: {
@@ -128,18 +129,68 @@
         })
         .then(response => response.json())  // Convertir la réponse en JSON
         .then(data => {
-            // Une fois les données reçues, générer le tableau
-            generateTable(data);
+            tableData = data;  // Stocker les données reçues
+            generateTable(tableData);
+            generateFilters(); // Générer les filtres pour chaque colonne
         })
         .catch(error => {
             console.error('Erreur:', error);
         });
     }
 
+    // Fonction pour générer les filtres
+    function generateFilters() {
+        filterContainer.innerHTML = ''; // Nettoyer le conteneur de filtres
+
+        selectedColumns.forEach(col => {
+            const label = document.createElement('label');
+            label.textContent = `Filter ${col}:`;
+            const select = document.createElement('select');
+            select.setAttribute('data-column', col);
+
+            // Ajouter une option par défaut
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Tous';
+            select.appendChild(defaultOption);
+
+            // Obtenir des valeurs uniques pour cette colonne
+            const uniqueValues = [...new Set(tableData.map(row => row[col]))];
+
+            uniqueValues.forEach(value => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = value;
+                select.appendChild(option);
+            });
+
+            // Écouter le changement pour filtrer les données
+            select.addEventListener('change', applyFilters);
+
+            filterContainer.appendChild(label);
+            filterContainer.appendChild(select);
+        });
+    }
+
+    // Fonction pour appliquer les filtres
+    function applyFilters() {
+        let filteredData = tableData;
+
+        const selects = filterContainer.querySelectorAll('select');
+        selects.forEach(select => {
+            const column = select.getAttribute('data-column');
+            const value = select.value;
+            if (value) {
+                filteredData = filteredData.filter(row => row[column] == value);
+            }
+        });
+
+        generateTable(filteredData);
+    }
+
     // Fonction pour générer le tableau à partir des données renvoyées par le serveur
     function generateTable(data) {
-        // Nettoyer la zone d'affichage du tableau
-        tableContainer.innerHTML = '';
+        tableContainer.innerHTML = ''; // Nettoyer la zone d'affichage du tableau
 
         // Créer un tableau HTML
         const table = document.createElement('table');
@@ -158,7 +209,7 @@
         headerRow.appendChild(totalTh);
         thead.appendChild(headerRow);
 
-        // Créer le corps du tableau avec les données reçues du serveur
+        // Créer le corps du tableau avec les données filtrées
         data.forEach(row => {
             const tr = document.createElement('tr');
             selectedColumns.forEach(col => {
@@ -177,7 +228,6 @@
         tableContainer.appendChild(table);
     }
 </script>
-
 
 </body>
 </html>
