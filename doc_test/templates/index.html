@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glisser-Déposer pour Table</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .draggable-item {
+            width: 150px;
+            padding: 10px;
+            margin: 5px;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            cursor: move;
+        }
+
+        #droppable-area {
+            width: 50%;
+            min-height: 150px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 2px dashed #004085;
+        }
+
+        #table-container {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #004085;
+            color: white;
+        }
+
+        .droppable-item {
+            padding: 8px;
+            margin: 5px;
+            background-color: #e1ffe1;
+            border: 1px solid green;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Liste des colonnes à glisser -->
+    <div>
+        <h3>Colonnes disponibles</h3>
+        <div class="draggable-item" data-column="region" draggable="true">Région</div>
+        <div class="draggable-item" data-column="age" draggable="true">Âge</div>
+        <div class="draggable-item" data-column="sexe" draggable="true">Sexe</div>
+        <!-- Ajoute ici d'autres colonnes selon ton besoin -->
+    </div>
+
+    <!-- Zone où déposer les colonnes -->
+    <div>
+        <h3>Zone de dépôt</h3>
+        <div id="droppable-area">
+            Glissez et déposez les colonnes ici
+        </div>
+    </div>
+</div>
+
+<!-- Conteneur pour afficher le tableau généré -->
+<div id="table-container"></div>
+
+<script>
+    // Variables pour gérer le glisser-déposer
+    const draggableItems = document.querySelectorAll('.draggable-item');
+    const droppableArea = document.getElementById('droppable-area');
+    const tableContainer = document.getElementById('table-container');
+    let selectedColumns = [];
+
+    draggableItems.forEach(item => {
+        item.addEventListener('dragstart', function (e) {
+            e.dataTransfer.setData('text', e.target.getAttribute('data-column'));
+        });
+    });
+
+    droppableArea.addEventListener('dragover', function (e) {
+        e.preventDefault();
+    });
+
+    droppableArea.addEventListener('drop', function (e) {
+        e.preventDefault();
+        const column = e.dataTransfer.getData('text');
+        
+        if (!selectedColumns.includes(column)) {
+            selectedColumns.push(column);
+            const newItem = document.createElement('div');
+            newItem.classList.add('droppable-item');
+            newItem.textContent = column;
+            droppableArea.appendChild(newItem);
+        }
+        
+        // Envoyer une requête AJAX au serveur pour traiter les colonnes sélectionnées
+        sendColumnsToServer();
+    });
+
+    // Fonction pour envoyer les colonnes sélectionnées au serveur Flask
+    function sendColumnsToServer() {
+        // Envoyer une requête POST à Flask avec les colonnes sélectionnées
+        fetch('/process_columns', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ columns: selectedColumns })
+        })
+        .then(response => response.json())  // Convertir la réponse en JSON
+        .then(data => {
+            // Une fois les données reçues, générer le tableau
+            generateTable(data);
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+        });
+    }
+
+    // Fonction pour générer le tableau à partir des données renvoyées par le serveur
+    function generateTable(data) {
+        // Nettoyer la zone d'affichage du tableau
+        tableContainer.innerHTML = '';
+
+        // Créer un tableau HTML
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+
+        // Créer l'en-tête du tableau
+        const headerRow = document.createElement('tr');
+        selectedColumns.forEach(col => {
+            const th = document.createElement('th');
+            th.textContent = col;
+            headerRow.appendChild(th);
+        });
+        const totalTh = document.createElement('th');
+        totalTh.textContent = 'Valeur';
+        headerRow.appendChild(totalTh);
+        thead.appendChild(headerRow);
+
+        // Créer le corps du tableau avec les données reçues du serveur
+        data.forEach(row => {
+            const tr = document.createElement('tr');
+            selectedColumns.forEach(col => {
+                const td = document.createElement('td');
+                td.textContent = row[col] || 'N/A';
+                tr.appendChild(td);
+            });
+            const totalTd = document.createElement('td');
+            totalTd.textContent = row.total_population;
+            tr.appendChild(totalTd);
+            tbody.appendChild(tr);
+        });
+
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        tableContainer.appendChild(table);
+    }
+</script>
+
+
+</body>
+</html>
