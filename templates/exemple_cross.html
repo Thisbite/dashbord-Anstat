@@ -8,7 +8,9 @@
   
 </head>
 <body>
-<h3 > Données pour {{indicateur2.capitalize()}}</h3>
+    <h3 class="titre-indicateur">Données pour {{indicateur2.capitalize()}}</h3>
+
+<div class="parent-frame">
 <div class="container">
     <!-- Liste des colonnes à glisser -->
     <div>
@@ -40,9 +42,10 @@
 </div>
 <!-- Conteneur pour afficher le tableau généré -->
 <div id="table-container"></div>
+</div>
 
 <script>
-    // Variables pour gérer le glisser-déposer
+   
  // Variables pour gérer le glisser-déposer
 const draggableItems = document.querySelectorAll('.draggable-item');
 const droppableArea = document.getElementById('droppable-area');
@@ -78,6 +81,13 @@ droppableArea.addEventListener('drop', function (e) {
         newItem.setAttribute('draggable', 'true'); // Rendre le nouvel élément glissable si nécessaire
         newItem.setAttribute('data-column', column); // Ajouter l'attribut 'data-column'
         newItem.textContent = column;
+
+        // Ajouter un événement de clic pour supprimer l'élément de la zone de dépôt
+        newItem.addEventListener('click', function() {
+            droppableArea.removeChild(newItem); // Retirer l'élément du DOM
+            selectedColumns = selectedColumns.filter(col => col !== column); // Retirer la colonne de selectedColumns
+            sendColumnsToServer(); // Renvoyer les colonnes mises à jour au serveur
+        });
 
         // Ajouter l'élément dans la zone de dépôt
         droppableArea.appendChild(newItem);

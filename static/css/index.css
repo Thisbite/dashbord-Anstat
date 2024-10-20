@@ -168,3 +168,28 @@ td {
 tr:hover {
     background-color: #e0e0e0;
 }
+
+
+/* Style pour le conteneur parent avec la bordure tricolore */
+.parent-frame {
+    border: 10px solid; /* Épaisseur de la bordure */
+    border-image: linear-gradient(to right, orange 33%, white 33%, white 66%, green 66%);
+    border-image-slice: 1;
+    padding: 20px;
+    border-radius: 10px; /* Pour arrondir les coins du cadre */
+    margin-bottom: 20px;
+    background-color: #fff; /* Couleur de fond blanche à l'intérieur */
+}
+
+.titre-indicateur {
+    text-align: center; /* Centrer le texte à l'intérieur */
+    font-weight: bold; /* Mettre le texte en gras */
+    padding: 10px; /* Ajouter de l'espace autour du texte */
+    border: 2px solid #0C4B33; /* Bordure verte ivoirienne */
+    border-radius: 5px; /* Arrondir légèrement les coins */
+    background-color: #F77F00; /* Fond orange ivoirien */
+    color: #FFFFFF; /* Texte blanc */
+    display: inline-block; /* Pour que le cadre s'ajuste au contenu */
+    margin: 20px auto; /* Centre le bloc en ajoutant de l'espace en haut/bas et automatique sur les côtés */
+    width: fit-content; /* S'adapte à la largeur du contenu */
+}

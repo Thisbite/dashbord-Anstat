@@ -96,7 +96,7 @@ def process_columns():
     # Ajouter des conditions pour ignorer les colonnes non pertinentes sauf 'sexe'
     for column in desaggregation_columns:
         if column in df.columns and column not in columns:  # Vérifier si la colonne existe et n'est pas dans les colonnes sélectionnées
-            conditions &= (df[column].isnull() | (df[column] == ''))
+            conditions &= (df[column].isnull() | (df[column] == '-'))
 
     # Filtrer les données en fonction des conditions dynamiques
     filtered_df = df[conditions]

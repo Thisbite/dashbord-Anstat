@@ -563,7 +563,7 @@ def request_indicateur():
         df_filtered = df_filtered.dropna(axis=1, how='all')
 
         # Remplacer les valeurs manquantes par des chaînes vides
-        df_filtered = df_filtered.fillna('')
+        df_filtered = df_filtered.fillna('-')
 
         # Stocker le DataFrame filtré dans la session pour une utilisation ultérieure
         df_filtered_json = df_filtered.to_json(orient='split')  # Convertir en JSON pour le stockage
@@ -579,7 +579,7 @@ def request_indicateur():
         print("Colonnes valables pour désagrégation :", desaggregation_columns)
 
     return render_template(
-        'exemple_cross.html',
+        'result.html',
         colonne_valable=desaggregation_columns,  # Colonnes à utiliser pour désagréger les données
         indicateurs=indicateurs_options,  # Options d'indicateurs pour le dropdown
         indicateur2=indicateur_SELECT,  # Indicateur sélectionné
@@ -618,7 +618,7 @@ def process_columns():
     for column in desaggregation_columns:
         if column in df_filtered.columns and column not in columns:
             # Filtrer sur les colonnes qui ne sont pas sélectionnées et qui sont vides
-            conditions &= (df_filtered[column].isnull() | (df_filtered[column] == ''))
+            conditions &= (df_filtered[column].isnull() | (df_filtered[column] == '-'))
 
     # Filtrer les données en fonction des conditions appliquées
     filtered_df = df_filtered[conditions]

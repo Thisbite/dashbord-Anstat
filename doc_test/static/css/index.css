@@ -168,3 +168,15 @@ td {
 tr:hover {
     background-color: #e0e0e0;
 }
+
+
+/* Style pour le conteneur parent avec la bordure tricolore */
+.parent-frame {
+    border: 10px solid; /* Épaisseur de la bordure */
+    border-image: linear-gradient(to right, orange 33%, white 33%, white 66%, green 66%);
+    border-image-slice: 1;
+    padding: 20px;
+    border-radius: 10px; /* Pour arrondir les coins du cadre */
+    margin-bottom: 20px;
+    background-color: #fff; /* Couleur de fond blanche à l'intérieur */
+}
