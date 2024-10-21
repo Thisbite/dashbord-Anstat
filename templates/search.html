@@ -3,48 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mettre le titre indicateur- Tableau</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
-    <title>Moteur de Recherche</title>
+    
 </head>
 <body>
-
-    <div class="header-secondary">
-        <div class="nav-links">
-            <a href="{{ url_for('list_regions') }}">Statistiques</a>
-            <a href="{{ url_for('search_boostrap') }}">Requête</a>
-            <a href="{{ url_for('domaines') }}">Domaines</a>
-            <a href="#connexion">Aide</a>
+    <header>
+        <div class="logo">
+            <a href="#"><span>Base de données</span>Régionale</a>
         </div>
+       <!-- Ici etait la barre de navigation-->
+    </header>
 
-        <!-- Formulaire de recherche -->
-        <div class="search-bar">
-            <!--Utilisation de recherche
-     
-            <form action="{{ url_for('request_indicateur' ) }}" method="GET">
-                <input type="text" id="indicateur-search2" name="indicateur2" placeholder="Recherche indicateur..." required>
-                <button type="submit">Chercher</button>
-            </form>
-            -->
-            <form method="POST" action="{{ url_for('search_boostrap') }}">
-                <input type="text" name="query" placeholder="Entrez votre recherche..." required>
-                <button type="submit">Rechercher</button>
-            </form>
+    <div class="container">
+        <div class="header">
+           #Ici le titre indicateur
+        </div>
+        <div class="container-flex">
+            <div class="dimensions">
+                <h2>Dimensions</h2>
+                <ul id="dimension-list" ondragover="handleDragOver(event)" ondrop="handleReturnToDimensions(event)">
+                    {% for colonne in colonne_valable %}
+                        <li draggable="true" data-id="{{ colonne }}">{{ colonne.capitalize() }}</li>
+                    {% endfor %}
+                </ul>
+                
+            </div>
+            <div class="tableaux">
+                <div class="buttons">
+                    <button>Télécharger en Excel</button>
+                    <button>Télécharger en CSV</button>
+                    <!--
+                 Un lien ici pour telecharger en csv
+                        -->
+                        <button>Voir Metadonnées</button>
+                    </a>
+                </div>
+                <div class="dropzone" id="dropzone1">
+                    <p>Zone de dépôt : Ajoute les lignes ici</p>
+                </div>
+                <div class="dropzone" id="dropzone2">
+                    <p class="vertical">Zone de dépôt : Colonnes</p>
+                </div>
+                <!-- Conteneur pour afficher le tableau -->
+                <div id="table-container"></div>
+            </div>
+        </div>
+    </div>
 
-      <!-- Barre de flash infos -->
+    <script>
+        // JavaScript pour la gestion du drag-and-drop
+        const dimensionItems = document.querySelectorAll('.dimensions li');
+        const dropzones = document.querySelectorAll('.dropzone');
+        const dimensionList = document.getElementById('dimension-list');
+        const tableContainer = document.getElementById('table-container');
     
-    </div>
-  
-    </div>
-
+        let rowData = [];
+        let columnData = [];
     
+        // Événements pour démarrer le drag
+        dimensionItems.forEach(item => {
+            item.addEventListener('dragstart', handleDragStart);
+        });
     
+        // Événements sur les zones de dépôt
+        dropzones.forEach(zone => {
+            zone.addEventListener('dragover', handleDragOver);
+            zone.addEventListener('drop', handleDrop);
+            zone.addEventListener('dragleave', handleDragLeave);
+        });
     
-<div class="container">
-        <h1>Recherche d'indicateur</h1>
-        <form method="POST" action="/search">
-            <input type="text" name="query" placeholder="Entrez votre recherche..." required>
-            <button type="submit">Rechercher</button>
-        </form>
-    </div>
+        function handleDragStart(event) {
+            event.dataTransfer.setData('text/plain', event.target.dataset.id);
+            event.target.classList.add('dragging');
+        }
+    
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.target.classList.add('hovered');
+        }
+    
+        function handleDrop(event) {
+            event.preventDefault();
+            const data = event.dataTransfer.getData('text/plain');
+            const dropzone = event.target.closest('.dropzone');
+            const textPlaceholder = dropzone.querySelector('p');
+    
+            // Vérifier si l'élément est déjà dans une autre zone
+            const isAlreadyInAnotherZone = [...dropzones].some(zone => {
+                return [...zone.querySelectorAll('.dimension-item')].some(item => item.dataset.id === data);
+            });
+    
+            if (!isAlreadyInAnotherZone) {
+                // Créer un nouvel élément dans la zone de dépôt
+                const newElement = document.createElement('div');
+                newElement.classList.add('dimension-item');
+                newElement.textContent = data;
+                newElement.setAttribute('draggable', 'true');
+                newElement.dataset.id = data;
+    
+                newElement.addEventListener('dragstart', handleDragStart);
+                newElement.addEventListener('dragend', handleDragEnd);
+    
+                dropzone.appendChild(newElement);
+    
+                // Supprimer l'élément de la liste de dimensions
+                const originalElement = [...dimensionList.querySelectorAll('li')].find(el => el.dataset.id === data);
+                if (originalElement) {
+                    originalElement.remove();
+                }
+    
+                // Fetch les données de la dimension
+                fetch(`/get_dimension_data/?dimension=${data}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (dropzone.id === 'dropzone1') {
+                            rowData = data;
+                        } else if (dropzone.id === 'dropzone2') {
+                            columnData = data;
+                        }
+                        createCrosstab(rowData, columnData);  // Créer le tableau croisé
+                    });
+            }
+    
+            if (dropzone.querySelectorAll('.dimension-item').length > 0) {
+                textPlaceholder.style.display = 'none';
+            }
+    
+            event.target.classList.remove('hovered');
+        }
+    
+        function handleDragLeave(event) {
+            event.target.classList.remove('hovered');
+        }
+    
+        function handleDragEnd(event) {
+            const dropzone = event.target.closest('.dropzone');
+            const textPlaceholder = dropzone ? dropzone.querySelector('p') : null;
+    
+            if (!dropzone) {
+                const existingElement = [...dimensionList.querySelectorAll('li')].find(el => el.dataset.id === event.target.dataset.id);
+                if (!existingElement) {
+                    const li = document.createElement('li');
+                    li.textContent = event.target.dataset.id;
+                    li.setAttribute('draggable', 'true');
+                    li.dataset.id = event.target.dataset.id;
+    
+                    li.addEventListener('dragstart', handleDragStart);
+    
+                    dimensionList.appendChild(li);
+                }
+                event.target.remove();
+            }
+    
+            if (dropzone && dropzone.querySelectorAll('.dimension-item').length === 0) {
+                textPlaceholder.style.display = 'block';
+            }
+    
+            event.target.classList.remove('dragging');
+        }
+    
+        function createCrosstab(rowData, columnData) {
+            tableContainer.innerHTML = ''; // Effacer le tableau précédent
+        
+            if (rowData.length === 0 || columnData.length === 0) {
+                return;  // Ne rien faire si les données sont vides
+            }
+        
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+        
+            // Créer l'entête du tableau
+            const headerRow = document.createElement('tr');
+            headerRow.appendChild(document.createElement('th')); // Cellule vide en haut à gauche
+        
+            const columnKeys = Object.keys(columnData[0]); // Clés des colonnes
+            const rowKeys = Object.keys(rowData[0]); // Clés des lignes
+        
+            // Ajouter les colonnes à l'en-tête
+            columnData.forEach(col => {
+                const th = document.createElement('th');
+                th.textContent = col[columnKeys[1]]; // Récupérer la 2ème clé dynamique
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+        
+            // Ajouter les lignes de données
+            rowData.forEach(row => {
+                const tr = document.createElement('tr');
+                const rowHeader = document.createElement('th');
+                rowHeader.textContent = row[rowKeys[1]]; // Nom dynamique pour la ligne
+                tr.appendChild(rowHeader);
+        
+                columnData.forEach(col => {
+                    const td = document.createElement('td');
+                    // Remplacer par une logique de calcul ou affichage de données
+                    td.textContent = ''; // Ici ajouter la logique d'affichage des valeurs
+                    tr.appendChild(td);
+                });
+        
+                tbody.appendChild(tr);
+            });
+        
+            table.appendChild(thead);
+            table.appendChild(tbody);
+            tableContainer.appendChild(table);
+        }
+    
+    </script>
+    
 </body>
 </html>

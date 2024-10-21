@@ -193,3 +193,33 @@ tr:hover {
     margin: 20px auto; /* Centre le bloc en ajoutant de l'espace en haut/bas et automatique sur les côtés */
     width: fit-content; /* S'adapte à la largeur du contenu */
 }
+
+.header-secondary {
+    background-color: #ff9933;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.nav-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    padding: 10px 20px;
+    font-size: 18px;
+    margin: 0 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.nav-links a:hover {
+    background-color: #007bff;
+    color: white;
+}
+

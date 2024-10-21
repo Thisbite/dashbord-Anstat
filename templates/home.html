@@ -14,14 +14,15 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  
 </head>
+
 <body>
 
     <div class="header-secondary">
         <div class="nav-links">
             <a href="{{ url_for('list_regions') }}">Statistiques</a>
-            <a href="{{ url_for('search_boostrap') }}">Requête</a>
+            <a href="{{ url_for('search_indicators') }}">Requête</a>
             <a href="{{ url_for('domaines') }}">Domaines</a>
             <a href="#connexion">Aide</a>
         </div>
@@ -62,17 +63,21 @@
             </div>
 
             <div class="right-section">
-                <!-- Ajout de deux indicateurs (1 sur l'éducation et 1 sur la santé) -->
+                <!-- Ajout de deux indicateurs (1 sur l'éducation et 1 sur la santé) et naissance  -->
                 <div class="indicator-card">
-                    <div class="card-title">Taux d'Éducation</div>
-                    <div class="card-value">85%</div>
-                    <div class="card-description">Proportion des enfants scolarisés en 2021</div>
+                    
+                    <div class="card-title" >Population actuelle</div>
+                    <div id="birthsBox" class="card-value">0</div>
+                    <div id="dateBox" class="card-date"></div> 
                 </div>
         
                 <div class="indicator-card">
-                    <div class="card-title">Accès aux soins</div>
-                    <div class="card-value">70%</div>
-                    <div class="card-description">Proportion de la population ayant accès aux soins de santé de base</div>
+                    <div class="card-title">Naissances</div>
+                    <div class="card-value">456</div>
+                    <div class="card-description">Au cours en cours de l'année 2024</div>
+                    <div class="card-title">Décès</div>
+                    <div class="card-value">12</div>
+                    <div class="card-description">Au cours en cours de l'année 2024</div>
                 </div>
             </div>
         </div>
@@ -414,7 +419,73 @@
         regionsCoords.forEach(function(coords) {
             drawRegion(coords);
         });
+    
+   
     </script>
+    <script>
+        let totalBirths = 0;  // Variable pour accumuler les naissances
+        let birthDataSeries = [];  // Tableau pour stocker la série de données
+        
+        // Fonction pour mettre à jour la box avec la nouvelle valeur
+        function updateBirthsBox() {
+            fetch('/births_data')  // Appelle l'API Flask pour obtenir les données
+                .then(response => response.json())
+                .then(data => {
+                    totalBirths = data.total_births;  // Met à jour avec la valeur totale
+                    document.getElementById('birthsBox').textContent = totalBirths.toFixed(0);  // Affiche la valeur dans la box
+        
+                    // Formatage de la date
+                    const date = new Date(data.time * 1000);  // Convertir le timestamp en objet Date
+                    const day = String(date.getDate()).padStart(2, '0');  // Obtenir le jour
+                    const month = String(date.getMonth() + 1).padStart(2, '0');  // Obtenir le mois (0-indexé)
+                    const year = date.getFullYear();  // Obtenir l'année
+                    const hours = String(date.getHours()).padStart(2, '0');  // Obtenir l'heure
+                    const minutes = String(date.getMinutes()).padStart(2, '0');  // Obtenir les minutes
+                    
+                    // Créer la chaîne de date formatée
+                    const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}`;
+                    document.getElementById('dateBox').textContent = formattedDate;  // Mettre à jour l'élément HTML avec la date formatée
+        
+                    // Ajouter les données dans la série
+                    birthDataSeries.push({
+                        time: new Date(data.time * 1000).toLocaleTimeString(),
+                        births: totalBirths.toFixed(0),
+                        day: data.day,
+                        month: data.month,
+                        year: data.year
+                    });
+                });
+        }
+        
+        // Mettre à jour toutes les secondes
+        setInterval(updateBirthsBox, 1000);
+        
+
+        // Mettre à jour toutes les secondes
+        setInterval(updateBirthsBox, 1000);
+    
+        // Fonction pour télécharger les données en CSV
+        function downloadCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Time,Accumulated Births,Day,Month,Year\n";  
+            birthDataSeries.forEach(function(row) {
+                csvContent += row.time + "," + row.births + "," + row.day + "," + row.month + "," + row.year + "\n";
+            });
+    
+            // Créer un lien de téléchargement
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "births_data.csv");
+            document.body.appendChild(link);
+    
+            // Cliquer sur le lien pour télécharger le fichier
+            link.click();
+        }
+    
+        // Ajouter un événement au bouton de téléchargement
+        document.getElementById('downloadButton').addEventListener('click', downloadCSV);
+    </script>
+    
     
 </body>
 </html>

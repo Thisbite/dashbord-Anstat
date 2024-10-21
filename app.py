@@ -181,12 +181,9 @@ def search():
         
         return render_template('resultats.html', results=unique_results, query=query, page=page, total_pages=total_pages)
 
-    return render_template('search.html')
+
 
 #index_data_from_excel()
-
-
-
 es.indices.put_settings(index='requete_elastic', body={
     "index.blocks.read_only_allow_delete": None
 })
@@ -219,11 +216,19 @@ STORAGE_FILE = 'births_data.json'
 # Date de départ pour le calcul des naissances (exemple : 1er janvier 2022)
 START_DATE = datetime(2022, 1, 1)
 
-# Fonction pour calculer les naissances par seconde avec variation
-def get_births_per_second():
-    moyenne_naissance = 10
+
+
+# Fichier pour stocker les données sur l'horloge de population
+STORAGE_FILE = 'births_data.json'
+
+# Date de départ pour le calcul des naissances (exemple : 1er janvier 2022)
+START_DATE = datetime(2022, 1, 1)
+
+# Fonction pour calculer les naissances par minute avec variation
+def get_births_per_minute():
+    moyenne_naissance = 1.3  # naissances par seconde
     variation = random.uniform(-0.034, 0.034)
-    return round(moyenne_naissance, 2)
+    return int(moyenne_naissance + variation )  # Convertir en naissances par minute
 
 # Fonction pour charger l'état actuel du compteur
 def load_birth_data():
@@ -231,8 +236,7 @@ def load_birth_data():
         with open(STORAGE_FILE, 'r') as f:
             data = json.load(f)
             return data
-    # Si le fichier n'existe pas, on retourne un total de naissances par défaut et la date de départ
-    return {'total_births':29090897, 'last_time': START_DATE.timestamp()}
+    return {'total_births': 29090897, 'last_time': START_DATE.timestamp()} #Date de depart
 
 # Fonction pour sauvegarder l'état actuel du compteur
 def save_birth_data(total_births, last_time):
@@ -251,8 +255,8 @@ def calculate_accumulated_births():
     elapsed_time = current_time - last_time
 
     # Calculer les naissances accumulées pendant ce temps
-    births_per_second = get_births_per_second()
-    accumulated_births = births_per_second * elapsed_time
+    births_per_minute = get_births_per_minute()
+    accumulated_births = (births_per_minute / 60) * elapsed_time  # Convertir en naissances par seconde
 
     # Mettre à jour le total des naissances
     total_births += accumulated_births
@@ -261,10 +265,6 @@ def calculate_accumulated_births():
     save_birth_data(total_births, current_time)
 
     return total_births
-
-@app.route('/naissance')
-def naissance():
-    return render_template('naissance.html')
 
 @app.route('/births_data')
 def births_data():
@@ -282,13 +282,15 @@ def births_data():
     # Renvoie les données en JSON pour le frontend
     data = {
         'time': time.time(),
-        'total_births': round(total_births, 2),
-        'births_per_second': get_births_per_second(),
+        'total_births': round(total_births, 0),  # Afficher comme un entier
+        'births_per_minute': get_births_per_minute(),  # Renvoyer les naissances par minute
         'day': day,
         'month': month,
         'year': year
     }
     return jsonify(data)
+
+
 
 
 
@@ -487,18 +489,20 @@ def autocomplete_indicateur():
     return jsonify(results)
 
 
-# Obtenir la région en fonction de l'indicateur
-@app.route('/get_regions', methods=['GET'])
-def get_regions():
-    indicateur = request.args.get('indicateur')
-    df = qr.get_data_from_mysql()  # Récupère les données
-    regions = df[df['indicateur'] == indicateur]['region'].dropna().sort_values().unique()
-    return jsonify(list(regions))
+# Route pour afficher la page avec les indicateurs et les régions
+@app.route('/search_indicators')
+def search_indicators():
+    annee_debut = request.args.get('annee_debut')
+    annee_fin = request.args.get('annee_fin')
+    indicateurs = qr.options_indicateur()  # Fonction qui récupère les indicateurs
+    regions = qr.options_regions()  # Fonction qui récupère les régions
+    return render_template('search_indicateur.html',indicateurs=indicateurs,regions=regions)
+#print(qr.options_indicateur())
 # Route pour récupérer les départements en fonction de la région sélectionnée
 @app.route('/get_departements', methods=['GET'])
 def get_departements():
     region = request.args.get('region')
-    df = qr.get_data_from_mysql()  # Récupère les données
+    df = qr.get_data_from_mysql()  # Récupère les données depuis la base de données
     departements = df[df['region'] == region]['departement'].sort_values().unique()
     return jsonify(list(departements))
 
@@ -506,7 +510,7 @@ def get_departements():
 @app.route('/get_sous_prefectures', methods=['GET'])
 def get_sous_prefectures():
     departement = request.args.get('departement')
-    df = qr.get_data_from_mysql()  # Récupère les données
+    df = qr.get_data_from_mysql()  # Récupère les données depuis la base de données
     sous_prefectures = df[df['departement'] == departement]['sousprefecture'].sort_values().unique()
     return jsonify(list(sous_prefectures))
 
@@ -527,12 +531,7 @@ def get_sous_prefectures():
 
 
 
-
-
-
-
-
-# Page de requête
+# Page de requête au niveau de l'accueil
 @app.route('/request_indicateur', methods=['GET', 'POST'])
 def request_indicateur():
     # Charger les données depuis MySQL
@@ -586,6 +585,58 @@ def request_indicateur():
         df_filtered=df_filtered_json  # Data JSON pour le filtrage
     )
 
+import urllib
+# Deuxieme bloc 
+# Page de requête au niveau de l'accueil
+@app.route('/search_indicators2/<path:indicateur>') 
+def request_indicateur2(indicateur):
+    # Charger les données depuis MySQL
+    df = qr.get_data_from_mysql()
+    indicateur_SELECT = urllib.parse.unquote(indicateur)
+    print('Indicateur de js:',indicateur_SELECT)
+    # Obtenir les options pour chaque filtre (indicateur, région, etc.
+    df_filtered = pd.DataFrame()
+    #indicateur_SELECT = request.args.get('indicateur_elastic')
+    
+    # Appliquer les filtres (indicateur, etc.)
+    df_filtered = df.drop(columns=['statut_approbation', 'id'], errors='ignore')
+
+    # Appliquer le filtre si 'indicateur' existe et que la sélection d'indicateur est présente
+    if indicateur_SELECT and 'indicateur' in df_filtered.columns:
+        # Convertir la colonne 'indicateur' en chaînes de caractères
+        df_filtered['indicateur'] = df_filtered['indicateur'].astype(str).str.strip().str.lower()
+        
+        # Appliquer le filtre sur la colonne 'indicateur'
+        df_filtered = df_filtered[df_filtered['indicateur'] == indicateur_SELECT.strip().lower()]
+    else:
+        print("Aucun filtre appliqué sur l'indicateur")
+    
+    # Supprimer les colonnes contenant uniquement des NaN
+    df_filtered = df_filtered.dropna(axis=1, how='all')
+
+    # Remplacer les valeurs manquantes par des chaînes vides
+    df_filtered = df_filtered.fillna('-')
+
+    # Stocker le DataFrame filtré dans la session pour une utilisation ultérieure
+    df_filtered_json = df_filtered.to_json(orient='split')  # Convertir en JSON pour le stockage
+    
+    session['df_filtered'] = df_filtered_json
+    # Obtenir les colonnes valables pour les désagrégations
+    existing_columns = df_filtered.columns.tolist()
+    columns_to_exclude = ['valeur', 'indicateur']
+    desaggregation_columns = [col for col in existing_columns if col not in columns_to_exclude]
+    return render_template(
+        'result.html',
+        colonne_valable=desaggregation_columns,  # Colonnes à utiliser pour désagréger les données
+        indicateur2=indicateur_SELECT,  # Indicateur sélectionné
+        df_filtered=df_filtered_json  # Data JSON pour le filtrage
+    )
+
+    
+    
+    
+    
+
     
     
 @app.route('/process_columns', methods=['POST'])
@@ -619,30 +670,24 @@ def process_columns():
         if column in df_filtered.columns and column not in columns:
             # Filtrer sur les colonnes qui ne sont pas sélectionnées et qui sont vides
             conditions &= (df_filtered[column].isnull() | (df_filtered[column] == '-'))
-
     # Filtrer les données en fonction des conditions appliquées
     filtered_df = df_filtered[conditions]
-
     # Vérifier si la colonne 'valeur' est dans les colonnes d'agrégation
     if 'valeur' not in columns:
         columns.append('valeur')
-
     # Vérifier si la colonne 'valeur' est numérique
     if 'valeur' in filtered_df.columns:
         try:
             # Tenter de convertir la colonne 'valeur' en numérique
-            filtered_df['valeur'] = pd.to_numeric(filtered_df['valeur'], errors='coerce')
-            
+            filtered_df['valeur'] = pd.to_numeric(filtered_df['valeur'], errors='coerce')           
             # Si certaines valeurs ne peuvent pas être converties, elles deviennent NaN (grâce à errors='coerce')
             # Vous pouvez ensuite filtrer ces lignes ou gérer ces NaN selon vos besoins
             filtered_df = filtered_df.dropna(subset=['valeur'])  # Supprime les lignes où 'valeur' est NaN
         except Exception as e:
             print(f"Erreur lors de la conversion de 'valeur' en numérique : {e}")
             return jsonify({"error": "La colonne 'valeur' contient des données non numériques"}), 400
-
     # Afficher les colonnes d'agrégation
     print('Notre agrégation somme:', columns)
-
     # Effectuer l'agrégation par somme des valeurs sur les colonnes sélectionnées
     try:
         # Effectuer la somme uniquement pour les colonnes numériques
@@ -650,8 +695,6 @@ def process_columns():
     except KeyError as e:
         print(f"Erreur: {e}. Assurez-vous que les colonnes suivantes existent dans les données: {columns}")
         return jsonify({"error": f"Colonne manquante: {str(e)}"}), 400
-
-
     # Transformer les données en dictionnaire pour les envoyer au format JSON
     result_data = aggregated_data.to_dict(orient='records')
 
@@ -660,16 +703,7 @@ def process_columns():
 
 
 
-    
-    
 
-
-
-
-#Pour afficher le cross table
-@app.route('/requete')
-def crosstable():
-    return render_template('exemple_cross.html')
 
 # Données de test
 @app.route('/get_data', methods=['GET'])
@@ -772,81 +806,38 @@ def domaines():
     return render_template('domaines.html')
 
 
+
+
+
+
+
+
+
+#-------------------- Pour la phase de requete e
+
+
+
+
+@app.route('/get_data2')
+def get_data2():
+    # Charger le fichier Excel
+    df = pd.read_excel('search_indicateur.xlsx')
+
+    # Grouper les données par Domaine et Thématique
+    data = df.groupby(['Domaine', 'Thematique'])['Indicateurs'].apply(list).to_dict()
+    data_str_keys = {f"{key[0]}, {key[1]}": value for key, value in data.items()}
+
+    # Retourner les données en JSON
+    return jsonify(data_str_keys)
+
+
 #Requete domaine
 
-@app.route('/domaines_indicateur', methods=['GET', 'POST'])
-def domaines_indicateur():
-    df = qr.get_data_from_mysql()
-    indicateurs_options = qr.options_indicateur()
-
-    if request.method == 'POST':
-        # Récupérer les sélections de l'utilisateur
-        indicateur_SELECT = request.form.get('indicateur')
-        region_SELECT = request.form.get('region')
-        departement_SELECT = request.form.get('departement')
-        sousprefecture_SELECT = request.form.get('sous_prefecture')
-
-        # Commencer avec l'ensemble complet des données
-        df_filtered = df.drop(columns=['statut_approbation', 'id'], errors='ignore')
-
-        # Filtrer par indicateur
-        if indicateur_SELECT and 'indicateur' in df_filtered.columns:
-            df_filtered = df_filtered[df_filtered['indicateur'].str.strip().str.lower() == indicateur_SELECT.strip().lower()]
-            print("Indicateur sélectionné:", indicateur_SELECT)
-
-        # Filtrer par région
-        if not df_filtered.empty and region_SELECT and 'region' in df_filtered.columns:
-            df_filtered = df_filtered[df_filtered['region'] == region_SELECT]
-            print("Région sélectionnée:", region_SELECT)
-
-        # Filtrer par département
-        if not df_filtered.empty and departement_SELECT and 'departement' in df_filtered.columns:
-            df_filtered = df_filtered[df_filtered['departement'] == departement_SELECT]
-            print("Département sélectionné:", departement_SELECT)
-
-        # Filtrer par sous-préfecture
-        if not df_filtered.empty and sousprefecture_SELECT and 'sousprefecture' in df_filtered.columns:
-            df_filtered = df_filtered[df_filtered['sousprefecture'] == sousprefecture_SELECT]
-            df_filtered = df_filtered.drop(columns=['region', 'departement'], errors='ignore')
-            print("Sous-préfecture sélectionnée:", sousprefecture_SELECT)
-
-        # Supprimer les colonnes contenant uniquement des NaN
-        df_filtered = df_filtered.dropna(axis=1, how='all')
-
-        # Vérifier si le DataFrame est vide après filtrage
-        if df_filtered.empty:
-            message = "Aucune donnée disponible pour les critères sélectionnés."
-            return render_template('result.html', available_columns=[], message=message)
-
-        # Stocker le DataFrame dans la session
-        from io import StringIO
-        df_filtered_json = StringIO()
-        df_filtered.to_json(df_filtered_json)
-        session['df_filtered'] = df_filtered_json.getvalue()
-
-        # Récupérer les colonnes disponibles
-        available_columns = list(df_filtered.columns)
-        defintions = qr.definition_indicateur(indicateur_choisi=indicateur_SELECT)
-        mode_calcul = qr.mode_calcul_indicateur(mode_calcul=indicateur_SELECT)
-
-        return render_template('result.html', available_columns=available_columns,
-                               indicateur_SELECT=indicateur_SELECT,
-                               defintions=defintions,
-                               mode_calcul=mode_calcul)
+#______________________________________Requete indicateur mode Guinéen
 
 
-    # Si GET, afficher la page de sélection avec les options de filtre
-    regions = df['region'].dropna().sort_values().unique()
-    departements = df['departement'].dropna().sort_values().unique()
-    sous_prefectures = df['sousprefecture'].dropna().sort_values().unique()
 
-    return render_template(
-        'domaines_indicateur.html',
-        indicateurs=indicateurs_options,
-        regions=regions,
-        departements=departements,
-        sous_prefectures=sous_prefectures
-    )
+
 
 
 

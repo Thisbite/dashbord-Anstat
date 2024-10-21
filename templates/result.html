@@ -4,10 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Glisser-Déposer pour Table</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
   
 </head>
 <body>
+    <div class="header-secondary">
+        <div class="nav-links">
+            <a href="{{ url_for('list_regions') }}">Statistiques</a>
+            <a href="{{ url_for('search_indicators') }}">Requête</a>
+            <a href="#{{ url_for('domaines') }}">Domaines</a>
+            <a href="#connexion">Aide</a>
+        </div>
+    </div>
     <h3 class="titre-indicateur">Données pour {{indicateur2.capitalize()}}</h3>
 
 <div class="parent-frame">
@@ -45,200 +53,180 @@
 </div>
 
 <script>
-   
- // Variables pour gérer le glisser-déposer
-const draggableItems = document.querySelectorAll('.draggable-item');
-const droppableArea = document.getElementById('droppable-area');
-const tableContainer = document.getElementById('table-container');
-const filterContainer = document.getElementById('filter-container'); // Conteneur pour les filtres
-let selectedColumns = [];
-let tableData = []; // Pour stocker les données reçues du serveur
+    // Variables pour gérer le glisser-déposer
+    const draggableItems = document.querySelectorAll('.draggable-item');
+    const droppableArea = document.getElementById('droppable-area');
+    const tableContainer = document.getElementById('table-container');
+    const filterContainer = document.getElementById('filter-container');
+    let selectedColumns = [];
+    let tableData = [];
 
-// Gérer l'événement 'dragstart' pour chaque élément glissable
-draggableItems.forEach(item => {
-    item.addEventListener('dragstart', function (e) {
-        e.dataTransfer.setData('text', e.target.getAttribute('data-column'));
+    // Ajouter les gestionnaires d'événements de glisser-déposer
+    draggableItems.forEach(item => {
+        item.addEventListener('dragstart', handleDragStart);
     });
-});
 
-// Autoriser le dépôt dans la zone de dépôt
-droppableArea.addEventListener('dragover', function (e) {
-    e.preventDefault();
-});
+    droppableArea.addEventListener('dragover', handleDragOver);
+    droppableArea.addEventListener('drop', handleDrop);
 
-// Gérer l'événement 'drop' dans la zone de dépôt
-droppableArea.addEventListener('drop', function (e) {
-    e.preventDefault();
-    const column = e.dataTransfer.getData('text');
-
-    // Vérifier si la colonne n'est pas déjà sélectionnée
-    if (!selectedColumns.includes(column)) {
-        selectedColumns.push(column);
-        
-        // Créer un nouvel élément et appliquer la classe 'draggable-item' pour conserver le style
-        const newItem = document.createElement('div');
-        newItem.classList.add('draggable-item'); // Appliquer la classe pour maintenir le style
-        newItem.setAttribute('draggable', 'true'); // Rendre le nouvel élément glissable si nécessaire
-        newItem.setAttribute('data-column', column); // Ajouter l'attribut 'data-column'
-        newItem.textContent = column;
-
-        // Ajouter un événement de clic pour supprimer l'élément de la zone de dépôt
-        newItem.addEventListener('click', function() {
-            droppableArea.removeChild(newItem); // Retirer l'élément du DOM
-            selectedColumns = selectedColumns.filter(col => col !== column); // Retirer la colonne de selectedColumns
-            sendColumnsToServer(); // Renvoyer les colonnes mises à jour au serveur
-        });
-
-        // Ajouter l'élément dans la zone de dépôt
-        droppableArea.appendChild(newItem);
+    // Événements de glisser-déposer
+    function handleDragStart(event) {
+        event.dataTransfer.setData('text/plain', event.target.dataset.column);
+        event.target.classList.add('dragging');
     }
 
-    // Envoyer une requête AJAX au serveur pour traiter les colonnes sélectionnées
-    sendColumnsToServer();
-});
+    function handleDragOver(event) {
+        event.preventDefault();
+        event.target.classList.add('hovered');
+    }
 
-// Fonction pour envoyer les colonnes sélectionnées au serveur Flask
-function sendColumnsToServer() {
-    fetch('/process_columns', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ columns: selectedColumns })
-    })
-    .then(response => response.json())  // Convertir la réponse en JSON
-    .then(data => {
-        tableData = data;  // Stocker les données reçues
-        generateTable(tableData);
-        generateFilters(); // Générer les filtres pour chaque colonne
-    })
-    .catch(error => {
-        console.error('Erreur:', error);
-    });
-}
+    function handleDrop(event) {
+        event.preventDefault();
+        const column = event.dataTransfer.getData('text/plain');
 
-// Fonction pour générer les filtres
-// Fonction pour générer les filtres
-function generateFilters() {
-    filterContainer.innerHTML = ''; // Nettoyer le conteneur de filtres
+        if (!selectedColumns.includes(column)) {
+            selectedColumns.push(column);
 
-    selectedColumns.forEach(col => {
-        const label = document.createElement('label');
-        label.textContent = `Filtrer par ${col}:`;
-        const select = document.createElement('select');
-        select.setAttribute('data-column', col);
+            // Créer un nouvel élément dans la zone de dépôt
+            const newItem = document.createElement('div');
+            newItem.classList.add('draggable-item');
+            newItem.textContent = column;
+            newItem.setAttribute('draggable', 'true');
+            newItem.setAttribute('data-column', column);
+            newItem.addEventListener('dragstart', handleDragStart);
 
-        // Ajouter une option par défaut
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = 'Tous';
-        select.appendChild(defaultOption);
+            // Ajouter un événement de clic pour retirer l'élément
+            newItem.addEventListener('click', function () {
+                droppableArea.removeChild(newItem);
+                selectedColumns = selectedColumns.filter(col => col !== column);
+                sendColumnsToServer();
+            });
 
-        // Obtenir des valeurs uniques pour cette colonne
-        const uniqueValues = [...new Set(tableData.map(row => row[col]))];
-
-        uniqueValues.forEach(value => {
-            const option = document.createElement('option');
-            option.value = value;
-            option.textContent = value;
-            select.appendChild(option);
-        });
-
-        // Écouter le changement pour filtrer les données
-        select.addEventListener('change', applyFilters);
-
-        filterContainer.appendChild(label);
-        filterContainer.appendChild(select);
-    });
-}
-
-
-// Fonction pour appliquer les filtres
-function applyFilters() {
-    let filteredData = tableData;
-
-    const selects = filterContainer.querySelectorAll('select');
-    selects.forEach(select => {
-        const column = select.getAttribute('data-column');
-        const value = select.value;
-        if (value) {
-            filteredData = filteredData.filter(row => row[column] == value);
+            droppableArea.appendChild(newItem);
         }
-    });
 
-    generateTable(filteredData);
-}
-
-// Fonction pour générer le tableau à partir des données renvoyées par le serveur
-function generateTable(data) {
-    tableContainer.innerHTML = ''; // Nettoyer la zone d'affichage du tableau
-
-    // Créer un tableau HTML
-    const table = document.createElement('table');
-    const thead = document.createElement('thead');
-    const tbody = document.createElement('tbody');
-
-    // Créer l'en-tête du tableau
-    const headerRow = document.createElement('tr');
-    selectedColumns.forEach(col => {
-        const th = document.createElement('th');
-        th.textContent = col;
-        headerRow.appendChild(th);
-    });
-    const totalTh = document.createElement('th');
-    totalTh.textContent = 'Valeur';
-    headerRow.appendChild(totalTh);
-    thead.appendChild(headerRow);
-
-    // Créer le corps du tableau avec les données filtrées
-    data.forEach(row => {
-        const tr = document.createElement('tr');
-        selectedColumns.forEach(col => {
-            const td = document.createElement('td');
-            td.textContent = row[col] || 'N/A';
-            tr.appendChild(td);
-        });
-        const totalTd = document.createElement('td');
-        totalTd.textContent = row.valeur;
-        tr.appendChild(totalTd);
-        tbody.appendChild(tr);
-    });
-
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    tableContainer.appendChild(table);
-}
-droppableArea.addEventListener('drop', function (e) {
-    e.preventDefault();
-    const column = e.dataTransfer.getData('text');
-
-    // Cache le texte placeholder s'il y a un élément déposé
-    const placeholder = document.getElementById('placeholder-text');
-    if (placeholder) {
-        placeholder.style.display = 'none';
-    }
-
-    if (!selectedColumns.includes(column)) {
-        selectedColumns.push(column);
-        const newItem = document.createElement('div');
-        newItem.classList.add('droppable-item');
-        newItem.textContent = column;
-        droppableArea.appendChild(newItem);
-    }
-
-    sendColumnsToServer();
-});
-
-// Si vous souhaitez réafficher le placeholder lorsque la zone est vide
-function checkDroppableArea() {
-    if (droppableArea.children.length === 0) {
+        // Cacher le texte placeholder si un élément est déposé
         const placeholder = document.getElementById('placeholder-text');
-        placeholder.style.display = 'block';
+        if (placeholder) {
+            placeholder.style.display = 'none';
+        }
+
+        sendColumnsToServer();
     }
-}
 
+    // Vérifie si la zone de dépôt est vide et affiche le placeholder
+    function checkDroppableArea() {
+        if (droppableArea.children.length === 0) {
+            const placeholder = document.getElementById('placeholder-text');
+            placeholder.style.display = 'block';
+        }
+    }
 
+    // Fonction pour envoyer les colonnes sélectionnées au serveur Flask
+    function sendColumnsToServer() {
+        fetch('/process_columns', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ columns: selectedColumns })
+        })
+        .then(response => response.json())
+        .then(data => {
+            tableData = data;
+            generateTable(tableData);
+            generateFilters();
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+        });
+    }
+
+    // Fonction pour générer les filtres
+    function generateFilters() {
+        filterContainer.innerHTML = '';
+
+        selectedColumns.forEach(col => {
+            const label = document.createElement('label');
+            label.textContent = `Filtrer par ${col}:`;
+            const select = document.createElement('select');
+            select.setAttribute('data-column', col);
+
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Tous';
+            select.appendChild(defaultOption);
+
+            const uniqueValues = [...new Set(tableData.map(row => row[col]))];
+
+            uniqueValues.forEach(value => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = value;
+                select.appendChild(option);
+            });
+
+            select.addEventListener('change', applyFilters);
+
+            filterContainer.appendChild(label);
+            filterContainer.appendChild(select);
+        });
+    }
+
+    // Fonction pour appliquer les filtres
+    function applyFilters() {
+        let filteredData = tableData;
+
+        const selects = filterContainer.querySelectorAll('select');
+        selects.forEach(select => {
+            const column = select.getAttribute('data-column');
+            const value = select.value;
+            if (value) {
+                filteredData = filteredData.filter(row => row[column] == value);
+            }
+        });
+
+        generateTable(filteredData);
+    }
+
+    // Fonction pour générer le tableau
+    function generateTable(data) {
+        tableContainer.innerHTML = '';
+
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+
+        const headerRow = document.createElement('tr');
+        selectedColumns.forEach(col => {
+            const th = document.createElement('th');
+            th.textContent = col;
+            headerRow.appendChild(th);
+        });
+        const totalTh = document.createElement('th');
+        totalTh.textContent = 'Valeur';
+        headerRow.appendChild(totalTh);
+        thead.appendChild(headerRow);
+
+        data.forEach(row => {
+            const tr = document.createElement('tr');
+            selectedColumns.forEach(col => {
+                const td = document.createElement('td');
+                td.textContent = row[col] || 'N/A';
+                tr.appendChild(td);
+            });
+            const totalTd = document.createElement('td');
+            totalTd.textContent = row.valeur;
+            tr.appendChild(totalTd);
+            tbody.appendChild(tr);
+        });
+
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        tableContainer.appendChild(table);
+    }
 </script>
+
 
 </body>
 </html>

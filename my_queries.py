@@ -26,7 +26,7 @@ def options_indicateur():
     try:
         with cf.create_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT indicateur FROM indicateur_v2")
+            cursor.execute("SELECT indicateur FROM indicateur_v2 ")
             # Récupérer les résultats sous forme de liste de tuples
             indicateurs = cursor.fetchall()
     except Error as e:
@@ -36,7 +36,7 @@ def options_indicateur():
         print(f"Exception in options_regions: {e}")
         return []
     
-    indicateurs =[row[0] for row in indicateurs ]
+    indicateurs =sorted([row[0] for row in indicateurs ])
     return indicateurs 
 
 
