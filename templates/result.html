@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Glisser-Déposer pour Table</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
   
 </head>
 <body>
@@ -19,6 +21,13 @@
     <h3 class="titre-indicateur">Données pour {{indicateur2.capitalize()}}</h3>
 
 <div class="parent-frame">
+    <!-- Conteneur pour afficher les boutons de téléchargement -->
+<div class="download-buttons">
+    <button id="download-xlsx">Télécharger en XLSX</button>
+    <button id="download-csv">Télécharger en CSV</button>
+</div>
+
+    <!-- deux boutons créer en js pour telecharger le tableau en xlsx et csv-->
 <div class="container">
     <!-- Liste des colonnes à glisser -->
     <div>
@@ -60,6 +69,7 @@
     const filterContainer = document.getElementById('filter-container');
     let selectedColumns = [];
     let tableData = [];
+    let filteredTableData = [];  // Nouvelle variable pour stocker les données filtrées
 
     // Ajouter les gestionnaires d'événements de glisser-déposer
     draggableItems.forEach(item => {
@@ -134,7 +144,8 @@
         .then(response => response.json())
         .then(data => {
             tableData = data;
-            generateTable(tableData);
+            filteredTableData = data; // Initialisation de filteredTableData
+            generateTable(filteredTableData);
             generateFilters();
         })
         .catch(error => {
@@ -175,18 +186,18 @@
 
     // Fonction pour appliquer les filtres
     function applyFilters() {
-        let filteredData = tableData;
+        filteredTableData = tableData;  // Commencez avec toutes les données
 
         const selects = filterContainer.querySelectorAll('select');
         selects.forEach(select => {
             const column = select.getAttribute('data-column');
             const value = select.value;
             if (value) {
-                filteredData = filteredData.filter(row => row[column] == value);
+                filteredTableData = filteredTableData.filter(row => row[column] == value);
             }
         });
 
-        generateTable(filteredData);
+        generateTable(filteredTableData);  // Utilisez les données filtrées pour générer le tableau
     }
 
     // Fonction pour générer le tableau
@@ -225,7 +236,53 @@
         table.appendChild(tbody);
         tableContainer.appendChild(table);
     }
+
+    // Fonction pour convertir les données en CSV en tenant compte des filtres
+    function convertToCSV(data) {
+        const header = selectedColumns.join(',') + ',Valeur\n';
+        const rows = data.map(row => {
+            const rowData = selectedColumns.map(col => row[col] || 'N/A').join(',');
+            return `${rowData},${row.valeur}`;
+        }).join('\n');
+        return header + rows;
+    }
+
+    // Fonction pour convertir les données en XLSX en tenant compte des filtres
+    function downloadXLSX() {
+        const workbook = XLSX.utils.book_new();
+        const worksheetData = [selectedColumns.concat('Valeur')];
+
+        filteredTableData.forEach(row => {
+            const rowData = selectedColumns.map(col => row[col] || 'N/A').concat(row.valeur);
+            worksheetData.push(rowData);
+        });
+
+        const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Tableau');
+
+        XLSX.writeFile(workbook, 'tableau.xlsx');
+    }
+
+    // Fonction pour télécharger le CSV en tenant compte des filtres
+    function downloadCSV() {
+        const csv = convertToCSV(filteredTableData);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'tableau.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Ajoutez les événements de clic pour les boutons de téléchargement
+    document.getElementById('download-xlsx').addEventListener('click', downloadXLSX);
+    document.getElementById('download-csv').addEventListener('click', downloadCSV);
+
 </script>
+
 
 
 </body>
