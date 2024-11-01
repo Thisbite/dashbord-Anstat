@@ -37,9 +37,18 @@ body {
     min-width: 40vh; 
 }
 
+
+
+
+
+
+
 .sidebar h5 {
-    font-weight: bold;
-    color: #ba3c3c;
+    background-color: #ff9933;
+    padding: 10px;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
 }
 
 .sidebar ul {
@@ -79,7 +88,7 @@ body {
     margin-left: 10px;
     padding: 20px;
     border-radius: 10px;
-    min-width: 50vh; /* Assurez-vous que le contenu principal utilise toute la hauteur */
+    min-width: 40vh; /* Assurez-vous que le contenu principal utilise toute la hauteur */
 }
 
 .main-content h5 {
@@ -109,6 +118,15 @@ body {
     color: #ff3366;
 }
 
+
+.indicators-list{
+    flex: 3;
+    background-color: #fff;
+    margin-left: 10px;
+    padding: 20px;
+    border-radius: 10px;
+    min-width: 50vh; /* Assurez-vous que le contenu principal utilise toute la hauteur */
+}
 /* Style de la liste des indicateurs */
 .indicators-list ul li {
     color: #ff3366;

@@ -196,34 +196,9 @@ es.indices.put_settings(index='requete_elastic', body={
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Fichier pour stocker les données sur l'horloge de population
-STORAGE_FILE = 'births_data.json'
-
 # Date de départ pour le calcul des naissances (exemple : 1er janvier 2022)
 START_DATE = datetime(2022, 1, 1)
-
-
-
-# Fichier pour stocker les données sur l'horloge de population
 STORAGE_FILE = 'births_data.json'
-
-# Date de départ pour le calcul des naissances (exemple : 1er janvier 2022)
-START_DATE = datetime(2022, 1, 1)
-
 # Fonction pour calculer les naissances par minute avec variation
 def get_births_per_minute():
     moyenne_naissance = 1.3  # naissances par seconde
@@ -352,99 +327,11 @@ def fiche_synoptique():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#------------------------------Page accueil avec les fonctions de statistiques
-@app.route('/statistiques')
-def statistiques():
-    # Charger le fichier GeoJSON
-    with open('static/carte/populations_ok.json', 'r') as f:
-        geojson_data = json.load(f)
-
-    # Extraire les noms des régions et les populations
-    regions = [feature['properties']['REGION'] for feature in geojson_data['features']]
-    populations = [feature['properties']['Population'] for feature in geojson_data['features']]
-
-    # Créer la carte centrée sur la Côte d'Ivoire
-    m = folium.Map(location=[7.539989, -5.547080], zoom_start=6)
-
-    # Créer une échelle de couleur basée sur la population
-    colormap = cm.LinearColormap(colors=['red', 'orange', 'yellow', 'green', 'blue'], vmin=min(populations), vmax=max(populations))
-
-    # Ajouter les polygones des régions à partir du GeoJSON avec les populations
-    folium.GeoJson(
-        geojson_data,
-        style_function=lambda feature: {
-            'fillColor': colormap(feature['properties']['Population']),
-            'color': 'black',
-            'weight': 2,
-            'fillOpacity': 0.7,
-        },
-        tooltip=folium.GeoJsonTooltip(
-            fields=["REGION", "Population"],
-            aliases=["Région: ", "Population: "],
-            localize=True
-        )
-    ).add_to(m)
-
-    # Ajouter la légende
-    colormap.add_to(m)
-
-    # Sauvegarder la carte sous forme de chaîne HTML
-    map_html = m._repr_html_()
-
-    # Renvoyer les données à la page HTML
-    return render_template('statistiques.html', map_html=map_html, regions=regions, populations=populations)
-
-
-
-
-
-
-
-
-
-
-
-
 #---------------------------------------------------Home page pour accueil
 @app.route('/')
 def list_regions():
     regions = qr.options_regions()
-    map_html = dt.statistiques()
+    #map_html = dt.statistiques()
     coord_list=[]
     # Données
     years = [2019, 2020, 2021, 2022, 2023]
@@ -461,7 +348,7 @@ def list_regions():
                            age_groups=age_groups,
                            age_distribution=age_distribution,
                            regions=regions,
-                           map_html=map_html )
+                           )
 
 
 
@@ -474,19 +361,6 @@ def show_region_pdf(region):
         return render_template('region_pdf.html', region=region)
     except FileNotFoundError:
         return f"PDF pour la région {region} non trouvé.", 404
-
-
-
-
-@app.route('/autocomplete_indicateur')
-def autocomplete_indicateur():
-    term = request.args.get('term', '')
-    indicateurs_options = qr.options_indicateur()
-    # Simuler une liste d'indicateurs (à remplacer par une vraie requête de base de données)
-    indicateurs = indicateurs_options
-    # Filtrer la liste en fonction du terme de recherche
-    results = [{'label': ind, 'value': ind} for ind in indicateurs if term.lower() in ind.lower()]
-    return jsonify(results)
 
 
 # Route pour afficher la page avec les indicateurs et les régions
@@ -644,13 +518,11 @@ def process_columns():
     # Récupérer les colonnes envoyées par la requête AJAX
     data = request.get_json()
     columns = data.get('columns', [])
-
     # Charger les données réelles depuis la session ou depuis MySQL si nécessaire
     df_filtered_json = session.get('df_filtered', None)
     if df_filtered_json:
         # Convertir le JSON en DataFrame
         df_filtered = pd.read_json(df_filtered_json, orient='split')
-
     # Filtrer les colonnes pour créer desaggregation_columns, sauf 'valeur'
     existing_columns = df_filtered.columns.tolist()
     # Liste des colonnes à exclure
@@ -693,11 +565,10 @@ def process_columns():
         # Effectuer la somme uniquement pour les colonnes numériques
         aggregated_data = filtered_df.groupby(columns).sum(numeric_only=True).reset_index()
     except KeyError as e:
-        print(f"Erreur: {e}. Assurez-vous que les colonnes suivantes existent dans les données: {columns}")
+        print(f"Erreur: {e} : {columns}")
         return jsonify({"error": f"Colonne manquante: {str(e)}"}), 400
     # Transformer les données en dictionnaire pour les envoyer au format JSON
     result_data = aggregated_data.to_dict(orient='records')
-
     # Retourner les données sous forme de JSON
     return jsonify(result_data)
 
@@ -750,48 +621,7 @@ def get_data():
 def search_boostrap():
     return render_template('boostrap_search.html')
 
- 
-
 import io
-
-
-
-
-
-
-# Pour télécharger le tableau en Excel
-@app.route('/download_excel')
-def download_excel():
-    selected_columns = request.args.get('columns', '').split(',')
-
-    # Vérifier si des colonnes ont été sélectionnées
-    if not selected_columns or selected_columns == ['']:
-        return "<p>Aucune variable n'a été sélectionnée pour le téléchargement</p>"
-
-    # Reload filtered dataframe from session
-    df_filtered_json = session.get('df_filtered', None)
-
-    if df_filtered_json:
-        df = pd.read_json(df_filtered_json)
-
-        # Générer le tableau croisé dynamique en utilisant les colonnes sélectionnées
-        # Utiliser une fonction d'agrégation qui gère les données non numériques
-        pivot_table = pd.pivot_table(df, index=selected_columns, aggfunc='first')
-
-        # Créer un fichier Excel en mémoire
-        output = io.BytesIO()
-        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-            pivot_table.to_excel(writer, index=True)
-
-        # Déplacer le curseur au début du fichier
-        output.seek(0)
-
-        # Retourner le fichier Excel à télécharger
-        return send_file(output, download_name='tableau_pivot.xlsx', as_attachment=True)
-    else:
-        return "<p>Aucune donnée disponible pour téléchargement</p>"
-
-
 
 # Debut du  dash bord région avec leur carte
 
@@ -836,10 +666,130 @@ def get_data2():
 #______________________________________Requete indicateur mode Guinéen
 
 
+# Fonction pour charger et traiter les données depuis un fichier Excel
+def load_excel_data(file_path):
+    df = pd.read_excel(file_path)
+    indicateurs_data = {}
+
+    for _, row in df.iterrows():
+        # Séparer les modalités et les dimensions en supposant qu'elles sont séparées par '/'
+        dim_parts = row['Modalites'].split('/')
+        dimensions = row['Dimension'].split('/')
+        value = row['Valeurs']
+        
+        for dim, mod in zip(dimensions, dim_parts):
+            dim = dim.strip()  # Enlever les espaces autour de la dimension
+            mod = mod.strip()  # Enlever les espaces autour de la modalité
+            
+            # Créer l'entrée pour la dimension si elle n'existe pas
+            if dim not in indicateurs_data:
+                indicateurs_data[dim] = []
+            
+            # Ajouter la modalité uniquement si elle n'existe pas déjà pour cette dimension
+            if not any(entry['nom'] == mod for entry in indicateurs_data[dim]):
+                indicateurs_data[dim].append({'nom': mod, 'valeur': value})
+    
+    return indicateurs_data
+
+# Chargement des données d'un fichier Excel
+indicateurs_data = load_excel_data("First.xlsx")
 
 
 
 
+
+# Fonction pour récupérer la liste des niveaux de désagrégation
+def get_niveaux_desagregation(indicateurs_data):
+    return list(indicateurs_data.keys())
+
+
+# Exemple d'utilisation
+niveaux_desagregation = get_niveaux_desagregation(indicateurs_data)
+print(niveaux_desagregation)
+
+
+@app.route('/abou', methods=['POST', 'GET'])
+def result_abou():
+    global filtered_df, row_dimensions, column_dimensions  # Utilisation des variables globales
+
+    # Vérifier si des dimensions ont été définies
+    if request.method == 'POST':
+        data = request.get_json()
+        if data:
+            test = data.get('rowDimensions', [])
+            print('Result abou ligne:', test)
+    
+    niveaux_desagregation = [key.strip() for key in indicateurs_data.keys() if key.strip()]
+
+    if filtered_df is not None and not filtered_df.empty:
+        filtered_df
+        ma_table = cf.clean_create_pivot_table(
+            filtered_df, row_dimensions, column_dimensions, "Valeurs", "Année"
+        )
+        ma_table.fillna('-',inplace=True)
+        ma_table_html = ma_table.to_html(
+            classes="table table-bordered", header=True, index=True
+        )
+    else:
+        ma_table_html = "<p>Aucune donnée à afficher. Veuillez effectuer une sélection.</p>"
+
+    return render_template('result_abou.html', dimensions=niveaux_desagregation, ma_table_html=ma_table_html)
+
+
+# Route pour récupérer les données des dimensions en fonction de la sélection (via AJAX)
+@app.route('/get_dimension_data/')
+def get_dimension_data():
+    dimension = request.args.get('dimension')
+    return jsonify(indicateurs_data.get(dimension, []))
+
+
+df = cf.wrangle('First.xlsx')
+
+# Variables globales pour stocker le DataFrame filtré et les dimensions
+filtered_df = None
+row_dimensions = []
+column_dimensions = []
+
+@app.route('/save_dimensions', methods=['POST'])
+def save_dimensions():
+    global filtered_df, row_dimensions, column_dimensions  # Utilisation des variables globales
+    data = request.get_json()
+
+    # Récupération des données envoyées par JavaScript
+    row_dimensions = data.get('rowDimensions', [])
+    column_dimensions = data.get('columnDimensions', [])
+    index = column_dimensions + row_dimensions
+
+    # Traitement des dimensions récupérées
+    print("Dimensions de ligne:", row_dimensions)
+    print("Dimensions de colonne:", column_dimensions)
+    print("Ensemble choisi par l'utilisateur:", index)
+    
+    sorted_index = sorted(index)
+    filter_value = '/'.join(sorted_index)
+    filter_column = "Dimension"  # Nom explicite de la colonne
+
+    # Filtrage du DataFrame en fonction du filtre
+    filtered_df = df[df[filter_column] == filter_value]
+
+    if filtered_df.empty:
+        print(f"Aucune donnée trouvée pour la dimension '{filter_value}'.")
+        response = {"status": "error", "message": "Aucune donnée trouvée avec le filtre spécifié"}
+    else:
+        print(f"Données filtrées pour la dimension '{filter_value}':")
+        response = {"status": "success", "message": "Données filtrées prêtes à l'affichage"}
+
+    # Retourne la réponse JSON
+    return jsonify(response)
+
+
+
+
+
+    
+    
+    
+    
 
 #Fin du das bord avec les régions de la CI
 

@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
   
 </head>
 
@@ -23,7 +24,7 @@
         <div class="nav-links">
             <a href="{{ url_for('list_regions') }}">Statistiques</a>
             <a href="{{ url_for('search_indicators') }}">Requête</a>
-            <a href="{{ url_for('domaines') }}">Domaines</a>
+            <a href="#a propos">A propos</a>
             <a href="#connexion">Aide</a>
         </div>
 
@@ -44,22 +45,20 @@
     </div>
 
       <!-- Barre de flash infos -->
-      <div class="flash-info-bar">
-        <marquee behavior="scroll" direction="left" scrollamount="5">
-           <a href="https://example.com/natalite">Le taux de natalité a augmenté de 2%</a> en 2024. &nbsp; | &nbsp; 
-          <a href="https://example.com/scolarisation">85% des enfants sont maintenant scolarisés</a>. &nbsp; | &nbsp; 
-         <a href="https://example.com/chomage">Le taux de chômage a chuté à 5%</a>. &nbsp; | &nbsp; 
-        <a href="https://example.com/sante">70% de la population a accès à des soins de santé de base</a>.
-        </marquee>
-    </div>
+     
     
     
 
     <div class="container">
         <div class="left-column">
             <div class="left-section">
-               <!-- La carte de la CI avec population-->
-                {{ map_html|safe }}
+                <!-- Pour la carte de la cote d'ivoire-->
+                <div id="map">
+                  
+                </div>
+                <div id="tooltip" class="tooltip" style="display: none;">
+               
+            </div>
             </div>
 
             <div class="right-section">
@@ -72,12 +71,12 @@
                 </div>
         
                 <div class="indicator-card">
-                    <div class="card-title">Naissances</div>
-                    <div class="card-value">456</div>
-                    <div class="card-description">Au cours en cours de l'année 2024</div>
-                    <div class="card-title">Décès</div>
-                    <div class="card-value">12</div>
-                    <div class="card-description">Au cours en cours de l'année 2024</div>
+                    <div class="card-title">Nombre de naissances</div>
+                    <div class="card-value">2350</div>
+                    <div class="card-description"></div>
+                    <div class="card-title">Nombre de décès</div>
+                    <div class="card-value">358</div>
+                    <div class="card-description">Du 01-01-2024 à ce jour</div>
                 </div>
             </div>
         </div>
@@ -85,12 +84,14 @@
         <div class="right-column">
             <h2>Tableau de bord par région</h2>
             <ul class="region-list">
+                <!-- {{ url_for('dashboard', region=region) }}-->
                 {% for region in regions %}
                 <li>
-                    <a href="{{ url_for('dashboard', region=region) }}">{{ region }}</a>
+                    <a href="#">{{ region }}</a>
                 </li>
                 {% endfor %}
             </ul>
+            <div class="scroll-indicator">▼</div>
         </div>
     </div> 
 <!-- Conteneur principal avec un cadre autour des cartes -->
@@ -463,29 +464,111 @@
 
         // Mettre à jour toutes les secondes
         setInterval(updateBirthsBox, 1000);
-    
-        // Fonction pour télécharger les données en CSV
-        function downloadCSV() {
-            let csvContent = "data:text/csv;charset=utf-8,Time,Accumulated Births,Day,Month,Year\n";  
-            birthDataSeries.forEach(function(row) {
-                csvContent += row.time + "," + row.births + "," + row.day + "," + row.month + "," + row.year + "\n";
-            });
-    
-            // Créer un lien de téléchargement
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "births_data.csv");
-            document.body.appendChild(link);
-    
-            // Cliquer sur le lien pour télécharger le fichier
-            link.click();
-        }
-    
-        // Ajouter un événement au bouton de téléchargement
-        document.getElementById('downloadButton').addEventListener('click', downloadCSV);
     </script>
     
-    
+<!-- Pour la représentation de la carte de la Côte d'Ivoire -->
+<script>
+    // Dimensions de la carte
+    const width = 800, height = 500;
+
+    // Créer une projection géographique pour la Côte d'Ivoire
+    const projection = d3.geoMercator()
+        .center([-5.547080, 7.539989])  // Centre sur la Côte d'Ivoire
+        .scale(4000)
+        .translate([width / 2, height / 2]);
+
+    // Générateur de chemins pour les polygones
+    const path = d3.geoPath().projection(projection);
+
+    // Couleurs pour l'échelle de population
+    const colorScale = d3.scaleLinear()
+        .domain([100000, 5000000])  // Mettre ici les min et max populations
+        .range(["orange", "green"]);
+
+    // Ajouter un SVG pour la carte
+    const svg = d3.select("#map")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    // Ajouter un groupe pour le titre et la légende à gauche de la carte
+    const legendGroup = svg.append("g")
+        .attr("class", "legend-group")
+        //.attr("transform", `translate(20, 20)`);  // Positionné à gauche 
+        .attr("transform", `translate(${650 - 20}, 350)`); // Pour a droite 
+
+   // Ajouter le titre dans le groupe SVG
+        svg.append("text")
+        .attr("class", "title")
+        .attr("x", svg.attr("width") / 2)  // Centre horizontalement dans le SVG
+        .attr("y", 10)  // Ajuster la position verticale (en fonction de l'espacement désiré)
+        .attr("text-anchor", "middle")  // Centrer le texte par rapport à l'axe X
+        .style("font-size", "14px")  // Taille du texte
+        .style("font-weight", "bold")  // Mettre le texte en gras
+        .style("fill", "#ca5704")  // Couleur du texte
+        .text("Population de la Côte d'Ivoire selon le RGPH 2021");
+
+   
+
+    // Ajouter un conteneur pour la légende de l'échelle des couleurs
+    const legend = legendGroup.append("g")
+        .attr("class", "legend")
+        .attr("transform", "translate(0, 40)");
+
+    // Ajouter l'échelle des couleurs
+    const legendScale = d3.scaleLinear()
+        .domain([100000, 5000000])
+        .range([0, 150]);
+
+    const legendAxis = d3.axisBottom(legendScale)
+        .ticks(5)
+        .tickFormat(d3.format(".0s"));
+
+    // Créer un dégradé pour la légende
+    const gradient = svg.append("defs")
+        .append("linearGradient")
+        .attr("id", "gradient")
+        .attr("x1", "0%").attr("y1", "0%")
+        .attr("x2", "100%").attr("y2", "0%");
+
+    gradient.append("stop").attr("offset", "0%").attr("stop-color", "orange");
+    gradient.append("stop").attr("offset", "100%").attr("stop-color", "green");
+
+    // Ajouter un rectangle avec le dégradé dans la légende
+    legend.append("rect")
+        .attr("width", 150)
+        .attr("height", 10)
+        .style("fill", "url(#gradient)");
+
+    // Ajouter l'axe de la légende
+    legend.append("g")
+        .attr("transform", "translate(0, 10)")
+        .call(legendAxis);
+
+    // Charger les données GeoJSON
+    d3.json("static/carte/populations_ok.json").then(function(geojsonData) {
+
+        // Dessiner les régions
+        svg.selectAll(".region")
+            .data(geojsonData.features)
+            .enter().append("path")
+            .attr("class", "region")
+            .attr("d", path)
+            .attr("fill", d => colorScale(d.properties.Population))
+            .on("mouseover", function(event, d) {
+                // Afficher la population en survolant
+                d3.select("#tooltip")
+                    .style("display", "block")
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 10) + "px")
+                    .html(`<strong>${d.properties.REGION}</strong><br>Population: ${d.properties.Population}`);
+            })
+            .on("mouseout", function() {
+                // Masquer le tooltip
+                d3.select("#tooltip").style("display", "none");
+            });
+    });
+</script>
+
 </body>
 </html>

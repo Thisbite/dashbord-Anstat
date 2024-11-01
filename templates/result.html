@@ -14,7 +14,7 @@
         <div class="nav-links">
             <a href="{{ url_for('list_regions') }}">Statistiques</a>
             <a href="{{ url_for('search_indicators') }}">Requête</a>
-            <a href="#{{ url_for('domaines') }}">Domaines</a>
+            <a href="#">A propos</a>
             <a href="#connexion">Aide</a>
         </div>
     </div>
@@ -236,7 +236,6 @@
         table.appendChild(tbody);
         tableContainer.appendChild(table);
     }
-
     // Fonction pour convertir les données en CSV en tenant compte des filtres
     function convertToCSV(data) {
         const header = selectedColumns.join(',') + ',Valeur\n';
@@ -246,7 +245,6 @@
         }).join('\n');
         return header + rows;
     }
-
     // Fonction pour convertir les données en XLSX en tenant compte des filtres
     function downloadXLSX() {
         const workbook = XLSX.utils.book_new();

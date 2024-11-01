@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 import os
+import pandas as pd
 from flask import Flask, g
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -76,5 +77,51 @@ migrate = Migrate(app, db)
 @app.teardown_appcontext
 def teardown_db(exception):
     close_db()
+
+
+# Fonction pour nettoyer les données et créer le tableau croisé dynamique
+def clean_create_pivot_table(df, row_dimensions, col_dimensions, Valeurs, Annee):
+    df_final = pd.DataFrame()  # Initialiser un DataFrame final pour stocker les données nettoyées
+    for i, row in df.iterrows():
+        dimension_cols = row['Dimension'].split('/')
+        category_values = row['Modalites'].split('/')
+        dimension_cols = [col.strip() for col in dimension_cols]
+        category_values = [value.strip() for value in category_values]
+        dimension_dict = dict(zip(dimension_cols, category_values))
+        temp_row = pd.Series(dimension_dict)
+        temp_row['Indicateurs'] = row['Indicateurs']
+        temp_row[Valeurs] = row[Valeurs]
+        temp_row[Annee] = row[Annee]
+        # Ajouter cette ligne nettoyée au DataFrame final
+        df_final = pd.concat([df_final, temp_row.to_frame().T], ignore_index=True)
+    
+    # Remplir les valeurs manquantes pour garder la structure propre
+    df_final.fillna('-', inplace=True)
+
+    # Créer le tableau croisé dynamique
+    tableau_croise = pd.pivot_table(
+        df_final,
+        values=Valeurs,
+        index=row_dimensions,
+        columns=col_dimensions + [Annee],  # Ajouter l'année aux colonnes
+        aggfunc='sum'
+    )
+
+    return tableau_croise
+
+
+    # Remplir les valeurs manquantes du tableau croisé avec un tiret
+    tableau_croise.fillna('-', inplace=True)
+
+    return tableau_croise
+
+#Pour traitement de données
+def wrangle(path):
+    df=pd.read_excel(path)
+    # Supprimer les espaces autour des barres obliques dans la colonne 'Dimension'
+    df['Dimension'] = df['Dimension'].str.replace(r'\s*/\s*', '/', regex=True)
+    df['Dimension'] = df['Dimension'].apply(lambda x: '/'.join(sorted(x.split('/'))))
+    return df
+
 
 

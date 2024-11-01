@@ -116,12 +116,8 @@ tr:hover {
     color: white;
 }
 
-.pagination strong {
-    background-color: #343a40;
-}
-
 .header-secondary {
-    background-color: #f8f9fa;
+    background-color: #ff9933;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -136,7 +132,7 @@ tr:hover {
 
 .nav-links a {
     text-decoration: none;
-    color: #4204d4;
+    color: white;
     padding: 10px 20px;
     font-size: 18px;
     margin: 0 10px;
@@ -145,6 +141,6 @@ tr:hover {
 }
 
 .nav-links a:hover {
-    background-color: #007bff;
+    background-color: #0cc52e;
     color: white;
 }

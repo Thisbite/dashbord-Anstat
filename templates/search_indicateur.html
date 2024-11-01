@@ -14,7 +14,7 @@
         <div class="nav-links">
             <a href="{{ url_for('list_regions') }}">Statistiques</a>
             <a href="{{ url_for('search_indicators') }}">Requête</a>
-            <a href="{{ url_for('domaines') }}">Domaines</a>
+            <a href="#">A propos</a>
             <a href="#connexion">Aide</a>
         </div>
 
@@ -22,10 +22,6 @@
         <div class="search-bar">
             <!--Utilisation de recherche
      
-            <form action="{{ url_for('request_indicateur' ) }}" method="GET">
-                <input type="text" id="indicateur-search2" name="indicateur2" placeholder="Recherche indicateur..." required>
-                <button type="submit">Chercher</button>
-            </form>
             -->
             <form method="POST" action="{{ url_for('search') }}">
                 <input type="text" name="query" placeholder="Recherche dans la base" required>
