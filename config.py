@@ -107,13 +107,11 @@ def clean_create_pivot_table(df, row_dimensions, col_dimensions, Valeurs, Annee)
         aggfunc='sum'
     )
 
-    return tableau_croise
-
-
-    # Remplir les valeurs manquantes du tableau croisé avec un tiret
-    tableau_croise.fillna('-', inplace=True)
 
     return tableau_croise
+
+
+
 
 #Pour traitement de données
 def wrangle(path):
@@ -124,4 +122,28 @@ def wrangle(path):
     return df
 
 
+# Fonction pour charger et traiter les données depuis un fichier Excel
+def load_excel_data(file_path):
+    df = pd.read_excel(file_path)
+    indicateurs_data = {}
+
+    for _, row in df.iterrows():
+        # Séparer les modalités et les dimensions en supposant qu'elles sont séparées par '/'
+        dim_parts = row['Modalites'].split('/')
+        dimensions = row['Dimension'].split('/')
+        value = row['Valeurs']
+        
+        for dim, mod in zip(dimensions, dim_parts):
+            dim = dim.strip()  # Enlever les espaces autour de la dimension
+            mod = mod.strip()  # Enlever les espaces autour de la modalité
+            
+            # Créer l'entrée pour la dimension si elle n'existe pas
+            if dim not in indicateurs_data:
+                indicateurs_data[dim] = []
+            
+            # Ajouter la modalité uniquement si elle n'existe pas déjà pour cette dimension
+            if not any(entry['nom'] == mod for entry in indicateurs_data[dim]):
+                indicateurs_data[dim].append({'nom': mod, 'valeur': value})
+    
+    return indicateurs_data
 

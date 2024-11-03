@@ -9,10 +9,7 @@
     <title> Tableau</title>
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <a href="#"><span>Base de données</span>Régionale</a>
-    </header>
+ 
   
     <div class="container">
 
@@ -37,11 +34,13 @@
             </div>
             <div class="tableaux">
                 <div class="buttons">
-                    <button>Télécharger en Excel</button>
-                    <button>Télécharger en CSV</button>
-                    <a href="#">
-                        <button>Voir Metadonnées</button>
-                    </a>
+                    <form method="GET" action="/abou">
+                        <button type="submit" class="btn btn-primary">Générer le tableau</button>
+                    </form>
+                    <button class="btn btn-primary">Télécharger en Excel</button>
+                    <button class="btn btn-primary">Télécharger en CSV</button>
+                   
+                    <button onclick="window.location.href='#';" class="btn btn-primary">Voir Metadonnées</button>
                 </div>
                 <div class="dropzone" id="dropzone1">
                     <p>Ligne</p>
@@ -49,25 +48,35 @@
                 <div class="dropzone" id="dropzone2">
                     <p class="vertical">Colonne</p>
                 </div>
-                <!-- Conteneur pour afficher le tableau -->
-                <div id="table-container"></div>
+                <!-- Ici doit s'afficher le tableau des données -->
+                <div class="table-container">
+                    <h3>Résultat</h3>
+                    <input type="text" id="filter-input" placeholder="Filtre sur ligne..">
+                    <div>{{ ma_table_html | safe }}</div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="container mt-4">
-        <h1>Tableau des Indicateurs</h1>
-
-        <!-- Formulaire pour actualiser la page et générer le tableau -->
-        <form method="GET" action="/abou">
-            <button type="submit" class="btn btn-primary mb-3">Générer le tableau</button>
-        </form>
-        
-        <!-- Affichage du tableau croisé dynamique -->
-        <div class="table-container">
-            <h3>Tableau</h3>
-            <div>{{ ma_table_html | safe }}</div>
-        </div>
-    </div>
+    </div>     
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterInput = document.getElementById('filter-input');
+            const table = document.querySelector('.table-container table');
+            const rows = table.getElementsByTagName('tr');
+    
+            filterInput.addEventListener('input', function() {
+                const filter = filterInput.value.toLowerCase();
+                for (let i = 1; i < rows.length; i++) { // Commence à 1 pour ignorer l'en-tête
+                    const firstCell = rows[i].cells[0]; // Sélection de la première cellule (index)
+                    if (firstCell) {
+                        const textValue = firstCell.textContent || firstCell.innerText;
+                        // Affiche ou masque la ligne en fonction de la correspondance
+                        rows[i].style.display = textValue.toLowerCase().includes(filter) ? '' : 'none';
+                    }
+                }
+            });
+        });
+    </script>
+    
    
     <script>
         // JavaScript pour la gestion du drag-and-drop optimisé
@@ -170,6 +179,36 @@
                     placeholder.style.display = 'block';
                 }
             }
+
+            // Fonction pour ajouter des capacités de filtrage interactif
+        function addTableFilters() {
+            const table = document.querySelector('#table-container2 table');
+            if (table) {
+                const headers = table.querySelectorAll('th');
+                headers.forEach(header => {
+                    const input = document.createElement('input');
+                    input.setAttribute('type', 'text');
+                    input.setAttribute('placeholder', `Filtrer ${header.textContent}`);
+                    input.style.width = '100%';
+                    input.style.marginBottom = '5px';
+
+                    header.appendChild(input);
+
+                    input.addEventListener('input', () => {
+                        const filterValue = input.value.toLowerCase();
+                        const rows = table.querySelectorAll('tbody tr');
+                        rows.forEach(row => {
+                            const cell = row.querySelector(`td:nth-child(${[...headers].indexOf(header) + 1})`);
+                            if (cell && cell.textContent.toLowerCase().includes(filterValue)) {
+                                row.style.display = '';
+                            } else {
+                                row.style.display = 'none';
+                            }
+                        });
+                    });
+                });
+            }
+        }
     
             // Nouvelle fonction pour envoyer les dimensions sélectionnées à Flask
             async function saveDimensions() {
@@ -211,6 +250,9 @@
                 zone.addEventListener('drop', saveDimensions);
             });
         });
+
+
+          
     </script>
 </body>
 </html>

@@ -506,13 +506,7 @@ def request_indicateur2(indicateur):
         df_filtered=df_filtered_json  # Data JSON pour le filtrage
     )
 
-    
-    
-    
-    
 
-    
-    
 @app.route('/process_columns', methods=['POST'])
 def process_columns():
     # Récupérer les colonnes envoyées par la requête AJAX
@@ -600,50 +594,17 @@ def get_data():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @app.route('/search_boostrap', methods=['GET', 'POST'])
 def search_boostrap():
     return render_template('boostrap_search.html')
 
-import io
-
-# Debut du  dash bord région avec leur carte
 
 @app.route('/dash_region', methods=['GET', 'POST'])
 def dash_region():
     return render_template('dash_region.html')
 
-#==============================================================Domaine
-#Section de domaine
-@app.route('/domaines', methods=['GET', 'POST'])
-def domaines():
-    return render_template('domaines.html')
 
 
-
-
-
-
-
-
-
-#-------------------- Pour la phase de requete e
 
 
 
@@ -661,42 +622,10 @@ def get_data2():
     return jsonify(data_str_keys)
 
 
-#Requete domaine
-
-#______________________________________Requete indicateur mode Guinéen
 
 
-# Fonction pour charger et traiter les données depuis un fichier Excel
-def load_excel_data(file_path):
-    df = pd.read_excel(file_path)
-    indicateurs_data = {}
-
-    for _, row in df.iterrows():
-        # Séparer les modalités et les dimensions en supposant qu'elles sont séparées par '/'
-        dim_parts = row['Modalites'].split('/')
-        dimensions = row['Dimension'].split('/')
-        value = row['Valeurs']
-        
-        for dim, mod in zip(dimensions, dim_parts):
-            dim = dim.strip()  # Enlever les espaces autour de la dimension
-            mod = mod.strip()  # Enlever les espaces autour de la modalité
-            
-            # Créer l'entrée pour la dimension si elle n'existe pas
-            if dim not in indicateurs_data:
-                indicateurs_data[dim] = []
-            
-            # Ajouter la modalité uniquement si elle n'existe pas déjà pour cette dimension
-            if not any(entry['nom'] == mod for entry in indicateurs_data[dim]):
-                indicateurs_data[dim].append({'nom': mod, 'valeur': value})
-    
-    return indicateurs_data
-
-# Chargement des données d'un fichier Excel
-indicateurs_data = load_excel_data("First.xlsx")
-
-
-
-
+# La liste des niveau de désagrégation
+indicateurs_data = cf.load_excel_data("First.xlsx")
 
 # Fonction pour récupérer la liste des niveaux de désagrégation
 def get_niveaux_desagregation(indicateurs_data):
@@ -722,18 +651,28 @@ def result_abou():
     niveaux_desagregation = [key.strip() for key in indicateurs_data.keys() if key.strip()]
 
     if filtered_df is not None and not filtered_df.empty:
-        filtered_df
-        ma_table = cf.clean_create_pivot_table(
-            filtered_df, row_dimensions, column_dimensions, "Valeurs", "Année"
-        )
-        ma_table.fillna('-',inplace=True)
-        ma_table_html = ma_table.to_html(
-            classes="table table-bordered", header=True, index=True
-        )
+            ma_table = cf.clean_create_pivot_table(
+                filtered_df, row_dimensions, column_dimensions, "Valeurs", "Année"
+            )
+            ma_table.fillna('-', inplace=True) 
+            ma_table=pd.DataFrame(ma_table)    
+            ma_table.columns.name=None
+            ma_table_html = f"""
+            <div style="overflow-x: auto;">
+                {ma_table.to_html(
+                    classes="table table-bordered table-striped table-hover",  # Ajout de classes supplémentaires
+                    header=True,
+                    index=True,
+                    border=0  # Supprime les bordures par défaut pour un style plus léger
+                )}
+            </div>
+            """
+
     else:
         ma_table_html = "<p>Aucune donnée à afficher. Veuillez effectuer une sélection.</p>"
 
     return render_template('result_abou.html', dimensions=niveaux_desagregation, ma_table_html=ma_table_html)
+
 
 
 # Route pour récupérer les données des dimensions en fonction de la sélection (via AJAX)
@@ -743,9 +682,8 @@ def get_dimension_data():
     return jsonify(indicateurs_data.get(dimension, []))
 
 
-df = cf.wrangle('First.xlsx')
-
 # Variables globales pour stocker le DataFrame filtré et les dimensions
+df = cf.wrangle('First.xlsx')
 filtered_df = None
 row_dimensions = []
 column_dimensions = []

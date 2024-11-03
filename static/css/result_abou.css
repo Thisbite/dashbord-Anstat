@@ -13,29 +13,7 @@ a {
     text-decoration: none;
 }
 
-/* Styles de l'entête et du menu */
-header {
-    background-color: rgb(244, 158, 0); /* Slightly transparent background */
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 40px;
-    padding: 0 5%;
-}
 
-header .logo a {
-    font-size: 25px;
-    color: rgb(3, 3, 3);
-}
-
-header .logo a span {
-    color: white;
-}
 
 .menu {
     display: flex;
@@ -155,53 +133,110 @@ header .logo a span {
 }
 #dropzone2 {
     width: 150px;
-    height: 100px;
+    height: 150px;
     flex-direction: column;
 }
+/* Style de l'élément dimension avec bordure en tiret */
 .dimension-item {
     padding: 5px;
-    border: 1px solid #000;
+    border: 3px dashed #b71717; /* Bordure en tiret */
     margin: 2px;
-    background-color: #96b9ed;
+    background-color: rgb(60, 158, 22);
     border-radius: 3px;
     cursor: pointer;
     display: inline-block;
-}
-#table-container {
-
-    width: 50px; /* 500px + 60px (2cm en largeur) */
-    height: 25px; /* 300px + 150px (5cm en longueur) */
-    overflow: auto; /* Permet le défilement */
-    
-    position: relative; /* Permet de positionner précisément l'élément */
-    left: 60%;
-    top: -42%; /* Ajuste cette valeur pour déplacer le rectangle vers le haut */
-    transform: translateX(-50%); /* Centre seulement horizontalement */
+    color: #f4f4f4;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+.table {
+    font-size: 0.9em;  /* Ajuste la taille de la police */
+    margin: 20px 0;
 }
-table, th, td {
-    border: 1px solid #000;
+.table th, .table td {
+    text-align: center;  /* Centre le texte */
+    vertical-align: middle;  /* Aligne verticalement au centre */
 }
-th, td {
-    padding: 8px;
-    text-align: left;
+th.hidden-column, td.hidden-column {
+    display: none;  /* Masque les colonnes */
 }
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9;  /* Ajoute des bandes de couleur */
+}
+.table-hover tbody tr:hover {
+    background-color: #f1f1f1;  /* Change la couleur lors du survol */
+}
+
+/* Harmonisation des boutons */
 .buttons {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 15px; /* Réduction de l'écart pour plus d'harmonie */
     margin-bottom: 20px;
 }
-.buttons button {
-    padding: 10px 15px;
-    border: 1px solid #000;
-    border-radius: 5px;
+
+.buttons button, .buttons form button {
+    padding: 12px 20px; /* Augmentation légère pour plus de confort */
+    border: none; /* Retrait de la bordure pour un aspect moderne */
+    border-radius: 8px; /* Arrondi plus marqué pour plus de douceur */
     cursor: pointer;
-    background-color: #9696de;
+    color: #ffffff;
+    background-color: #c67915;
+    font-size: 15px; /* Augmentation pour une meilleure lisibilité */
+    font-weight: 500; /* Ajout de poids pour un texte plus visible */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.buttons button:hover, .buttons form button:hover {
+    background-color: #07bd43; /* Couleur légèrement plus foncée au survol */
+    transform: translateY(-2px); /* Effet de levée au survol */
+}
+
+.buttons button:active, .buttons form button:active {
+    background-color: #70a830; /* Couleur encore plus foncée lors du clic */
+    transform: translateY(0);
+}
+
+
+/* Harmonisation de la zone de dropzone */
+.dropzone {
+    border: 2px dashed #c67915; /* Couleur harmonisée avec les boutons */
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    margin: 10px 0;
+    background-color: #fdf5e6; /* Couleur de fond douce */
+}
+
+.dropzone p {
+    margin: 0;
+    font-size: 16px;
+    color: #c67915; /* Couleur de texte assortie */
+    font-weight: bold;
+}
+
+.dropzone p.vertical {
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+}
+
+/* Style global du conteneur de tableau */
+#table-container {
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center; /* Centrer le titre 'Résultat' */
+}
+
+#filter-input {
+    width: 80%; /* Rendre le champ de filtre plus long */
+    padding: 10px; /* Ajouter du padding pour un meilleur design */
+    margin: 10px auto; /* Centrer le champ dans le conteneur */
+    display: block; /* Assurer l'affichage en bloc pour le centrage */
+    border: 1px solid #c67915;
+    border-radius: 5px;
     font-size: 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
