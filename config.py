@@ -128,7 +128,7 @@ def clean_create_pivot_table(df, row_dimensions, col_dimensions, Valeurs, Annee,
     if isinstance(tableau_croise.columns, pd.MultiIndex):
         # S'il s'agit d'un MultiIndex, remplacez les premiers niveaux comme prévu
         l = len(row_dimensions)
-        nouvelle_colonne = [(' ', ' ',' ',' ')] * l + list(tableau_croise.columns[l:])
+        nouvelle_colonne = [(' ', ' ')] * l + list(tableau_croise.columns[l:])
         print('longueur l:',l)
         # Affecter les nouvelles colonnes au DataFrame
         tableau_croise_columns = pd.MultiIndex.from_tuples(nouvelle_colonne, names=tableau_croise_columns.names)
