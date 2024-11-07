@@ -59,14 +59,21 @@
     </div>     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Récupérer la liste des colonnes depuis l'attribut data- ou généré par Python
+            const listeColonne = JSON.parse('{{ liste_colonne | tojson | safe }}');
+    
+            console.log('Liste des colonnes:', listeColonne);  // Pour vérifier la liste des colonnes dans la console
+    
             const filterInput = document.getElementById('filter-input');
             const table = document.querySelector('.table-container table');
             const rows = table.getElementsByTagName('tr');
     
             filterInput.addEventListener('input', function() {
                 const filter = filterInput.value.toLowerCase();
-                for (let i = 1; i < rows.length; i++) { // Commence à 1 pour ignorer l'en-tête
-                    const firstCell = rows[i].cells[0]; // Sélection de la première cellule (index)
+                // Commence à partir de la longueur de la liste des colonnes pour ignorer l'en-tête
+                for (let i = listeColonne.length; i < rows.length; i++) {
+                    const firstCell = rows[i].cells[1]; // Sélection de la première cellule (index)
+    
                     if (firstCell) {
                         const textValue = firstCell.textContent || firstCell.innerText;
                         // Affiche ou masque la ligne en fonction de la correspondance
@@ -76,6 +83,8 @@
             });
         });
     </script>
+    
+    
     
    
     <script>
@@ -180,35 +189,7 @@
                 }
             }
 
-            // Fonction pour ajouter des capacités de filtrage interactif
-        function addTableFilters() {
-            const table = document.querySelector('#table-container2 table');
-            if (table) {
-                const headers = table.querySelectorAll('th');
-                headers.forEach(header => {
-                    const input = document.createElement('input');
-                    input.setAttribute('type', 'text');
-                    input.setAttribute('placeholder', `Filtrer ${header.textContent}`);
-                    input.style.width = '100%';
-                    input.style.marginBottom = '5px';
-
-                    header.appendChild(input);
-
-                    input.addEventListener('input', () => {
-                        const filterValue = input.value.toLowerCase();
-                        const rows = table.querySelectorAll('tbody tr');
-                        rows.forEach(row => {
-                            const cell = row.querySelector(`td:nth-child(${[...headers].indexOf(header) + 1})`);
-                            if (cell && cell.textContent.toLowerCase().includes(filterValue)) {
-                                row.style.display = '';
-                            } else {
-                                row.style.display = 'none';
-                            }
-                        });
-                    });
-                });
-            }
-        }
+           
     
             // Nouvelle fonction pour envoyer les dimensions sélectionnées à Flask
             async function saveDimensions() {

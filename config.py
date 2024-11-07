@@ -79,8 +79,14 @@ def teardown_db(exception):
     close_db()
 
 
-# Fonction pour nettoyer les données et créer le tableau croisé dynamique
-def clean_create_pivot_table(df, row_dimensions, col_dimensions, Valeurs, Annee):
+import pandas as pd
+
+import pandas as pd
+
+import pandas as pd
+
+# Fonction pour nettoyer les données et créer le tableau croisé dynamique sans afficher les noms de variables en lignes et colonnes
+def clean_create_pivot_table(df, row_dimensions, col_dimensions, Valeurs, Annee, row_label="-", col_label="-"):
     df_final = pd.DataFrame()  # Initialiser un DataFrame final pour stocker les données nettoyées
     for i, row in df.iterrows():
         dimension_cols = row['Dimension'].split('/')
@@ -98,17 +104,50 @@ def clean_create_pivot_table(df, row_dimensions, col_dimensions, Valeurs, Annee)
     # Remplir les valeurs manquantes pour garder la structure propre
     df_final.fillna('-', inplace=True)
 
-    # Créer le tableau croisé dynamique
+    # Créer le tableau croisé dynamique avec plusieurs niveaux de dimensions
     tableau_croise = pd.pivot_table(
         df_final,
+        fill_value='-',
         values=Valeurs,
         index=row_dimensions,
-        columns=col_dimensions + [Annee],  # Ajouter l'année aux colonnes
+        columns=[Annee] + col_dimensions,  # Ajouter l'année aux colonnes
         aggfunc='sum'
     )
+    
+    # Réinitialiser les index pour transformer les dimensions en colonnes et masquer les noms de variables
+    tableau_croise = tableau_croise.reset_index()
+    # Renommer les niveaux de colonnes
+    tableau_croise.index.names = [row_label if i > 0 else None for i in range(len(tableau_croise.index.names))]
+    
+    tableau_croise.columns.names = [col_label if i > 0 else None for i in range(len(tableau_croise.columns.names))]
+    
+    # Supposons que tableau_croise.columns soit défini comme suit :
+    tableau_croise_columns = tableau_croise.columns
 
+    # Vérifier si `tableau_croise_columns` est un MultiIndex
+    if isinstance(tableau_croise.columns, pd.MultiIndex):
+        # S'il s'agit d'un MultiIndex, remplacez les premiers niveaux comme prévu
+        l = len(row_dimensions)
+        nouvelle_colonne = [(' ', ' ',' ',' ')] * l + list(tableau_croise.columns[l:])
+        print('longueur l:',l)
+        # Affecter les nouvelles colonnes au DataFrame
+        tableau_croise_columns = pd.MultiIndex.from_tuples(nouvelle_colonne, names=tableau_croise_columns.names)
+    elif isinstance(tableau_croise.columns, pd.Index):
+        nouvelle_colonne = ['-'] + list(tableau_croise.columns[1:])
+        tableau_croise_columns = nouvelle_colonne
+
+    tableau_croise.columns = tableau_croise_columns
+
+    # Convertir en 'object', remplir les NaN par '-' et finaliser le type d'objet
+    tableau_croise = tableau_croise.astype('object').fillna('-')
+
+    # Assurer que toutes les cellules sont des chaînes de caractères pour éviter les futurs avertissements
+    tableau_croise = tableau_croise.applymap(str)
 
     return tableau_croise
+
+
+
 
 
 

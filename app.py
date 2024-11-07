@@ -640,6 +640,7 @@ print(niveaux_desagregation)
 @app.route('/abou', methods=['POST', 'GET'])
 def result_abou():
     global filtered_df, row_dimensions, column_dimensions  # Utilisation des variables globales
+    liste_colonne = ["Index"]  # Initialisation par défaut avec 'Année'
 
     # Vérifier si des dimensions ont été définies
     if request.method == 'POST':
@@ -651,27 +652,34 @@ def result_abou():
     niveaux_desagregation = [key.strip() for key in indicateurs_data.keys() if key.strip()]
 
     if filtered_df is not None and not filtered_df.empty:
-            ma_table = cf.clean_create_pivot_table(
-                filtered_df, row_dimensions, column_dimensions, "Valeurs", "Année"
-            )
-            ma_table.fillna('-', inplace=True) 
-            ma_table=pd.DataFrame(ma_table)    
-            ma_table.columns.name=None
-            ma_table_html = f"""
-            <div style="overflow-x: auto;">
-                {ma_table.to_html(
-                    classes="table table-bordered table-striped table-hover",  # Ajout de classes supplémentaires
-                    header=True,
-                    index=True,
-                    border=0  # Supprime les bordures par défaut pour un style plus léger
-                )}
-            </div>
-            """
+        ma_table = cf.clean_create_pivot_table(
+            filtered_df, row_dimensions, column_dimensions, "Valeurs", "Année"
+        )
+        
+        ma_table = pd.DataFrame(ma_table)
+        ma_table=ma_table.astype('object').fillna('-')
+        print(' première colonne:', ma_table.columns)
 
+
+
+        # Ajouter les colonnes de 'column_dimensions' à 'liste_colonne', en évitant les doublons
+        if column_dimensions:
+            liste_colonne.extend([col for col in column_dimensions if col not in liste_colonne])
+
+        ma_table_html = f"""
+        <div style="overflow-x: auto;">
+            {ma_table.to_html(
+                classes="table table-bordered table-striped table-hover",  # Ajout de classes supplémentaires
+                header=True,
+                index=True,
+                border=0  # Supprime les bordures par défaut pour un style plus léger
+            )}
+        </div>
+        """
     else:
         ma_table_html = "<p>Aucune donnée à afficher. Veuillez effectuer une sélection.</p>"
 
-    return render_template('result_abou.html', dimensions=niveaux_desagregation, ma_table_html=ma_table_html)
+    return render_template('result_abou.html', dimensions=niveaux_desagregation, ma_table_html=ma_table_html, liste_colonne=liste_colonne)
 
 
 
@@ -722,9 +730,6 @@ def save_dimensions():
 
 
 
-
-
-    
     
     
     

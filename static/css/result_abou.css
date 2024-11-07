@@ -98,12 +98,19 @@ a {
     margin: 0;
 }
 .dimensions li {
+    display: inline-block; /* Permet à l'élément de s'adapter à la largeur du contenu */
     padding: 10px;
-    border-bottom: 1px solid #ccc;
+    border: 3px dashed rgb(223, 77, 10);
+    border-radius: 5px;
     cursor: pointer;
-    background-color: #fff;
+    background-color: #d89c2c;
     margin-bottom: 5px;
+    color: white;
+    min-width: fit-content; /* Ajuste la largeur minimale au contenu */
+    white-space: nowrap; /* Empêche le texte de passer à la ligne */
+    font-weight: bold;
 }
+
 .dropzone {
     border: 1px solid #000;
     border-radius: 5px;
