@@ -79,14 +79,8 @@ def teardown_db(exception):
     close_db()
 
 
-import pandas as pd
-
-import pandas as pd
-
-import pandas as pd
-
 # Fonction pour nettoyer les données et créer le tableau croisé dynamique sans afficher les noms de variables en lignes et colonnes
-def clean_create_pivot_table(df, row_dimensions, col_dimensions, Valeurs, Annee, row_label="-", col_label="-"):
+def clean_create_pivot_table(df, row_dimensions, col_dimensions, Valeurs, Annee, row_label="-", col_label=""):
     df_final = pd.DataFrame()  # Initialiser un DataFrame final pour stocker les données nettoyées
     for i, row in df.iterrows():
         dimension_cols = row['Dimension'].split('/')
@@ -125,6 +119,7 @@ def clean_create_pivot_table(df, row_dimensions, col_dimensions, Valeurs, Annee,
     tableau_croise_columns = tableau_croise.columns
 
     # Vérifier si `tableau_croise_columns` est un MultiIndex
+    # Vérifier si `tableau_croise_columns` est un MultiIndex
     if isinstance(tableau_croise.columns, pd.MultiIndex):
         # Calculer la longueur de `row_dimensions`
         l = len(row_dimensions)
@@ -135,7 +130,7 @@ def clean_create_pivot_table(df, row_dimensions, col_dimensions, Valeurs, Annee,
         tableau_croise_columns = pd.MultiIndex.from_tuples(nouvelle_colonne, names=tableau_croise.columns.names)
 
     elif isinstance(tableau_croise.columns, pd.Index):
-        nouvelle_colonne = ['-'] + list(tableau_croise.columns[1:])
+        nouvelle_colonne = [' '] + list(tableau_croise.columns[1:])
         tableau_croise_columns = nouvelle_colonne
 
     tableau_croise.columns = tableau_croise_columns
