@@ -442,8 +442,6 @@ def request_indicateur():
         df_filtered_json = df_filtered.to_json(orient='split')  # Convertir en JSON pour le stockage
         
         session['df_filtered'] = df_filtered_json
-        print("Données filtrées stockées dans la session :", session.get('df_filtered'))
-        print('Indicateur sélectionné :', indicateur_SELECT)
 
         # Obtenir les colonnes valables pour les désagrégations
         existing_columns = df_filtered.columns.tolist()
@@ -470,11 +468,7 @@ def request_indicateur2(indicateur):
     print('Indicateur de js:',indicateur_SELECT)
     # Obtenir les options pour chaque filtre (indicateur, région, etc.
     df_filtered = pd.DataFrame()
-    #indicateur_SELECT = request.args.get('indicateur_elastic')
-    
-    # Appliquer les filtres (indicateur, etc.)
     df_filtered = df.drop(columns=['statut_approbation', 'id'], errors='ignore')
-
     # Appliquer le filtre si 'indicateur' existe et que la sélection d'indicateur est présente
     if indicateur_SELECT and 'indicateur' in df_filtered.columns:
         # Convertir la colonne 'indicateur' en chaînes de caractères
@@ -484,7 +478,6 @@ def request_indicateur2(indicateur):
         df_filtered = df_filtered[df_filtered['indicateur'] == indicateur_SELECT.strip().lower()]
     else:
         print("Aucun filtre appliqué sur l'indicateur")
-    
     # Supprimer les colonnes contenant uniquement des NaN
     df_filtered = df_filtered.dropna(axis=1, how='all')
 
@@ -505,65 +498,52 @@ def request_indicateur2(indicateur):
         indicateur2=indicateur_SELECT,  # Indicateur sélectionné
         df_filtered=df_filtered_json  # Data JSON pour le filtrage
     )
-
+import io
 
 @app.route('/process_columns', methods=['POST'])
 def process_columns():
     # Récupérer les colonnes envoyées par la requête AJAX
     data = request.get_json()
-    columns = data.get('columns', [])
+    row_columns = data.get('row_columns', [])
+    col_columns = data.get('col_columns', [])
+    value_column = data.get('value_column', 'valeur')
+
     # Charger les données réelles depuis la session ou depuis MySQL si nécessaire
     df_filtered_json = session.get('df_filtered', None)
     if df_filtered_json:
-        # Convertir le JSON en DataFrame
-        df_filtered = pd.read_json(df_filtered_json, orient='split')
-    # Filtrer les colonnes pour créer desaggregation_columns, sauf 'valeur'
-    existing_columns = df_filtered.columns.tolist()
-    # Liste des colonnes à exclure
-    columns_to_exclude = ['valeur', 'indicateur']
+        df_filtered = pd.read_json(io.StringIO(df_filtered_json), orient='split')
+    else:
+        return jsonify({"error": "Aucune donnée disponible dans la session"}), 400
 
-    # Créer une liste des colonnes de désagrégation en excluant celles de columns_to_exclude
-    desaggregation_columns = [col for col in existing_columns if col not in columns_to_exclude]
-
-    print('Dans process columns:', desaggregation_columns)
-
-
-    # Initialiser les conditions pour filtrer les colonnes non pertinentes, avec 'region' obligatoire
-    conditions = df_filtered['region'].notnull()
-
-    # Appliquer les conditions dynamiques pour ignorer certaines colonnes
-    for column in desaggregation_columns:
-        if column in df_filtered.columns and column not in columns:
-            # Filtrer sur les colonnes qui ne sont pas sélectionnées et qui sont vides
-            conditions &= (df_filtered[column].isnull() | (df_filtered[column] == '-'))
-    # Filtrer les données en fonction des conditions appliquées
-    filtered_df = df_filtered[conditions]
-    # Vérifier si la colonne 'valeur' est dans les colonnes d'agrégation
-    if 'valeur' not in columns:
-        columns.append('valeur')
-    # Vérifier si la colonne 'valeur' est numérique
-    if 'valeur' in filtered_df.columns:
+    # Vérification et conversion de la colonne 'valeur' en numérique
+    if value_column in df_filtered.columns:
         try:
-            # Tenter de convertir la colonne 'valeur' en numérique
-            filtered_df['valeur'] = pd.to_numeric(filtered_df['valeur'], errors='coerce')           
-            # Si certaines valeurs ne peuvent pas être converties, elles deviennent NaN (grâce à errors='coerce')
-            # Vous pouvez ensuite filtrer ces lignes ou gérer ces NaN selon vos besoins
-            filtered_df = filtered_df.dropna(subset=['valeur'])  # Supprime les lignes où 'valeur' est NaN
+            df_filtered[value_column] = pd.to_numeric(df_filtered[value_column], errors='coerce')
+            df_filtered = df_filtered.dropna(subset=[value_column])
         except Exception as e:
-            print(f"Erreur lors de la conversion de 'valeur' en numérique : {e}")
-            return jsonify({"error": "La colonne 'valeur' contient des données non numériques"}), 400
-    # Afficher les colonnes d'agrégation
-    print('Notre agrégation somme:', columns)
-    # Effectuer l'agrégation par somme des valeurs sur les colonnes sélectionnées
+            return jsonify({"error": f"La colonne '{value_column}' contient des données non numériques : {e}"}), 400
+    # Création du tableau croisé dynamique
     try:
-        # Effectuer la somme uniquement pour les colonnes numériques
-        aggregated_data = filtered_df.groupby(columns).sum(numeric_only=True).reset_index()
-    except KeyError as e:
-        print(f"Erreur: {e} : {columns}")
-        return jsonify({"error": f"Colonne manquante: {str(e)}"}), 400
-    # Transformer les données en dictionnaire pour les envoyer au format JSON
-    result_data = aggregated_data.to_dict(orient='records')
-    # Retourner les données sous forme de JSON
+        pivot_table = pd.pivot_table(
+            df_filtered,
+            index=row_columns,
+            columns=col_columns,
+            values=value_column,
+            aggfunc='sum',
+            fill_value=0
+        )
+
+        # Réinitialiser l'index pour convertir les données en format JSON structuré
+        pivot_table.reset_index(inplace=True)
+        result_data = {
+            "columns": [list(map(str, col)) if isinstance(col, tuple) else [str(col)] for col in pivot_table.columns],
+            "index": list(pivot_table.index),
+            "data": pivot_table.values.tolist()
+        }
+    
+    except Exception as e:
+        return jsonify({"error": f"Erreur lors de la création du tableau croisé dynamique : {e}"}), 400
+
     return jsonify(result_data)
 
 

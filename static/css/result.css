@@ -47,15 +47,16 @@ body {
 /* Conteneur pour la zone de dépôt et les filtres */
 #depot-filter-container {
     display: flex;
+    
     justify-content: space-between;
     gap: 20px;
     align-items: flex-start;
 }
 
-/* Zone de dépôt */
-#droppable-area {
-    min-height: 150px; /* Hauteur minimale garantie */
-    min-width: 300px;  /* Largeur minimale garantie */
+/* Zones de dépôt pour les lignes et les colonnes */
+#droppable-area-rows, #droppable-area-cols {
+    min-height: 150px;
+    min-width: 300px;
     padding: 15px;
     border: 2px dashed #28a745;
     border-radius: 5px;
@@ -65,44 +66,43 @@ body {
     gap: 10px;
     align-items: center;
     justify-content: center;
-    width: 45%; /* Largeur de la zone de dépôt */
+    width: 45%; /* Largeur de chaque zone de dépôt */
     background-color: #f8f9fa;
     transition: background-color 0.3s, min-height 0.3s; /* Ajout d'une transition pour l'agrandissement */
 }
 
-/* Empêcher le rétrécissement lorsque des éléments sont déposés */
-#droppable-area > * {
-    flex-shrink: 0; /* Empêche les éléments internes de forcer la zone à rétrécir */
-}
-
-#droppable-area:hover {
+#droppable-area-rows:hover, #droppable-area-cols:hover {
     background-color: #e0f4e0; /* Changement de couleur au survol */
 }
 
-/* Placeholder */
-#placeholder-text {
+/* Placeholder pour chaque zone de dépôt */
+#placeholder-rows, #placeholder-cols {
     color: #6c757d;
     font-style: italic;
-    display: block; /* Assurer que le texte occupe tout l'espace au début */
-    width: 100%; /* Assure que le placeholder prend toute la largeur */
+    display: block;
+    width: 100%;
     text-align: center;
+}
+
+/* Empêcher le rétrécissement lorsque des éléments sont déposés */
+#droppable-area-rows > *, #droppable-area-cols > * {
+    flex-shrink: 0;
 }
 
 /* Zone de filtres */
 #filter-container {
     width: 45%; /* Largeur de la zone de filtres */
     min-height: 150px;
-    padding: 20px; /* Espacement interne augmenté */
+    padding: 20px;
     border: 2px solid #007bff;
     border-radius: 5px;
     background-color: #f8f9fa;
     text-align: left;
-    display: fixed;
+    display: flex;
     flex-direction: column;
     gap: 15px;
     overflow-y: auto;
 }
-
 
 /* Style pour chaque label + select */
 #filter-container label {
@@ -118,6 +118,7 @@ body {
     background-color: #fff;
     font-size: 1em;
 }
+
 
 /* Colonne de droite : Zone de dépôt */
 .container > div:nth-child(2) {
@@ -222,4 +223,6 @@ tr:hover {
     background-color: #0cce1c;
     color: white;
 }
+
+
 
