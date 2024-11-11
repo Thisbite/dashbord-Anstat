@@ -418,12 +418,15 @@ def request_indicateur():
 
     if request.method == 'GET':
         indicateur_SELECT = request.args.get('indicateur_elastic')
+        definitions=None
         
         # Appliquer les filtres (indicateur, etc.)
         df_filtered = df.drop(columns=['statut_approbation', 'id'], errors='ignore')
 
         # Appliquer le filtre si 'indicateur' existe et que la sélection d'indicateur est présente
         if indicateur_SELECT and 'indicateur' in df_filtered.columns:
+            definitions=qr.definition_indicateur(indicateur_SELECT)
+            mode_calcul=qr.mode_calcul_indicateur(indicateur_SELECT)
             # Convertir la colonne 'indicateur' en chaînes de caractères
             df_filtered['indicateur'] = df_filtered['indicateur'].astype(str).str.strip().str.lower()
             
@@ -451,6 +454,8 @@ def request_indicateur():
 
     return render_template(
         'result.html',
+        definitions=definitions,
+        mode_calcul=mode_calcul,
         colonne_valable=desaggregation_columns,  # Colonnes à utiliser pour désagréger les données
         indicateurs=indicateurs_options,  # Options d'indicateurs pour le dropdown
         indicateur2=indicateur_SELECT,  # Indicateur sélectionné
