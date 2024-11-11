@@ -1,26 +1,27 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_session import Session
 import os
 import logging
+import pandas as pd
+import random
+import time
+import json
+import urllib
+from io import StringIO
+from datetime import datetime
+from itertools import chain
+from unidecode import unidecode
+import folium
+import branca.colormap as cm 
+import mysql.connector
+import redis
+
 import my_queries as qr
 import data as dt
 import config as cf
-import pandas as pd
-from io import StringIO
-import folium
-import json
-import branca.colormap as cm 
-import random
-import time
-from datetime import datetime
-import mysql.connector
-from unidecode import unidecode
-import pandas as pd
-from io import StringIO
-from flask import Flask, session
-from flask_session import Session
-import redis
+
 #https://colab.research.google.com/drive/1oBqwcSMb4YTrn0NFUiQzJCiZ65uIay_S?hl=fr#scrollTo=CJAQGVAWNNPw
 #brew services restart elastic/tap/elasticsearch-full
 #redis-server
@@ -462,9 +463,6 @@ def request_indicateur():
         df_filtered=df_filtered_json  # Data JSON pour le filtrage
     )
 
-import urllib
-
-
 # Page de requête au niveau de l'accueil---- Pour la page requete
 @app.route('/search_indicators2/<path:indicateur>') 
 def request_indicateur2(indicateur):
@@ -526,7 +524,6 @@ def process_columns():
         df_filtered = pd.read_json(io.StringIO(df_filtered_json), orient='split')
     else:
         return jsonify({"error": "Aucune donnée disponible dans la session"}), 400
-
     # Vérification et conversion de la colonne 'valeur' en numérique
     if value_column in df_filtered.columns:
         try:
@@ -534,8 +531,11 @@ def process_columns():
             df_filtered = df_filtered.dropna(subset=[value_column])
         except Exception as e:
             return jsonify({"error": f"La colonne '{value_column}' contient des données non numériques : {e}"}), 400
-    # Création du tableau croisé dynamique
     try:
+        #Applique la nouvelle structure du jeu de données
+        mes_index=[col_columns,row_columns]
+        mes_index = list(chain.from_iterable(mes_index))
+        print('mes index:',mes_index)
         pivot_table = pd.pivot_table(
             df_filtered,
             index=row_columns,
@@ -544,7 +544,6 @@ def process_columns():
             aggfunc='sum',
             fill_value=0
         )
-
         # Réinitialiser l'index pour convertir les données en format JSON structuré
         pivot_table.reset_index(inplace=True)
         result_data = {
@@ -552,7 +551,6 @@ def process_columns():
             "index": list(pivot_table.index),
             "data": pivot_table.values.tolist()
         }
-    
     except Exception as e:
         return jsonify({"error": f"Erreur lors de la création du tableau croisé dynamique : {e}"}), 400
 

@@ -181,3 +181,38 @@ def load_excel_data(file_path):
     
     return indicateurs_data
 
+
+
+
+
+
+# Fonction pour nettoyer les données et créer le tableau croisé dynamique sans afficher les noms de variables en lignes et colonnes
+def pivot_table_2(df, row_dimensions, col_dimensions, Valeurs, Annee, row_label="-", col_label=""):
+    df_final = pd.DataFrame()  # Initialiser un DataFrame final pour stocker les données nettoyées
+    for i, row in df.iterrows():
+        dimension_cols = row['Dimension'].split('/')
+        category_values = row['Modalites'].split('/')
+        dimension_cols = [col.strip() for col in dimension_cols]
+        category_values = [value.strip() for value in category_values]
+        dimension_dict = dict(zip(dimension_cols, category_values))
+        temp_row = pd.Series(dimension_dict)
+        temp_row['Indicateurs'] = row['Indicateurs']
+        temp_row[Valeurs] = row[Valeurs]
+        temp_row[Annee] = row[Annee]
+        # Ajouter cette ligne nettoyée au DataFrame final
+        df_final = pd.concat([df_final, temp_row.to_frame().T], ignore_index=True)
+    
+    # Remplir les valeurs manquantes pour garder la structure propre
+    df_final.fillna('-', inplace=True)
+
+    # Créer le tableau croisé dynamique avec plusieurs niveaux de dimensions
+    tableau_croise = pd.pivot_table(
+        df_final,
+        fill_value='-',
+        values=Valeurs,
+        index=row_dimensions,
+        columns=[Annee] + col_dimensions,  # Ajouter l'année aux colonnes
+        aggfunc='sum'
+    )
+    
+    return tableau_croise

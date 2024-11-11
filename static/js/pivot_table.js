@@ -29,22 +29,28 @@ function handleDragOver(event) {
 
 function handleDrop(event, type) {
     event.preventDefault();
+    //const column = event.dataTransfer.getData('text/plain');
+    //console.table(column,type);
+    
     const column = event.dataTransfer.getData('text/plain');
 
     if (type === 'row' && !rowColumns.includes(column)) {
         rowColumns.push(column);
         addColumnToArea(column, droppableAreaRows, rowColumns, type);
-    } else if (type === 'col') {
+    } 
+    
+    else if (type === 'col') {
+
         // Vérifie si une colonne est déjà présente dans `colColumns`
-        if (colColumns.length === 0 && !colColumns.includes(column)) {
+       if (!colColumns.includes(column)) {
             colColumns.push(column);
             addColumnToArea(column, droppableAreaCols, colColumns, type);
         } else {
             alert("Vous ne pouvez déposer une seule varaible en colonne");
         }
     }
-
     sendColumnsToServer();
+    console.table(colColumns.length);
 }
 
 
@@ -160,21 +166,40 @@ function generateTable(data) {
 }
 
 
+// Déclaration de lastValidValues en dehors de la fonction pour conserver les valeurs
+const lastValidValues = {}; // Stockage des dernières valeurs valides par colonne
+
 function generateFilters() {
     filterContainer.innerHTML = '';
 
-    const allColumns = [...rowColumns, ...colColumns];
-    console.log("Columns for filters:", allColumns);
+    const allRows = [...rowColumns];
+    const allColumns = [...colColumns];
 
-    allColumns.forEach(col => {
+    console.log("Columns for filters:", allRows);
+    console.log('Columns for no filter:', allColumns);
+
+    allRows.forEach(col => {
         // Vérifier si la colonne est dans colColumns, auquel cas on ne génère pas de filtre
         if (colColumns.includes(col)) {
             return; // Ignore les colonnes dans colColumns
         }
 
         const colKey = Array.isArray(col) ? col.join(' ') : col;
-        const uniqueValues = [...new Set(tableData.map(row => row[colKey]))];
+        let uniqueValues = [...new Set(tableData.map(row => row[colKey]))];
+
+        // Filtrer les valeurs undefined
+        uniqueValues = uniqueValues.filter(val => val !== undefined);
+
+        // Si aucune valeur unique n'est trouvée, utiliser les dernières valeurs valides
+        if (uniqueValues.length === 0) {
+            uniqueValues = lastValidValues[colKey] || ["Valeur manquante"];
+        } else {
+            // Mettre à jour les dernières valeurs valides pour cette colonne
+            lastValidValues[colKey] = uniqueValues;
+        }
+
         console.log(`Unique values for ${colKey}:`, uniqueValues);
+        console.log('Valeur stockées', lastValidValues);
 
         // Créez un conteneur de filtre dépliable
         const filterGroup = document.createElement('div');
@@ -197,24 +222,22 @@ function generateFilters() {
                 checkboxContainer.style.display === 'none' ? 'block' : 'none';
         });
 
-        // Créez des cases à cocher pour chaque valeur unique
+        // Créez des cases à cocher pour chaque valeur unique, en gérant les valeurs undefined
         uniqueValues.forEach(value => {
-            if (value !== undefined) {
-                const checkboxWrapper = document.createElement('div');
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.value = value;
-                checkbox.setAttribute('data-column', colKey);
+            const checkboxWrapper = document.createElement('div');
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = value;
+            checkbox.setAttribute('data-column', colKey);
 
-                const checkboxLabel = document.createElement('label');
-                checkboxLabel.textContent = value;
+            const checkboxLabel = document.createElement('label');
+            checkboxLabel.textContent = value;
 
-                checkbox.addEventListener('change', applyFilters);
+            checkbox.addEventListener('change', applyFilters);
 
-                checkboxWrapper.appendChild(checkbox);
-                checkboxWrapper.appendChild(checkboxLabel);
-                checkboxContainer.appendChild(checkboxWrapper);
-            }
+            checkboxWrapper.appendChild(checkbox);
+            checkboxWrapper.appendChild(checkboxLabel);
+            checkboxContainer.appendChild(checkboxWrapper);
         });
 
         // Ajoutez le titre et les options au groupe de filtres
@@ -225,41 +248,53 @@ function generateFilters() {
 }
 
 
-function applyFilters() {
-    filteredTableData = [...tableData];
-    console.log("Applying filters...");
 
+
+function doesRowMatchFilters(row, filters) {
+    // Pour chaque clé de filtre, vérifiez si la ligne contient une valeur correspondante
+    return Object.keys(filters).every(column => {
+        const filterValues = filters[column];
+        
+        // Vérifiez toutes les valeurs de la ligne qui pourraient correspondre à la colonne filtrée
+        return Object.values(row).some(rowValue => filterValues.includes(rowValue));
+    });
+}
+function applyFilters() {
+    filteredTableData = [...tableData];  // Copie de données pour appliquer les filtres
+    console.log("Applying filters...");
+  
     const checkedCheckboxes = filterContainer.querySelectorAll('input[type="checkbox"]:checked');
     const filters = {};
-
-    // Récupérer toutes les colonnes et leurs valeurs cochées
+  
+    // Collecte des filtres sélectionnés
     checkedCheckboxes.forEach(checkbox => {
         const column = checkbox.getAttribute('data-column');
         const value = checkbox.value;
+
+        // Utilisez la clé normalisée pour les filtres
         if (!filters[column]) {
             filters[column] = [];
         }
         filters[column].push(value);
     });
 
-    // Appliquer les filtres aux données
-    filteredTableData = filteredTableData.filter(row => {
-        return Object.keys(filters).every(column => {
-            const rowValue = row[column];
-            return filters[column].includes(rowValue);
-        });
-    });
+    // Application des filtres en utilisant `doesRowMatchFilters`
+    filteredTableData = filteredTableData.filter(row => doesRowMatchFilters(row, filters));
 
+    console.log('tableau obtenir', filteredTableData);
+
+    // Regénérer le tableau avec les données filtrées
     generateTable({
         columns: tableData.columns,
         data: filteredTableData.map(row => {
             return tableData.columns.map(col => {
-                const key = Array.isArray(col) ? col.join(' ') : col;
+                const key = Array.isArray(col) ? col.join(' ') : col;  // Utilisez la clé normalisée
                 return row[key];
             });
         })
     });
 }
+
 
 
 
