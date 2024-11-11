@@ -157,7 +157,7 @@ th, td {
 }
 
 th {
-    background-color: #004085;
+    background-color: #e67f0a;
     color: white;
 }
 
@@ -225,4 +225,44 @@ tr:hover {
 }
 
 
+
+/* Style général du conteneur de filtre */
+.filter-group {
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+/* Titre du filtre pour l'effet dépliable/repliable */
+.filter-title {
+    background-color: #f0f0f0;
+    padding: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Indicateur pour le dépliage (+) ou repliage (-) */
+.filter-title::after {
+    content: '+';
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+    transition: transform 0.3s;
+}
+
+/* Style pour la liste de cases à cocher */
+.checkbox-container {
+    padding: 8px;
+    background-color: #fafafa;
+    display: none;
+}
+
+/* Indicateur de bascule (-) quand le conteneur est ouvert */
+.filter-group.open .filter-title::after {
+    content: '-';
+}
 

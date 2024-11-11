@@ -9,10 +9,8 @@ from mysql.connector import Error
 from sqlalchemy import create_engine, MetaData, Table, delete, or_, Float
 from sqlalchemy.orm import sessionmaker
 from elasticsearch import Elasticsearch
-
 # Charger les variables d'environnement depuis le fichier .env
 load_dotenv()
-
 # Utiliser les variables d'environnement pour MySQL
 host = os.getenv('MYSQL_HOST')
 database = os.getenv('MYSQL_DATABASE')

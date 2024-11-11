@@ -34,13 +34,19 @@ function handleDrop(event, type) {
     if (type === 'row' && !rowColumns.includes(column)) {
         rowColumns.push(column);
         addColumnToArea(column, droppableAreaRows, rowColumns, type);
-    } else if (type === 'col' && !colColumns.includes(column)) {
-        colColumns.push(column);
-        addColumnToArea(column, droppableAreaCols, colColumns, type);
+    } else if (type === 'col') {
+        // Vérifie si une colonne est déjà présente dans `colColumns`
+        if (colColumns.length === 0 && !colColumns.includes(column)) {
+            colColumns.push(column);
+            addColumnToArea(column, droppableAreaCols, colColumns, type);
+        } else {
+            alert("Vous ne pouvez déposer une seule varaible en colonne");
+        }
     }
 
     sendColumnsToServer();
 }
+
 
 function addColumnToArea(column, area, columnList, type) {
     const newItem = document.createElement('div');
@@ -161,70 +167,102 @@ function generateFilters() {
     console.log("Columns for filters:", allColumns);
 
     allColumns.forEach(col => {
-        const label = document.createElement('label');
-        label.textContent = `Filtrer par ${col}:`;
-        const select = document.createElement('select');
-        select.setAttribute('data-column', col);
+        // Vérifier si la colonne est dans colColumns, auquel cas on ne génère pas de filtre
+        if (colColumns.includes(col)) {
+            return; // Ignore les colonnes dans colColumns
+        }
 
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = 'Tous';
-        select.appendChild(defaultOption);
-
-        // Assurez-vous d'avoir le bon format de clé
         const colKey = Array.isArray(col) ? col.join(' ') : col;
         const uniqueValues = [...new Set(tableData.map(row => row[colKey]))];
         console.log(`Unique values for ${colKey}:`, uniqueValues);
 
+        // Créez un conteneur de filtre dépliable
+        const filterGroup = document.createElement('div');
+        filterGroup.classList.add('filter-group');
+
+        // Titre du filtre avec fonctionnalité de dépliage/repliage
+        const filterTitle = document.createElement('div');
+        filterTitle.classList.add('filter-title');
+        filterTitle.textContent = `Filtrer par ${col}`;
+        filterTitle.style.cursor = 'pointer';
+
+        // Conteneur des cases à cocher (initialement masqué)
+        const checkboxContainer = document.createElement('div');
+        checkboxContainer.classList.add('checkbox-container');
+        checkboxContainer.style.display = 'none';  // Commence replié
+
+        // Ajouter l'événement de clic pour déplier/replier
+        filterTitle.addEventListener('click', () => {
+            checkboxContainer.style.display = 
+                checkboxContainer.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Créez des cases à cocher pour chaque valeur unique
         uniqueValues.forEach(value => {
-            if (value !== undefined) {  // Ignore les valeurs undefined
-                const option = document.createElement('option');
-                option.value = value;
-                option.textContent = value;
-                select.appendChild(option);
+            if (value !== undefined) {
+                const checkboxWrapper = document.createElement('div');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = value;
+                checkbox.setAttribute('data-column', colKey);
+
+                const checkboxLabel = document.createElement('label');
+                checkboxLabel.textContent = value;
+
+                checkbox.addEventListener('change', applyFilters);
+
+                checkboxWrapper.appendChild(checkbox);
+                checkboxWrapper.appendChild(checkboxLabel);
+                checkboxContainer.appendChild(checkboxWrapper);
             }
         });
 
-        select.addEventListener('change', applyFilters);
-        filterContainer.appendChild(label);
-        filterContainer.appendChild(select);
+        // Ajoutez le titre et les options au groupe de filtres
+        filterGroup.appendChild(filterTitle);
+        filterGroup.appendChild(checkboxContainer);
+        filterContainer.appendChild(filterGroup);
     });
 }
-
 
 
 function applyFilters() {
     filteredTableData = [...tableData];
     console.log("Applying filters...");
 
-    const selects = filterContainer.querySelectorAll('select');
-    selects.forEach(select => {
-        const column = select.getAttribute('data-column');
-        const value = select.value;
+    const checkedCheckboxes = filterContainer.querySelectorAll('input[type="checkbox"]:checked');
+    const filters = {};
 
-        if (value) {
-            const colKey = Array.isArray(column) ? column.join(' ') : column;
-            console.log(`Filtering on ${colKey} with value:`, value);
-
-            filteredTableData = filteredTableData.filter(row => {
-                const rowValue = row[colKey];
-                console.log(`Row value for ${colKey}:`, rowValue);
-                return rowValue == value;
-            });
+    // Récupérer toutes les colonnes et leurs valeurs cochées
+    checkedCheckboxes.forEach(checkbox => {
+        const column = checkbox.getAttribute('data-column');
+        const value = checkbox.value;
+        if (!filters[column]) {
+            filters[column] = [];
         }
+        filters[column].push(value);
     });
 
-    // Conservez la structure des colonnes en passant `tableData.columns`
+    // Appliquer les filtres aux données
+    filteredTableData = filteredTableData.filter(row => {
+        return Object.keys(filters).every(column => {
+            const rowValue = row[column];
+            return filters[column].includes(rowValue);
+        });
+    });
+
     generateTable({
         columns: tableData.columns,
         data: filteredTableData.map(row => {
             return tableData.columns.map(col => {
-                const key = col.join(' ');
+                const key = Array.isArray(col) ? col.join(' ') : col;
                 return row[key];
             });
         })
     });
 }
+
+
+
 
 
 function mergeTableCells() {
@@ -252,4 +290,49 @@ function mergeTableCells() {
             }
         }
     }
+}
+
+// Ajouter des écouteurs d'événements pour les boutons de téléchargement
+document.getElementById('download-xlsx').addEventListener('click', downloadXLSX);
+document.getElementById('download-csv').addEventListener('click', downloadCSV);
+
+function downloadXLSX() {
+    if (!filteredTableData || filteredTableData.length === 0) {
+        alert("Aucune donnée à télécharger. Appliquez des filtres ou vérifiez les données.");
+        return;
+    }
+
+    // Créer un workbook avec SheetJS
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(filteredTableData);
+    XLSX.utils.book_append_sheet(wb, ws, 'Données Filtrées');
+
+    // Télécharger le fichier
+    XLSX.writeFile(wb, 'donnees_filtrees.xlsx');
+}
+
+function downloadCSV() {
+    if (!filteredTableData || filteredTableData.length === 0) {
+        alert("Aucune donnée à télécharger. Appliquez des filtres ou vérifiez les données.");
+        return;
+    }
+
+    const headers = Object.keys(filteredTableData[0]);
+    const rows = filteredTableData.map(row => headers.map(header => row[header]));
+
+    // Construire le contenu CSV
+    const csvContent = [
+        headers.join(','),    // Ajouter l'en-tête
+        ...rows.map(row => row.join(','))   // Ajouter les lignes
+    ].join('\n');
+
+    // Créer un fichier blob et déclencher le téléchargement
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'donnees_filtrees.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
