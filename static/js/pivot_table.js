@@ -298,14 +298,14 @@ document.getElementById('download-csv').addEventListener('click', downloadCSV);
 
 function downloadXLSX() {
     if (!filteredTableData || filteredTableData.length === 0) {
-        alert("Aucune donnée à télécharger. Appliquez des filtres ou vérifiez les données.");
+        alert("No data selected.");
         return;
     }
 
     // Créer un workbook avec SheetJS
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.json_to_sheet(filteredTableData);
-    XLSX.utils.book_append_sheet(wb, ws, 'Données Filtrées');
+    XLSX.utils.book_append_sheet(wb, ws, 'Data');
 
     // Télécharger le fichier
     XLSX.writeFile(wb, 'donnees_filtrees.xlsx');
@@ -313,7 +313,7 @@ function downloadXLSX() {
 
 function downloadCSV() {
     if (!filteredTableData || filteredTableData.length === 0) {
-        alert("Aucune donnée à télécharger. Appliquez des filtres ou vérifiez les données.");
+        alert("Aucune variable selectionnée");
         return;
     }
 

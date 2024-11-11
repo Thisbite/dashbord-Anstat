@@ -47,6 +47,7 @@ def definition_indicateur(indicateur_choisi):
     try:
         with cf.create_connection() as conn:
             cursor = conn.cursor()
+            indicateur_choisi = indicateur_choisi.strip().lower()
             # Requête pour obtenir la définition de l'indicateur choisi
             query = "SELECT definitions FROM indicateur_v2 WHERE indicateur = %s"
             cursor.execute(query, (indicateur_choisi,))
@@ -65,19 +66,20 @@ def definition_indicateur(indicateur_choisi):
 
 
 #Mode de calcul:
-def mode_calcul_indicateur(mode_calcul):
+def mode_calcul_indicateur(indicateur_choisi):
     try:
         with cf.create_connection() as conn:
             cursor = conn.cursor()
+            indicateur_choisi = indicateur_choisi.strip().lower()
             # Requête pour obtenir la définition de l'indicateur choisi
             query = "SELECT  mode_calcul FROM indicateur_v2 WHERE indicateur = %s"
-            cursor.execute(query, (mode_calcul,))
+            cursor.execute(query, (indicateur_choisi,))
             # Récupérer le résultat
             result = cursor.fetchone()
             if result:
                 return result[0]  # Retourne la définition si elle existe
             else:
-                return f"Mode de calcul pour l'indicateur '{mode_calcul}' non trouvée."
+                return f"Mode de calcul pour l'indicateur '{indicateur_choisi}' non trouvée."
     except Error as e:
         print(f"Database error: {e}")
         return None

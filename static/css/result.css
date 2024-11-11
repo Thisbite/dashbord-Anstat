@@ -4,6 +4,7 @@ body {
     background-color: #f8f9fa;
     margin: 0;
     padding: 20px;
+    color: #333;
 }
 
 /* Conteneur global pour la mise en page */
@@ -11,6 +12,7 @@ body {
     display: flex;
     justify-content: space-between;
     gap: 20px;
+    padding: 15px;
 }
 
 /* Colonne de gauche : Liste des colonnes disponibles */
@@ -28,26 +30,25 @@ body {
 }
 
 .draggable-item {
-    display: inline-block; /* S'adapte à la largeur de son contenu */
+    display: inline-block;
     padding: 10px;
     margin: 5px 0;
     background-color: #e9ecef;
     border: 1px solid #6c757d;
     border-radius: 10px;
     cursor: grab;
-    white-space: nowrap; /* Empêche le texte de passer à la ligne */
-    transition: background-color 0.3s, color 0.3s; /* Transition pour hover */
+    white-space: nowrap;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .draggable-item:hover {
     background-color: #06ba06;
-    color: whitesmoke;
+    color: #fff;
 }
 
 /* Conteneur pour la zone de dépôt et les filtres */
 #depot-filter-container {
     display: flex;
-    
     justify-content: space-between;
     gap: 20px;
     align-items: flex-start;
@@ -60,44 +61,37 @@ body {
     padding: 15px;
     border: 2px dashed #28a745;
     border-radius: 5px;
+    background-color: #f8f9fa;
     text-align: center;
     display: flex;
     flex-direction: column;
     gap: 10px;
     align-items: center;
     justify-content: center;
-    width: 45%; /* Largeur de chaque zone de dépôt */
-    background-color: #f8f9fa;
-    transition: background-color 0.3s, min-height 0.3s; /* Ajout d'une transition pour l'agrandissement */
+    width: 45%;
+    transition: background-color 0.3s, min-height 0.3s;
 }
 
 #droppable-area-rows:hover, #droppable-area-cols:hover {
-    background-color: #e0f4e0; /* Changement de couleur au survol */
+    background-color: #e0f4e0;
 }
 
 /* Placeholder pour chaque zone de dépôt */
 #placeholder-rows, #placeholder-cols {
     color: #6c757d;
     font-style: italic;
-    display: block;
-    width: 100%;
     text-align: center;
-}
-
-/* Empêcher le rétrécissement lorsque des éléments sont déposés */
-#droppable-area-rows > *, #droppable-area-cols > * {
-    flex-shrink: 0;
+    width: 100%;
 }
 
 /* Zone de filtres */
 #filter-container {
-    width: 45%; /* Largeur de la zone de filtres */
+    width: 45%;
     min-height: 150px;
     padding: 20px;
     border: 2px solid #007bff;
     border-radius: 5px;
     background-color: #f8f9fa;
-    text-align: left;
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -119,8 +113,7 @@ body {
     font-size: 1em;
 }
 
-
-/* Colonne de droite : Zone de dépôt */
+/* Zone de dépôt droite */
 .container > div:nth-child(2) {
     flex: 3;
     border: 1px solid #28a745;
@@ -165,34 +158,32 @@ td {
     background-color: #f8f9fa;
 }
 
-/* Amélioration des hover sur les lignes du tableau */
 tr:hover {
     background-color: #e0e0e0;
 }
 
-
 /* Style pour le conteneur parent avec la bordure tricolore */
 .parent-frame {
-    border: 10px solid; /* Épaisseur de la bordure */
+    border: 1px solid;
     border-image: linear-gradient(to right, orange 33%, white 33%, white 66%, green 66%);
     border-image-slice: 1;
     padding: 20px;
-    border-radius: 10px; /* Pour arrondir les coins du cadre */
+    border-radius: 10px;
     margin-bottom: 20px;
-    background-color: #fff; /* Couleur de fond blanche à l'intérieur */
+    background-color: #fff;
 }
 
 .titre-indicateur {
-    text-align: center; /* Centrer le texte à l'intérieur */
-    font-weight: bold; /* Mettre le texte en gras */
-    padding: 10px; /* Ajouter de l'espace autour du texte */
-    border: 2px solid #0C4B33; /* Bordure verte ivoirienne */
-    border-radius: 5px; /* Arrondir légèrement les coins */
-    background-color: #F77F00; /* Fond orange ivoirien */
-    color: #FFFFFF; /* Texte blanc */
-    display: inline-block; /* Pour que le cadre s'ajuste au contenu */
-    margin: 20px auto; /* Centre le bloc en ajoutant de l'espace en haut/bas et automatique sur les côtés */
-    width: fit-content; /* S'adapte à la largeur du contenu */
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+    border: 2px solid #0C4B33;
+    border-radius: 5px;
+    background-color: #F77F00;
+    color: #FFFFFF;
+    display: inline-block;
+    margin: 20px auto;
+    width: fit-content;
 }
 
 .header-secondary {
@@ -221,20 +212,15 @@ tr:hover {
 
 .nav-links a:hover {
     background-color: #0cce1c;
-    color: white;
 }
 
-
-
-/* Style général du conteneur de filtre */
+/* Conteneur de filtre */
 .filter-group {
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    overflow: hidden;
 }
 
-/* Titre du filtre pour l'effet dépliable/repliable */
 .filter-title {
     background-color: #f0f0f0;
     padding: 8px;
@@ -245,7 +231,6 @@ tr:hover {
     align-items: center;
 }
 
-/* Indicateur pour le dépliage (+) ou repliage (-) */
 .filter-title::after {
     content: '+';
     font-weight: bold;
@@ -254,15 +239,51 @@ tr:hover {
     transition: transform 0.3s;
 }
 
-/* Style pour la liste de cases à cocher */
 .checkbox-container {
     padding: 8px;
     background-color: #fafafa;
     display: none;
 }
 
-/* Indicateur de bascule (-) quand le conteneur est ouvert */
 .filter-group.open .filter-title::after {
     content: '-';
 }
 
+/* Boutons de téléchargement et Métadonnées */
+.download-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.download-buttons button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #ffffff;
+    background-color: #c67915;
+    font-size: 15px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.download-buttons button:hover {
+    background-color: #07bd43;
+    transform: translateY(-3px);
+}
+
+.download-buttons button:active {
+    background-color: #70a830;
+    transform: translateY(0);
+}
+
+#metadonnees {
+    background-color: #2c8ac6;
+}
+
+#metadonnees:hover {
+    background-color: #1d6b96;
+}

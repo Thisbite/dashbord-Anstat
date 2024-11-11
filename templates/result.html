@@ -6,11 +6,6 @@
     <title>Tableau Croisé Dynamique</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-
-
 </head>
 <body>
     <div class="header-secondary">
@@ -27,6 +22,13 @@
         <div class="download-buttons">
             <button id="download-xlsx">Télécharger en XLSX</button>
             <button id="download-csv">Télécharger en CSV</button>
+            <button id="metadonnees">Métadonnées</button>
+        </div>
+
+        <!-- Conteneur pour les métadonnées, caché par défaut -->
+        <div id="metadata-container" style="display: none;">
+            <p><strong>Définition:</strong> <span id="definition">{{ definitions }}</span></p>
+            <p><strong>Mode de Calcul:</strong> <span id="mode-calcul">{{ mode_calcul }}</span></p>
         </div>
 
         <div class="container">
@@ -39,21 +41,18 @@
 
             <div id="depot-filter-container">
                 <div>
-                   
                     <div id="droppable-area-rows">
-                        <span id="placeholder-rows">Glissez et déposez pour modalité en ligne(un clique retire la variable)</span>
+                        <span id="placeholder-rows">Glissez et déposez pour modalité en ligne (un clique retire la variable)</span>
                     </div>
                 </div>
 
                 <div>
-                  
                     <div id="droppable-area-cols">
                         <span id="placeholder-cols">Glissez et déposez modalité en colonne</span>
                     </div>
                 </div>
 
                 <div>
-                   
                     <div id="filter-container"></div>
                 </div>
             </div>
@@ -62,6 +61,17 @@
         <div id="table-container"></div>
     </div>
 
+    <script>
+        // Gestionnaire pour afficher/masquer les métadonnées
+        document.getElementById('metadonnees').addEventListener('click', function() {
+            const metadataContainer = document.getElementById('metadata-container');
+            if (metadataContainer.style.display === 'none') {
+                metadataContainer.style.display = 'block';
+            } else {
+                metadataContainer.style.display = 'none';
+            }
+        });
+    </script>
     <script src="{{ url_for('static', filename='js/pivot_table.js') }}"></script>
 </body>
 </html>

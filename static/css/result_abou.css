@@ -247,3 +247,42 @@ th.hidden-column, td.hidden-column {
     font-size: 14px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
+/* Style des boutons de téléchargement et métadonnées */
+.download-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.download-buttons button {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #ffffff;
+    background-color: #c67915; /* Couleur de base assortie */
+    font-size: 15px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.download-buttons button:hover {
+    background-color: #07bd43; /* Couleur au survol */
+    transform: translateY(-3px); /* Effet de soulèvement au survol */
+}
+
+.download-buttons button:active {
+    background-color: #70a830; /* Couleur au clic */
+    transform: translateY(0); /* Remise à plat */
+}
+
+#metadonnees {
+    background-color: #2c8ac6; /* Couleur personnalisée pour le bouton Métadonnées */
+}
+
+#metadonnees:hover {
+    background-color: #1d6b96; /* Couleur au survol pour Métadonnées */
+}

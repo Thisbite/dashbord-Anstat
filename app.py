@@ -458,13 +458,15 @@ def request_indicateur():
     )
 
 import urllib
-# Deuxieme bloc 
-# Page de requête au niveau de l'accueil
+
+
+# Page de requête au niveau de l'accueil---- Pour la page requete
 @app.route('/search_indicators2/<path:indicateur>') 
 def request_indicateur2(indicateur):
     # Charger les données depuis MySQL
     df = qr.get_data_from_mysql()
     indicateur_SELECT = urllib.parse.unquote(indicateur)
+    definitions=None
     print('Indicateur de js:',indicateur_SELECT)
     # Obtenir les options pour chaque filtre (indicateur, région, etc.
     df_filtered = pd.DataFrame()
@@ -473,6 +475,8 @@ def request_indicateur2(indicateur):
     if indicateur_SELECT and 'indicateur' in df_filtered.columns:
         # Convertir la colonne 'indicateur' en chaînes de caractères
         df_filtered['indicateur'] = df_filtered['indicateur'].astype(str).str.strip().str.lower()
+        definitions=qr.definition_indicateur(indicateur_SELECT)
+        mode_calcul=qr.mode_calcul_indicateur(indicateur_SELECT)
         
         # Appliquer le filtre sur la colonne 'indicateur'
         df_filtered = df_filtered[df_filtered['indicateur'] == indicateur_SELECT.strip().lower()]
@@ -486,7 +490,8 @@ def request_indicateur2(indicateur):
 
     # Stocker le DataFrame filtré dans la session pour une utilisation ultérieure
     df_filtered_json = df_filtered.to_json(orient='split')  # Convertir en JSON pour le stockage
-    
+    print('Definitions associée:',definitions)
+    print('Mode de calcul:',mode_calcul)
     session['df_filtered'] = df_filtered_json
     # Obtenir les colonnes valables pour les désagrégations
     existing_columns = df_filtered.columns.tolist()
@@ -494,6 +499,8 @@ def request_indicateur2(indicateur):
     desaggregation_columns = [col for col in existing_columns if col not in columns_to_exclude]
     return render_template(
         'result.html',
+        definitions=definitions,
+        mode_calcul=mode_calcul,
         colonne_valable=desaggregation_columns,  # Colonnes à utiliser pour désagréger les données
         indicateur2=indicateur_SELECT,  # Indicateur sélectionné
         df_filtered=df_filtered_json  # Data JSON pour le filtrage
