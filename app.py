@@ -584,7 +584,7 @@ def get_data():
 
 
 
-@app.route('/search_boostrap', methodss=['GET', 'POST'])
+@app.route('/search_boostrap', methods=['GET', 'POST'])
 def search_boostrap():
     return render_template('boostrap_search.html')
 
