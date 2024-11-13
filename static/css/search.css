@@ -13,10 +13,17 @@
         a {
             text-decoration: none;
         }
+        .header-secondary {
+            background-color: #468409;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
 
         /* Styles de l'entête et du menu */
         header {
-            background-color: rgb(244, 158, 0); /* Slightly transparent background */
+            background-color: #468409;
             position: fixed;
             top: 0;
             left: 0;
@@ -169,7 +176,7 @@
             display: inline-block;
         }
         #table-container {
-            border: 2px solid rgb(13, 12, 12);
+            border: 1px solid rgb(13, 12, 12);
             width: 750px; /* 500px + 60px (2cm en largeur) */
             height: 310px; /* 300px + 150px (5cm en longueur) */
             overflow: auto; /* Permet le défilement */

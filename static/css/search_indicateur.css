@@ -44,7 +44,7 @@ body {
 
 
 .sidebar h5 {
-    background-color: #ff9933;
+    background-color: #0d5e0d;
     padding: 10px;
     color: #fff;
     text-align: center;
@@ -92,7 +92,7 @@ body {
 }
 
 .main-content h5 {
-    background-color: #ff9933;
+    background-color: #0d5e0d;
     padding: 10px;
     color: #fff;
     text-align: center;
@@ -186,9 +186,8 @@ body {
 
 
 
-
 .header-secondary {
-    background-color: #ff9933;
+    background-color: #468409;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -232,7 +231,7 @@ body {
 
 .search-bar button {
     padding: 8px 12px;
-    background-color: #d66519;
+    background-color: #19d62f;
     color: white;
     border: none;
     border-radius: 4px;
@@ -245,3 +244,24 @@ body {
 }
 
 
+
+/* Style pour la modale */
+.modal-title {
+    font-weight: bold;
+    font-size: 1.5em;
+    color: #333; /* Vous pouvez changer la couleur si nécessaire */
+}
+
+.modal-body {
+    font-size: 1em;
+    color: #555; /* Couleur du texte de la description */
+}
+
+.modal-footer .btn-secondary {
+    background-color: #d11922;
+    color: #fff;
+}
+
+.modal-footer .btn-secondary:hover {
+    background-color: #5a6268;
+}

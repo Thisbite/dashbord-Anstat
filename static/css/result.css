@@ -18,14 +18,14 @@ body {
 /* Colonne de gauche : Liste des colonnes disponibles */
 .container > div:first-child {
     flex: 1;
-    border: 1px solid #004085;
+    border: 1px solid #2fd601;
     padding: 15px;
     background-color: #ffffff;
     border-radius: 5px;
 }
 
 .container > div:first-child h3 {
-    color: #004085;
+    color: #023e17;
     margin-bottom: 10px;
 }
 
@@ -46,18 +46,31 @@ body {
     color: #fff;
 }
 
-/* Conteneur pour la zone de dépôt et les filtres */
-#depot-filter-container {
+
+
+
+/* Zones de dépôt pour les lignes */
+#droppable-area-rows {
+    height: 200px;  /* Hauteur fixe */
+    width: 150px;   /* Largeur fixe */
+    padding: 15px;
+    border: 2px dashed #74e568;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    text-align: center;
     display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+    overflow-y: auto;  /* Ajout d'une barre de défilement si le contenu dépasse */
 }
 
-/* Zones de dépôt pour les lignes et les colonnes */
-#droppable-area-rows, #droppable-area-cols {
-    min-height: 150px;
-    min-width: 300px;
+/* Zones de dépôt pour les colonnes */
+#droppable-area-cols {
+    height: 100px; /* Hauteur fixe */
+    width: 200px;  /* Largeur fixe */
     padding: 15px;
     border: 2px dashed #28a745;
     border-radius: 5px;
@@ -68,8 +81,13 @@ body {
     gap: 10px;
     align-items: center;
     justify-content: center;
-    width: 45%;
-    transition: background-color 0.3s, min-height 0.3s;
+    transition: background-color 0.3s;
+    margin-left: -50%;
+    left: 20%;
+    top: 30%;
+    transform: translate(-10%, 10%);
+    overflow-y: auto;  /* Ajout d'une barre de défilement si le contenu dépasse */
+    white-space: nowrap;
 }
 
 #droppable-area-rows:hover, #droppable-area-cols:hover {
@@ -86,26 +104,29 @@ body {
 
 /* Zone de filtres */
 #filter-container {
-    width: 45%;
+    width: 100%;
     min-height: 150px;
     padding: 20px;
-    border: 2px solid #007bff;
+    border: 2px solid #c3d0bf;
     border-radius: 5px;
     background-color: #f8f9fa;
     display: flex;
     flex-direction: column;
     gap: 15px;
     overflow-y: auto;
+    width: 200px;
 }
 
 /* Style pour chaque label + select */
 #filter-container label {
     font-weight: bold;
     margin-right: 10px;
+    
 }
 
 #filter-container select {
     padding: 10px;
+
     border: 1px solid #ced4da;
     border-radius: 5px;
     width: 100%;
@@ -113,6 +134,32 @@ body {
     font-size: 1em;
 }
 
+/* Conteneur pour la zone de dépôt et les filtres */
+#depot-filter-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: flex-start; /* Garde tous les éléments alignés au début */
+    min-height: 200px; /* Ajustez selon la taille souhaitée */
+}
+
+/* Styles spécifiques pour les éléments enfants */
+#depot-filter-container > .filter-element {
+    width: 200px; /* Largeur fixe pour l'élément "filter" */
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+#depot-filter-container > .drop-area {
+    flex: 1;
+    min-height: 100px; /* Ajustez la hauteur minimale si nécessaire */
+    padding: 15px;
+    border: 2px dashed #2fd601;
+    background-color: #ffffff;
+    border-radius: 5px;
+}
 /* Zone de dépôt droite */
 .container > div:nth-child(2) {
     flex: 3;
@@ -134,6 +181,7 @@ body {
     padding: 15px;
     background-color: #ffffff;
     border-radius: 5px;
+    overflow-y: auto; 
 }
 
 /* Style du tableau */
@@ -150,7 +198,7 @@ th, td {
 }
 
 th {
-    background-color: #e67f0a;
+    background-color: #074120;
     color: white;
 }
 
@@ -177,9 +225,9 @@ tr:hover {
     text-align: center;
     font-weight: bold;
     padding: 10px;
-    border: 2px solid #0C4B33;
+   
     border-radius: 5px;
-    background-color: #F77F00;
+    background-color: #468409;
     color: #FFFFFF;
     display: inline-block;
     margin: 20px auto;
@@ -187,7 +235,7 @@ tr:hover {
 }
 
 .header-secondary {
-    background-color: #ff9933;
+    background-color: #468409;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -263,7 +311,7 @@ tr:hover {
     border-radius: 8px;
     cursor: pointer;
     color: #ffffff;
-    background-color: #c67915;
+    background-color: #15c632;
     font-size: 15px;
     font-weight: bold;
     transition: background-color 0.3s ease, transform 0.2s ease;
@@ -271,19 +319,19 @@ tr:hover {
 }
 
 .download-buttons button:hover {
-    background-color: #07bd43;
+    background-color: #efbb71;
     transform: translateY(-3px);
 }
 
 .download-buttons button:active {
-    background-color: #70a830;
+    background-color: #efbb71;
     transform: translateY(0);
 }
 
 #metadonnees {
-    background-color: #2c8ac6;
+    background-color: #468409;
 }
 
 #metadonnees:hover {
-    background-color: #1d6b96;
+    background-color: #de7207;
 }

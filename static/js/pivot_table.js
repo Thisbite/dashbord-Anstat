@@ -46,7 +46,7 @@ function handleDrop(event, type) {
             colColumns.push(column);
             addColumnToArea(column, droppableAreaCols, colColumns, type);
         } else {
-            alert("Vous ne pouvez déposer une seule varaible en colonne");
+            alert("Cette variable existe déjà...");
         }
     }
     sendColumnsToServer();
@@ -370,4 +370,39 @@ function downloadCSV() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+}
+
+
+document.getElementById('download-pdf').addEventListener('click', downloadPDF);
+
+function downloadPDF() {
+    if (!filteredTableData || filteredTableData.length === 0) {
+        alert("Aucune variable sélectionnée");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Titre du PDF
+    doc.setFontSize(16);
+    doc.text('Données Filtrées', 10, 10);
+
+    // Préparer les données pour autoTable
+    const headers = [Object.keys(filteredTableData[0])];
+    const rows = filteredTableData.map(row => Object.values(row));
+
+    // Utiliser autoTable pour générer le tableau
+    doc.autoTable({
+        startY: 20,                  // Position du tableau sous le titre
+        head: headers,               // En-têtes du tableau
+        body: rows,                  // Contenu des lignes
+        theme: 'grid',               // Style avec des bordures de grille
+        headStyles: { fillColor: [7, 65, 32] }, // Couleur de fond de l'en-tête
+        styles: { fontSize: 10, cellPadding: 4 }, // Style de texte et de cellule
+        margin: { top: 20 }
+    });
+
+    // Télécharger le PDF
+    doc.save('donnees_filtrees.pdf');
 }

@@ -82,8 +82,8 @@ th, td {
 }
 
 th {
-    background-color: #eb8520;
-    color: white;
+    background-color: #a6e0aa;
+    color: rgb(4, 75, 11);
 }
 
 tr:nth-child(even) {
@@ -105,19 +105,19 @@ tr:hover {
     padding: 10px 15px;
     border-radius: 5px;
     text-decoration: none;
-    background-color: #6253d8;
+    background-color: #81ba70;
     color: white;
     font-size: 16px;
     transition: background-color 0.3s ease;
 }
 
 .pagination a:hover {
-    background-color: #e46014;
+    background-color: #edf3ec;
     color: white;
 }
 
 .header-secondary {
-    background-color: #ff9933;
+    background-color: #468409;
     display: flex;
     justify-content: space-between;
     align-items: center;

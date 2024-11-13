@@ -1,7 +1,7 @@
 
 
 .header-primary {
-    background-color: #004085;
+    background-color: #1d8500;
     color: white;
     padding: 20px;
     text-align: center;
@@ -9,7 +9,7 @@
 }
 
 .header-secondary {
-    background-color: #f8f9fa;
+    background-color: #468409;
     display: flex;
     justify-content: space-between;
     align-items: center;

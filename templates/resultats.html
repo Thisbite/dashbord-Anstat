@@ -17,7 +17,7 @@
     <div class="header-secondary">
         <div class="nav-links">
             <a href="{{ url_for('list_regions') }}">Statistiques</a>
-            <a href="{{ url_for('search_boostrap') }}">Requête</a>
+            <a href="{{ url_for('search_indicators') }}">Requête</a>
             <a href="#">A Propos</a>
             <a href="#connexion">Aide</a>
         </div>
@@ -43,10 +43,10 @@
                     <th scope="row">{{ loop.index }}</th>
                     <td><a href="{{ url_for('request_indicateur', region=hit['_source']['region'], indicateur_elastic=hit['_source']['indicateur'] ) }}">{{ hit['_source']['indicateur']|capitalize }}</a></td>
 
-                    <td>{{ hit['_source']['Sous_domaine'] }}</td>
-                    <td>{{ hit['_source']['Definition'] }}</td>
-                    <td>{{ hit['_source']['Mode_de_calcul'] }}</td>
-                    <td>{{ hit['_source']['Mode_de_collecte'] }}</td>
+                    <td>{{ hit['_source']['Sous_domaine']| capitalize }}</td>
+                    <td>{{ hit['_source']['Definition']| capitalize }}</td>
+                    <td>{{ hit['_source']['Mode_de_calcul']| capitalize }}</td>
+                    <td>{{ hit['_source']['Mode_de_collecte']| capitalize }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

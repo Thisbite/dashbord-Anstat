@@ -6,6 +6,9 @@
     <title>Tableau Croisé Dynamique</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    
 </head>
 <body>
     <div class="header-secondary">
@@ -16,12 +19,13 @@
             <a href="#connexion">Aide</a>
         </div>
     </div>
-    <h3 class="titre-indicateur">Données pour {{indicateur2.capitalize()}}</h3>
+    <h3 id="pdf-title" class="titre-indicateur">Données pour {{indicateur2.capitalize()}}</h3>
 
     <div class="parent-frame">
         <div class="download-buttons">
             <button id="download-xlsx">Télécharger en XLSX</button>
             <button id="download-csv">Télécharger en CSV</button>
+            <button id="download-pdf">Télécharger en PDF</button>
             <button id="metadonnees">Métadonnées</button>
         </div>
 
@@ -34,21 +38,23 @@
         <div class="container">
             <div>
                 <h3>Niveau désagrégation</h3>
-                {% for colonne in colonne_valable %}
-                    <div class="draggable-item" data-column="{{ colonne }}" draggable="true">{{ colonne.capitalize() }}</div>
-                {% endfor %}
+                <div id="initial-list">
+                    {% for colonne in colonne_valable %}
+                        <div class="draggable-item" data-column="{{ colonne }}" draggable="true">{{ colonne.capitalize() }}</div>
+                    {% endfor %}
+                </div>
             </div>
 
             <div id="depot-filter-container">
                 <div>
                     <div id="droppable-area-rows">
-                        <span id="placeholder-rows">Glissez et déposez pour modalité en ligne (un clique retire la variable)</span>
+                        <span id="placeholder-rows">Glissez ici pour modalités en ligne</span>
                     </div>
                 </div>
 
                 <div>
                     <div id="droppable-area-cols">
-                        <span id="placeholder-cols">Glissez et déposez modalité en colonne</span>
+                        <span id="placeholder-cols">Modalité en colonne</span>
                     </div>
                 </div>
 
@@ -72,6 +78,27 @@
             }
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Sélectionne tous les conteneurs de filtre
+            document.querySelectorAll('.filter-title').forEach(function (title) {
+                title.addEventListener('click', function () {
+                    // Accède au parent '.filter-group' et bascule la classe 'open'
+                    const filterGroup = this.parentElement;
+                    filterGroup.classList.toggle('open');
+    
+                    // Affiche ou masque le conteneur des checkboxes
+                    const checkboxContainer = filterGroup.querySelector('.checkbox-container');
+                    if (filterGroup.classList.contains('open')) {
+                        checkboxContainer.style.display = 'block';
+                    } else {
+                        checkboxContainer.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+    
     <script src="{{ url_for('static', filename='js/pivot_table.js') }}"></script>
 </body>
 </html>
