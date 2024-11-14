@@ -16,7 +16,9 @@
 <body>
     <div class="header-secondary">
         <div class="nav-links">
-            <a href="{{ url_for('list_regions') }}">Statistiques</a>
+            <a href="{{ url_for('list_regions') }}">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Statistiques" style="width: 70px; height: auto;">
+            </a>   
             <a href="{{ url_for('search_indicators') }}">Requête</a>
             <a href="#">A Propos</a>
             <a href="#connexion">Aide</a>

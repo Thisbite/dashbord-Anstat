@@ -371,35 +371,24 @@ def request_indicateur():
     mode_calcul = None
     if request.method == 'GET':
         indicateur_SELECT = request.args.get('indicateur_elastic')
-        # Appliquer les filtres (indicateur, etc.)
-        #df_filtered = data_mysql.drop(columns=['statut_approbation', 'id'], errors='ignore')
         df_filtered = data_mysql
-        # Vérifier si l'indicateur sélectionné est présent et non nul
-        #if indicateur_SELECT and 'indicateur' in df_filtered.columns:
+        
         if indicateur_SELECT and 'Indicateurs' in df_filtered.columns:
             try:
-                # Récupérer la définition et le mode de calcul de l'indicateur
                 definitions = qr.definition_indicateur(indicateur_SELECT)
                 mode_calcul = qr.mode_calcul_indicateur(indicateur_SELECT)
                 
-                # Convertir la colonne 'indicateur' en chaînes de caractères et appliquer le filtre
                 df_filtered['Indicateurs'] = df_filtered['Indicateurs'].astype(str).str.strip().str.lower()
                 df_filtered = df_filtered[df_filtered['Indicateurs'] == indicateur_SELECT.strip().lower()]
                 
-                # Gérer le cas où aucun résultat ne correspond à l'indicateur sélectionné
                 if df_filtered.empty:
-                    print("Aucun résultat trouvé pour l'indicateur sélectionné.")
+                    return render_template('no_data.html')  # Rediriger vers la page 'Aucune donnée disponible'
                     
             except Exception as e:
                 print(f"Erreur lors de la récupération de l'indicateur: {e}")
                 definitions = "Indicateur non disponible"
                 mode_calcul = "Non défini"
-                
-        else:
-            print("Aucun filtre appliqué sur l'indicateur")
-        # Supprimer les colonnes contenant uniquement des NaN
-        #df_filtered = df_filtered.dropna(axis=1, how='all')
-        # Remplacer les valeurs manquantes par des chaînes vides
+        
         df_final = pd.DataFrame()
         df_filtered = df_filtered.fillna('-')
         for _, row in df_filtered.iterrows():
@@ -414,31 +403,29 @@ def request_indicateur():
             temp_row["Annee"] = row["Annee"]
             cle_pivot_table = ",".join(dimension_cols) + ",Annee"
             temp_row["cle_pivot_table"] = cle_pivot_table
-            
-            # Ajouter cette ligne nettoyée au DataFrame final
             df_final = pd.concat([df_final, temp_row.to_frame().T], ignore_index=True)
-            
+        
         df_filtered = df_final.dropna(axis=1, how='all')
         
-        # Stocker le DataFrame filtré dans la session pour une utilisation ultérieure
-        df_filtered_json =df_filtered.to_json(orient='split')  # Convertir en JSON pour le stockage
+        if df_filtered.empty:
+            return render_template('no_data.html')  # Rediriger vers la page 'Aucune donnée disponible'
+        
+        df_filtered_json = df_filtered.to_json(orient='split')
         session['df_filtered'] = df_filtered_json
-        # Obtenir les colonnes valables pour les désagrégations
         existing_columns = df_filtered.columns.tolist()
         columns_to_exclude = ['Valeur', 'Indicateurs','cle_pivot_table']
         desaggregation_columns = [col for col in existing_columns if col not in columns_to_exclude]
-        print("Colonnes valables pour désagrégation :", desaggregation_columns)
-        print("Header",df_filtered.head())
-
+    
     return render_template(
         'result.html',
         definitions=definitions,
         mode_calcul=mode_calcul,
-        colonne_valable=desaggregation_columns,  # Colonnes à utiliser pour désagréger les données
-        indicateurs=indicateurs_options,  # Options d'indicateurs pour le dropdown
-        indicateur2=indicateur_SELECT,  # Indicateur sélectionné
-        df_filtered=df_filtered_json  # Data JSON pour le filtrage
+        colonne_valable=desaggregation_columns,
+        indicateurs=indicateurs_options,
+        indicateur2=indicateur_SELECT,
+        df_filtered=df_filtered_json
     )
+
 
 
 # Page de requête au niveau de l'accueil---- Pour la page requete
@@ -465,7 +452,6 @@ def request_indicateur2(indicateur):
         print("Aucun filtre appliqué sur l'indicateur")
     # Supprimer les colonnes contenant uniquement des NaN
     df_filtered = df_filtered.dropna(axis=1, how='all')
-    print('Ma data test 2:',df_filtered.head())
     df_filtered = df_filtered.fillna('-')
     df_final = pd.DataFrame()
     for _, row in df_filtered.iterrows():
@@ -484,6 +470,8 @@ def request_indicateur2(indicateur):
             df_final = pd.concat([df_final, temp_row.to_frame().T], ignore_index=True)
             
     df_filtered = df_final.dropna(axis=1, how='all')
+    if df_filtered.empty:
+            return render_template('no_data.html')  # Rediriger vers la page 'Aucune donnée disponible'
     # Stocker le DataFrame filtré dans la session pour une utilisation ultérieure
     df_filtered_json = df_filtered.to_json(orient='split')  # Convertir en JSON pour le stockage
     print('Definitions associée:',definitions)
@@ -540,6 +528,7 @@ def process_columns():
 
         # Filtrer les lignes de df_filtered où cle_pivot_table contient les mêmes éléments que my_index
         data = df_filtered[df_filtered['cle_pivot_table'].apply(lambda x: set(x.split(',')) == my_index_set)]
+        data['Annee'] = df_filtered['Annee'].astype(str)
 
         # Afficher le DataFrame filtré pour vérification
         print('Data pour clé:',data )
@@ -551,7 +540,7 @@ def process_columns():
             aggfunc='sum',
             fill_value=0
         )
-        pivot_table = pivot_table / 2
+        pivot_table = pivot_table 
         # Réinitialiser l'index pour convertir les données en format JSON structuré
         pivot_table.reset_index(inplace=True)
         result_data = {
