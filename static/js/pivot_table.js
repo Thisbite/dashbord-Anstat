@@ -80,7 +80,7 @@ function sendColumnsToServer() {
         body: JSON.stringify({
             row_columns: rowColumns,
             col_columns: colColumns,
-            value_column: 'valeur'
+            value_column: 'Valeur'
         })
     })
     .then(response => response.json())

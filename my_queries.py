@@ -99,7 +99,6 @@ def get_data_from_mysql():
     conn = cf.create_connection()
     # Requête SQL pour sélectionner toutes les données
     query = "SELECT * FROM valeur_indicateur_libelle_ok"
-
     # Charger les données dans un DataFrame pandas
     df = pd.read_sql(query, conn)
 
@@ -108,4 +107,64 @@ def get_data_from_mysql():
 
     return df
 
+def get_data_from_mysql_V1():
+    # Configurer les informations de connexion à la base de données MySQL
+    conn = cf.create_connection()
+    # Requête SQL pour sélectionner toutes les données
+    query = "SELECT Dimension,Modalites,Indicateurs,Annee,Valeur FROM V1_indicateur"
+    # Charger les données dans un DataFrame pandas
+    df = pd.read_sql(query, conn)
+
+    # Fermer la connexion
+    conn.close()
+
+    return df
+
+
+
+# Pour la nouvelle base de données 
+def insert_data_from_excel(file_path):
+    # Charger le fichier Excel dans un DataFrame pandas
+    df = pd.read_excel(file_path)
+    # Renommer les colonnes si elles contiennent des accents ou espaces
+    df.columns = ['Dimension', 'Modalites', 'Indicateurs', 'Année', 'Valeur']
+    # Établir la connexion à la base de données
+    conn =cf.create_connection()
+    if conn is None:
+        print("Connexion échouée. Impossible d'insérer les données.")
+        return
+    try:
+        cursor = conn.cursor()
+        # Requête d'insertion
+        insert_query = """
+        INSERT INTO V1_indicateur (Dimension, Modalites, Indicateurs, Annee, Valeur)
+        VALUES (%s, %s, %s, %s, %s)
+        """
+        # Insérer chaque ligne du DataFrame dans la table
+        for _, row in df.iterrows():
+            cursor.execute(insert_query, (
+                row['Dimension'],
+                row['Modalites'],
+                row['Indicateurs'],
+                row['Année'],
+                row['Valeur']
+            ))
+        
+        # Valider les changements
+        conn.commit()
+        print("Données insérées avec succès dans la table V1_indicateur.")
+    
+    except Error as e:
+        print(f"Erreur lors de l'insertion des données : {e}")
+    
+    finally:
+        # Fermer la connexion
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+            print("Connexion MySQL fermée.")
+
+# Chemin du fichier Excel
+#file_path = 'V1_indicateurs.xlsx'
+#insert_data_from_excel(file_path)
 

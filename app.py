@@ -112,15 +112,7 @@ def index_data_from_excel():
     
 
 
-    
 
-
-
-
-
-#index_data_from_excel()
-#index_data_from_excel()
-#
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     query = request.form.get('query') or request.args.get('query')  # Récupère 'query' de POST ou GET
@@ -157,11 +149,9 @@ def search():
                 }
             }
         }
-
         # Effectue la recherche
         search_result = es.search(index=index_name, body=body)
         hits = search_result['hits']['hits']
-        
         # Utilisation d'un set pour éviter les doublons
         unique_results = []
         seen = set()
@@ -317,7 +307,6 @@ def dashboard():
 def fiche_synoptique():
      # Définir les années de 2018 à 2024
     region = request.args.get('region', session.get('region'))
-    
     if region is None:
         return "Veuillez choisir une région.", 400
     return render_template('pages/notifications.html',region=region)
@@ -332,8 +321,6 @@ def fiche_synoptique():
 @app.route('/')
 def list_regions():
     regions = qr.options_regions()
-    #map_html = dt.statistiques()
-    coord_list=[]
     # Données
     years = [2019, 2020, 2021, 2022, 2023]
     population = [24.0, 27.0, 27.4, 29.8, 30.38]
@@ -342,7 +329,6 @@ def list_regions():
     age_distribution = [40, 20, 30, 10, 18, 20]
 
     return render_template('home.html',
-                           coord_list=coord_list,
                            years=years,
                            population=population,
                            school_enrollment_rate=school_enrollment_rate,
@@ -367,91 +353,82 @@ def show_region_pdf(region):
 # Route pour afficher la page avec les indicateurs et les régions
 @app.route('/search_indicators')
 def search_indicators():
-    annee_debut = request.args.get('annee_debut')
-    annee_fin = request.args.get('annee_fin')
     indicateurs = qr.options_indicateur()  # Fonction qui récupère les indicateurs
     regions = qr.options_regions()  # Fonction qui récupère les régions
     return render_template('search_indicateur.html',indicateurs=indicateurs,regions=regions)
-#print(qr.options_indicateur())
-# Route pour récupérer les départements en fonction de la région sélectionnée
-@app.route('/get_departements', methods=['GET'])
-def get_departements():
-    region = request.args.get('region')
-    df = qr.get_data_from_mysql()  # Récupère les données depuis la base de données
-    departements = df[df['region'] == region]['departement'].sort_values().unique()
-    return jsonify(list(departements))
-
-# Route pour récupérer les sous-préfectures en fonction du département sélectionné
-@app.route('/get_sous_prefectures', methods=['GET'])
-def get_sous_prefectures():
-    departement = request.args.get('departement')
-    df = qr.get_data_from_mysql()  # Récupère les données depuis la base de données
-    sous_prefectures = df[df['departement'] == departement]['sousprefecture'].sort_values().unique()
-    return jsonify(list(sous_prefectures))
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Page de requête au niveau de l'accueil
 @app.route('/request_indicateur', methods=['GET', 'POST'])
 def request_indicateur():
     # Charger les données depuis MySQL
-    df = qr.get_data_from_mysql()
-    
+    data_mysql = qr.get_data_from_mysql_V1()
     # Obtenir les options pour chaque filtre (indicateur, région, etc.)
     indicateurs_options = qr.options_indicateur()
     indicateur_SELECT = None
     df_filtered = pd.DataFrame()
-
+    definitions = None
+    mode_calcul = None
     if request.method == 'GET':
         indicateur_SELECT = request.args.get('indicateur_elastic')
-        definitions=None
-        
         # Appliquer les filtres (indicateur, etc.)
-        df_filtered = df.drop(columns=['statut_approbation', 'id'], errors='ignore')
-
-        # Appliquer le filtre si 'indicateur' existe et que la sélection d'indicateur est présente
-        if indicateur_SELECT and 'indicateur' in df_filtered.columns:
-            definitions=qr.definition_indicateur(indicateur_SELECT)
-            mode_calcul=qr.mode_calcul_indicateur(indicateur_SELECT)
-            # Convertir la colonne 'indicateur' en chaînes de caractères
-            df_filtered['indicateur'] = df_filtered['indicateur'].astype(str).str.strip().str.lower()
-            
-            # Appliquer le filtre sur la colonne 'indicateur'
-            df_filtered = df_filtered[df_filtered['indicateur'] == indicateur_SELECT.strip().lower()]
+        #df_filtered = data_mysql.drop(columns=['statut_approbation', 'id'], errors='ignore')
+        df_filtered = data_mysql
+        # Vérifier si l'indicateur sélectionné est présent et non nul
+        #if indicateur_SELECT and 'indicateur' in df_filtered.columns:
+        if indicateur_SELECT and 'Indicateurs' in df_filtered.columns:
+            try:
+                # Récupérer la définition et le mode de calcul de l'indicateur
+                definitions = qr.definition_indicateur(indicateur_SELECT)
+                mode_calcul = qr.mode_calcul_indicateur(indicateur_SELECT)
+                
+                # Convertir la colonne 'indicateur' en chaînes de caractères et appliquer le filtre
+                df_filtered['Indicateurs'] = df_filtered['Indicateurs'].astype(str).str.strip().str.lower()
+                df_filtered = df_filtered[df_filtered['Indicateurs'] == indicateur_SELECT.strip().lower()]
+                
+                # Gérer le cas où aucun résultat ne correspond à l'indicateur sélectionné
+                if df_filtered.empty:
+                    print("Aucun résultat trouvé pour l'indicateur sélectionné.")
+                    
+            except Exception as e:
+                print(f"Erreur lors de la récupération de l'indicateur: {e}")
+                definitions = "Indicateur non disponible"
+                mode_calcul = "Non défini"
+                
         else:
             print("Aucun filtre appliqué sur l'indicateur")
-        
         # Supprimer les colonnes contenant uniquement des NaN
-        df_filtered = df_filtered.dropna(axis=1, how='all')
-
+        #df_filtered = df_filtered.dropna(axis=1, how='all')
         # Remplacer les valeurs manquantes par des chaînes vides
+        df_final = pd.DataFrame()
         df_filtered = df_filtered.fillna('-')
-
-        # Stocker le DataFrame filtré dans la session pour une utilisation ultérieure
-        df_filtered_json = df_filtered.to_json(orient='split')  # Convertir en JSON pour le stockage
+        for _, row in df_filtered.iterrows():
+            dimension_cols = row['Dimension'].split(',')
+            category_values = row['Modalites'].split('/')
+            dimension_cols = [col.strip() for col in dimension_cols]
+            category_values = [value.strip() for value in category_values]
+            dimension_dict = dict(zip(dimension_cols, category_values))
+            temp_row = pd.Series(dimension_dict)
+            temp_row['Indicateurs'] = row['Indicateurs']
+            temp_row["Valeur"] = row["Valeur"]
+            temp_row["Annee"] = row["Annee"]
+            cle_pivot_table = ",".join(dimension_cols) + ",Annee"
+            temp_row["cle_pivot_table"] = cle_pivot_table
+            
+            # Ajouter cette ligne nettoyée au DataFrame final
+            df_final = pd.concat([df_final, temp_row.to_frame().T], ignore_index=True)
+            
+        df_filtered = df_final.dropna(axis=1, how='all')
         
+        # Stocker le DataFrame filtré dans la session pour une utilisation ultérieure
+        df_filtered_json =df_filtered.to_json(orient='split')  # Convertir en JSON pour le stockage
         session['df_filtered'] = df_filtered_json
-
         # Obtenir les colonnes valables pour les désagrégations
         existing_columns = df_filtered.columns.tolist()
-        columns_to_exclude = ['valeur', 'indicateur']
+        columns_to_exclude = ['Valeur', 'Indicateurs','cle_pivot_table']
         desaggregation_columns = [col for col in existing_columns if col not in columns_to_exclude]
         print("Colonnes valables pour désagrégation :", desaggregation_columns)
+        print("Header",df_filtered.head())
 
     return render_template(
         'result.html',
@@ -463,34 +440,50 @@ def request_indicateur():
         df_filtered=df_filtered_json  # Data JSON pour le filtrage
     )
 
+
 # Page de requête au niveau de l'accueil---- Pour la page requete
 @app.route('/search_indicators2/<path:indicateur>') 
 def request_indicateur2(indicateur):
     # Charger les données depuis MySQL
-    df = qr.get_data_from_mysql()
+    df= qr.get_data_from_mysql_V1()
     indicateur_SELECT = urllib.parse.unquote(indicateur)
     definitions=None
     print('Indicateur de js:',indicateur_SELECT)
     # Obtenir les options pour chaque filtre (indicateur, région, etc.
     df_filtered = pd.DataFrame()
-    df_filtered = df.drop(columns=['statut_approbation', 'id'], errors='ignore')
+    df_filtered =df
     # Appliquer le filtre si 'indicateur' existe et que la sélection d'indicateur est présente
-    if indicateur_SELECT and 'indicateur' in df_filtered.columns:
+    if indicateur_SELECT and 'Indicateurs' in df_filtered.columns:
         # Convertir la colonne 'indicateur' en chaînes de caractères
-        df_filtered['indicateur'] = df_filtered['indicateur'].astype(str).str.strip().str.lower()
+        df_filtered['Indicateurs'] = df_filtered['Indicateurs'].astype(str).str.strip().str.lower()
         definitions=qr.definition_indicateur(indicateur_SELECT)
         mode_calcul=qr.mode_calcul_indicateur(indicateur_SELECT)
         
         # Appliquer le filtre sur la colonne 'indicateur'
-        df_filtered = df_filtered[df_filtered['indicateur'] == indicateur_SELECT.strip().lower()]
+        df_filtered = df_filtered[df_filtered['Indicateurs'] == indicateur_SELECT.strip().lower()]
     else:
         print("Aucun filtre appliqué sur l'indicateur")
     # Supprimer les colonnes contenant uniquement des NaN
     df_filtered = df_filtered.dropna(axis=1, how='all')
-
-    # Remplacer les valeurs manquantes par des chaînes vides
+    print('Ma data test 2:',df_filtered.head())
     df_filtered = df_filtered.fillna('-')
-
+    df_final = pd.DataFrame()
+    for _, row in df_filtered.iterrows():
+            dimension_cols = row['Dimension'].split(',')
+            category_values = row['Modalites'].split('/')
+            dimension_cols = [col.strip() for col in dimension_cols]
+            category_values = [value.strip() for value in category_values]
+            dimension_dict = dict(zip(dimension_cols, category_values))
+            temp_row = pd.Series(dimension_dict)
+            temp_row['Indicateurs'] = row['Indicateurs']
+            temp_row["Valeur"] = row["Valeur"]
+            temp_row["Annee"] = row["Annee"]
+            cle_pivot_table = ",".join(dimension_cols) + ",Annee"
+            temp_row["cle_pivot_table"] = cle_pivot_table
+            # Ajouter cette ligne nettoyée au DataFrame final
+            df_final = pd.concat([df_final, temp_row.to_frame().T], ignore_index=True)
+            
+    df_filtered = df_final.dropna(axis=1, how='all')
     # Stocker le DataFrame filtré dans la session pour une utilisation ultérieure
     df_filtered_json = df_filtered.to_json(orient='split')  # Convertir en JSON pour le stockage
     print('Definitions associée:',definitions)
@@ -498,7 +491,7 @@ def request_indicateur2(indicateur):
     session['df_filtered'] = df_filtered_json
     # Obtenir les colonnes valables pour les désagrégations
     existing_columns = df_filtered.columns.tolist()
-    columns_to_exclude = ['valeur', 'indicateur']
+    columns_to_exclude = ['Valeur', 'Indicateurs','cle_pivot_table']
     desaggregation_columns = [col for col in existing_columns if col not in columns_to_exclude]
     return render_template(
         'result.html',
@@ -516,8 +509,9 @@ def process_columns():
     data = request.get_json()
     row_columns = data.get('row_columns', [])
     col_columns = data.get('col_columns', [])
-    value_column = data.get('value_column', 'valeur')
-
+    value_column = data.get('value_column', 'Valeur')
+    my_index=[row_columns,col_columns]
+    #print("Les choix utilisateurs",my_index)
     # Charger les données réelles depuis la session ou depuis MySQL si nécessaire
     df_filtered_json = session.get('df_filtered', None)
     if df_filtered_json:
@@ -533,17 +527,31 @@ def process_columns():
             return jsonify({"error": f"La colonne '{value_column}' contient des données non numériques : {e}"}), 400
     try:
         #Applique la nouvelle structure du jeu de données
-        mes_index=[col_columns,row_columns]
-        mes_index = list(chain.from_iterable(mes_index))
-        print('mes index:',mes_index)
+        #print('data dabs processus:',df_filtered)
+        #mes_index=[col_columns,row_columns]
+        my_index= list(chain.from_iterable(my_index))
+        data_V1=my_index
+        data_V1=sorted(data_V1)
+        print('mes index:',data_V1)
+        #Ordonnée la data
+        df_filtered['cle_pivot_table'] = sorted(df_filtered['cle_pivot_table'])
+        # Convertir my_index en un ensemble pour faciliter la comparaison
+        my_index_set = set(my_index)
+
+        # Filtrer les lignes de df_filtered où cle_pivot_table contient les mêmes éléments que my_index
+        data = df_filtered[df_filtered['cle_pivot_table'].apply(lambda x: set(x.split(',')) == my_index_set)]
+
+        # Afficher le DataFrame filtré pour vérification
+        print('Data pour clé:',data )
         pivot_table = pd.pivot_table(
-            df_filtered,
+            data,
             index=row_columns,
             columns=col_columns,
             values=value_column,
             aggfunc='sum',
             fill_value=0
         )
+        pivot_table = pivot_table / 2
         # Réinitialiser l'index pour convertir les données en format JSON structuré
         pivot_table.reset_index(inplace=True)
         result_data = {
@@ -583,7 +591,7 @@ def get_data():
         return jsonify({"error": "Une erreur est survenue lors du chargement des données."}), 500
 
 
-
+#Page  de recherche
 @app.route('/search_boostrap', methods=['GET', 'POST'])
 def search_boostrap():
     return render_template('boostrap_search.html')
