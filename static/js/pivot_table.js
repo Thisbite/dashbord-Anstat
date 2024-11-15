@@ -331,34 +331,99 @@ function mergeTableCells() {
 document.getElementById('download-xlsx').addEventListener('click', downloadXLSX);
 document.getElementById('download-csv').addEventListener('click', downloadCSV);
 
+
+
 function downloadXLSX() {
     if (!filteredTableData || filteredTableData.length === 0) {
         alert("No data selected.");
         return;
     }
 
-    // Créer un workbook avec SheetJS
     const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(filteredTableData);
-    XLSX.utils.book_append_sheet(wb, ws, 'Data');
+    const ws = XLSX.utils.aoa_to_sheet([]);
 
-    // Télécharger le fichier
+    // Ajouter les en-têtes avec fusion
+    const columns = tableData.columns; // Les colonnes hiérarchiques
+    const levels = columns.length > 0 ? columns[0].length : 0;
+
+    let rowOffset = 0;
+    for (let level = 0; level < levels; level++) {
+        const headerRow = [];
+        let previousValue = null;
+        let colspan = 0;
+
+        columns.forEach((col, index) => {
+            const currentValue = col[level];
+            if (currentValue === previousValue) {
+                colspan += 1; // Incrémente le colspan pour les valeurs identiques
+            } else {
+                if (colspan > 0) {
+                    const mergeCell = {
+                        s: { r: rowOffset, c: headerRow.length - colspan },
+                        e: { r: rowOffset, c: headerRow.length - 1 }
+                    };
+                    ws['!merges'] = ws['!merges'] || [];
+                    ws['!merges'].push(mergeCell);
+                }
+                headerRow.push(currentValue || '');
+                previousValue = currentValue;
+                colspan = 1; // Réinitialise colspan pour la nouvelle valeur
+            }
+
+            // Dernière cellule
+            if (index === columns.length - 1 && colspan > 1) {
+                const mergeCell = {
+                    s: { r: rowOffset, c: headerRow.length - colspan },
+                    e: { r: rowOffset, c: headerRow.length - 1 }
+                };
+                ws['!merges'] = ws['!merges'] || [];
+                ws['!merges'].push(mergeCell);
+            }
+        });
+
+        XLSX.utils.sheet_add_aoa(ws, [headerRow], { origin: rowOffset });
+        rowOffset++;
+    }
+
+    // Ajouter les données
+    filteredTableData.forEach(row => {
+        const rowData = tableData.columns.map(col => {
+            const key = Array.isArray(col) ? col.join(' ') : col;
+            return row[key];
+        });
+        XLSX.utils.sheet_add_aoa(ws, [rowData], { origin: rowOffset });
+        rowOffset++;
+    });
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Data');
     XLSX.writeFile(wb, 'donnees_filtrees.xlsx');
 }
 
 function downloadCSV() {
     if (!filteredTableData || filteredTableData.length === 0) {
-        alert("Aucune variable selectionnée");
+        alert("Aucune variable sélectionnée");
         return;
     }
 
-    const headers = Object.keys(filteredTableData[0]);
-    const rows = filteredTableData.map(row => headers.map(header => row[header]));
+    // Gérer les colonnes hiérarchiques
+    const headers = tableData.columns.map(col => col.join(' ')); // Colonnes combinées pour les en-têtes
+    const rows = filteredTableData.map(row => {
+        return tableData.columns.map(col => {
+            const key = Array.isArray(col) ? col.join(' ') : col; // Normaliser la clé de colonne
+            return row[key] || ''; // Remplace undefined par une chaîne vide
+        });
+    });
 
-    // Construire le contenu CSV
+    // Construire le contenu CSV avec des en-têtes hiérarchiques
     const csvContent = [
-        headers.join(','),    // Ajouter l'en-tête
-        ...rows.map(row => row.join(','))   // Ajouter les lignes
+        headers.join(','),    // Ajouter l'en-tête formaté
+        ...rows.map(row => row.map(value => {
+            // Échapper les valeurs contenant des virgules, guillemets ou nouvelles lignes
+            if (typeof value === 'string' && (value.includes(',') || value.includes('"') || value.includes('\n'))) {
+                return `"${value.replace(/"/g, '""')}"`; // Doubler les guillemets pour l'échappement
+            }
+            return value;
+        }).join(','))   // Ajouter les lignes de données
     ].join('\n');
 
     // Créer un fichier blob et déclencher le téléchargement
@@ -386,23 +451,85 @@ function downloadPDF() {
 
     // Titre du PDF
     doc.setFontSize(16);
-    doc.text('Données Filtrées', 10, 10);
+    doc.text('Données Filtrées', 10, 15);
 
-    // Préparer les données pour autoTable
-    const headers = [Object.keys(filteredTableData[0])];
-    const rows = filteredTableData.map(row => Object.values(row));
+    // Gestion des colonnes hiérarchiques
+    const columns = tableData.columns;
+    const levels = columns.length > 0 ? columns[0].length : 0;
 
-    // Utiliser autoTable pour générer le tableau
+    const headerRows = [];
+    for (let level = 0; level < levels; level++) {
+        const headerRow = [];
+        let previousValue = null;
+        let colspan = 0;
+
+        columns.forEach((col, index) => {
+            const currentValue = col[level];
+            if (currentValue === previousValue) {
+                colspan += 1;
+            } else {
+                if (colspan > 0) {
+                    headerRow[headerRow.length - 1].colspan = colspan;
+                }
+                headerRow.push({ content: currentValue || '', colspan: 1 });
+                previousValue = currentValue;
+                colspan = 1;
+            }
+
+            if (index === columns.length - 1 && colspan > 1) {
+                headerRow[headerRow.length - 1].colspan = colspan;
+            }
+        });
+
+        headerRows.push(headerRow);
+    }
+
+    // Préparer les données du tableau
+    const bodyRows = filteredTableData.map(row =>
+        columns.map(col => {
+            const key = Array.isArray(col) ? col.join(' ') : col;
+            return row[key] || '';
+        })
+    );
+
+    // Créer les en-têtes avec les fusions
+    const headWithSpans = headerRows.map(row => {
+        return row.map(cell => ({
+            content: cell.content,
+            colSpan: cell.colspan || 1,
+            styles: {
+                halign: 'center',
+                fillColor: [0, 102, 204], // Bleu clair
+                textColor: [255, 255, 255], // Blanc
+                fontStyle: 'bold'
+            }
+        }));
+    });
+
+    // Créer les données avec styles
+    const bodyWithStyles = bodyRows.map(row =>
+        row.map(cell => ({
+            content: cell,
+            styles: { halign: 'center', fontSize: 10 }
+        }))
+    );
+
+    // Générer le tableau avec autoTable
     doc.autoTable({
-        startY: 20,                  // Position du tableau sous le titre
-        head: headers,               // En-têtes du tableau
-        body: rows,                  // Contenu des lignes
-        theme: 'grid',               // Style avec des bordures de grille
-        headStyles: { fillColor: [7, 65, 32] }, // Couleur de fond de l'en-tête
-        styles: { fontSize: 10, cellPadding: 4 }, // Style de texte et de cellule
-        margin: { top: 20 }
+        startY: 25,
+        head: headWithSpans,
+        body: bodyWithStyles,
+        theme: 'grid',
+        headStyles: { fillColor: [0, 102, 204], textColor: [255, 255, 255], fontStyle: 'bold' },
+        bodyStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], fontSize: 10, halign: 'center' },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        margin: { top: 20 },
+        columnStyles: {
+            0: { fillColor: [230, 230, 250], halign: 'center', fontStyle: 'bold' } // Exemple pour la première colonne
+        }
     });
 
     // Télécharger le PDF
     doc.save('donnees_filtrees.pdf');
 }
+
