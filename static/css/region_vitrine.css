@@ -1,0 +1,181 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+.header-secondary {
+    background-color: #468409;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.nav-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    padding: 10px 20px;
+    font-size: 18px;
+    margin: 0 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.nav-links a:hover {
+    background-color: #0cc52e;
+    color: white;
+}
+.search-bar {
+    display: flex;
+    align-items: center;
+}
+
+.search-bar input[type="text"] {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #009E60; /* Bordure verte */
+    border-radius: 4px;
+    width: 300px;
+    margin-right: 10px;
+}
+
+.search-bar button {
+    padding: 8px 12px;
+    background-color: #1ca208; /* Fond orange pour le bouton */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.search-bar button:hover {
+    background-color: #009E60; /* Fond vert au survol */
+}
+
+
+.card {
+    border: 1px solid #ddd; /* Ajoute une bordure subtile */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre pour un effet élégant */
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #0056b3; /* Couleur personnalisée pour les titres */
+}
+
+.card-text {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.btn-green {
+    background-color: #28a745 !important;
+    color: #fff !important;
+    border: none;
+}
+
+.card-img-top {
+    height: 150px; /* Augmente la hauteur */
+    width: 350px; /* Augmente la largeur tout en restant dans une taille raisonnable */
+    max-width: 100%; /* Empêche les images de dépasser la largeur de leur conteneur */
+    object-fit: contain; /* Affiche l'image entière sans la couper */
+    display: block; /* Nécessaire pour centrer avec margin */
+    margin: 0 auto; /* Centre l'image horizontalement */
+    padding: 10px; /* Ajoute un léger espace autour de l'image */
+    /*border-bottom: 1px solid #ddd;  Optionnel : ligne de séparation subtile */
+    background-color: none; /* Ajoute un fond clair pour une meilleure visibilité (optionnel) */
+    border-radius: 5px; /* Ajoute des coins arrondis */
+}
+
+/* pour les fiches synoptiques */
+.section-nav .section-btn {
+    background-color: #28a745; /* Vert */
+    color: #ffffff; /* Blanc */
+    border: none; 
+    padding: 10px 20px; /* Ajoute du padding */
+    font-size: 16px; /* Ajuste la taille du texte */
+    border-radius: 5px; /* Donne un effet arrondi */
+    cursor: pointer; /* Change le curseur au survol */
+    transition: background-color 0.3s ease; /* Transition pour effet au survol */
+}
+/* Applique une couleur de fond verte et une écriture blanche */
+.section-nav {
+    display: flex; /* Active Flexbox */
+    justify-content: center; /* Centre les boutons horizontalement */
+    gap: 10px; /* Ajoute un espace entre les boutons */
+    margin-top: 20px; /* Ajoute de l'espace au-dessus de la barre */
+}
+
+/* Effet de survol pour les boutons */
+.section-nav .section-btn:hover {
+    background-color: #218838; /* Vert foncé au survol */
+}
+
+/* Espacement entre les boutons */
+.section-nav .section-btn + .section-btn {
+    margin-left: 10px; /* Espacement entre les boutons */
+}
+
+
+
+/*Pour le graphe du dashbord*/
+#dashboard-container {
+    border-top: 4px solid green;
+    padding: 20px;
+    border-bottom: 4px solid green;
+}
+#charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* La liste des filtres ou des selections*/
+/* Conteneur principal pour les cases à cocher */
+#checkbox-container {
+    display: flex; /* Active le mode Flexbox */
+    flex-wrap: wrap; /* Permet le retour à la ligne si nécessaire */
+    gap: 15px; /* Espacement entre les éléments */
+    align-items: center; /* Centrer verticalement */
+}
+
+/* Style pour chaque case avec son label */
+#checkbox-container div {
+    display: flex; /* Alignement horizontal d'une case et de son label */
+    align-items: center;
+}
+
+/* Ajout d'un espacement entre la case et le texte */
+#checkbox-container input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+/* Ajustement de la taille des textes */
+#checkbox-container label {
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    color: #333; /* Couleur du texte */
+}
+
+
+
+
+
+
+
+
+
+

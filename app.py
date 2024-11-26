@@ -358,7 +358,7 @@ def search_indicators():
     return render_template('search_indicateur.html',indicateurs=indicateurs,regions=regions)
 
 
-#Request option elastic
+
 @app.route('/request_indicateur', methods=['GET', 'POST'])
 def request_indicateur():
     # Charger les données depuis MySQL
@@ -371,22 +371,26 @@ def request_indicateur():
     mode_calcul = None
     if request.method == 'GET':
         indicateur_SELECT = request.args.get('indicateur_elastic')
-        df_filtered = data_mysql # Transmission de la données au dataframe
+        df_filtered = data_mysql
+        
         if indicateur_SELECT and 'Indicateurs' in df_filtered.columns:
             try:
                 definitions = qr.definition_indicateur(indicateur_SELECT)
                 mode_calcul = qr.mode_calcul_indicateur(indicateur_SELECT)
+                
                 df_filtered['Indicateurs'] = df_filtered['Indicateurs'].astype(str).str.strip().str.lower()
                 df_filtered = df_filtered[df_filtered['Indicateurs'] == indicateur_SELECT.strip().lower()]
+                
                 if df_filtered.empty:
-                    return render_template('no_data.html')  # Rediriger vers la page 'Aucune donnée disponible' 
+                    return render_template('no_data.html')  # Rediriger vers la page 'Aucune donnée disponible'
+                    
             except Exception as e:
                 print(f"Erreur lors de la récupération de l'indicateur: {e}")
                 definitions = "Indicateur non disponible"
                 mode_calcul = "Non défini"
+        
         df_final = pd.DataFrame()
         df_filtered = df_filtered.fillna('-')
-        #Pour traiter les données avant de fait les tableau croisé dynamique
         for _, row in df_filtered.iterrows():
             dimension_cols = row['Dimension'].split(',')
             category_values = row['Modalites'].split('/')
@@ -400,7 +404,9 @@ def request_indicateur():
             cle_pivot_table = ",".join(dimension_cols) + ",Annee"
             temp_row["cle_pivot_table"] = cle_pivot_table
             df_final = pd.concat([df_final, temp_row.to_frame().T], ignore_index=True)
-        df_filtered = df_final.dropna(axis=1, how='all') 
+        
+        df_filtered = df_final.dropna(axis=1, how='all')
+        
         if df_filtered.empty:
             return render_template('no_data.html')  # Rediriger vers la page 'Aucune donnée disponible'
         
@@ -420,6 +426,8 @@ def request_indicateur():
         df_filtered=df_filtered_json
     )
 
+
+
 # Page de requête au niveau de l'accueil---- Pour la page requete
 @app.route('/search_indicators2/<path:indicateur>') 
 def request_indicateur2(indicateur):
@@ -437,6 +445,7 @@ def request_indicateur2(indicateur):
         df_filtered['Indicateurs'] = df_filtered['Indicateurs'].astype(str).str.strip().str.lower()
         definitions=qr.definition_indicateur(indicateur_SELECT)
         mode_calcul=qr.mode_calcul_indicateur(indicateur_SELECT)
+        
         # Appliquer le filtre sur la colonne 'indicateur'
         df_filtered = df_filtered[df_filtered['Indicateurs'] == indicateur_SELECT.strip().lower()]
     else:
@@ -593,6 +602,12 @@ def get_data2():
 
     # Retourner les données en JSON
     return jsonify(data_str_keys)
+
+
+#Bloc du dashbord
+@app.route('/region_vitrine')
+def region_vitrine():
+    return render_template('region_vitrine.html')
 
 
 if __name__ == '__main__':

@@ -6,27 +6,6 @@ body {
     padding: 0;
 }
 
-
-
-/* Conteneur principal */
-.container {
-    display: flex;
-    justify-content: space-between; /* Assure une répartition égale des colonnes */
-    width: 90%; /* Utilisation maximale de la largeur de la fenêtre */
-    max-width: 1200px;
-    background-color: #fff;
-    padding: 20px;
-    margin: 0 auto;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-
-
-
-
-
-
 /* Style de la barre latérale gauche (Domaines) */
 .sidebar {
     width: 220px; /* Réduire légèrement la largeur */
@@ -36,12 +15,6 @@ body {
     overflow-y: auto; /* Ajouter un défilement si le contenu dépasse */
     min-width: 40vh; 
 }
-
-
-
-
-
-
 
 .sidebar h5 {
     background-color: #0d5e0d;
@@ -54,6 +27,7 @@ body {
 .sidebar ul {
     list-style-type: none;
     padding: 0;
+    border: none;
 }
 
 .sidebar ul li {
@@ -64,6 +38,9 @@ body {
     cursor: pointer;
     border-radius: 8px;
     transition: background-color 0.3s;
+    border: none;
+    color: #033703;
+    font-weight: bold;
 }
 
 .sidebar ul li:hover {
@@ -71,24 +48,27 @@ body {
 }
 
 .sidebar ul li img {
+    border: none;
     width: 20px;
     height: 20px;
-    margin-right: 5px; /* Réduire l'espacement */
+    margin-right: 5px;
 }
 
 .sidebar ul li.active {
+    border: none;
     background-color: #ffe6e6;
     font-weight: bold;
+    border: none;
 }
-
-/* Colonne des thématiques et indicateurs */
 .main-content {
+    color: #033703;
     flex: 2;
     background-color: #fff;
     margin-left: 10px;
     padding: 20px;
     border-radius: 10px;
     min-width: 40vh; /* Assurez-vous que le contenu principal utilise toute la hauteur */
+    border: none;
 }
 
 .main-content h5 {
@@ -102,12 +82,22 @@ body {
 .main-content ul {
     list-style-type: none;
     padding: 0;
+    color: #033703;
+    border: none;
+}
+.main-content a {
+    list-style-type: none;
+    padding: 0;
+    color: #033703;
+    border: none;
 }
 
 .main-content ul li {
     padding: 8px; /* Gardez un padding cohérent */
     display: flex;
     align-items: center;
+    border: none;
+    color: #033703;
 }
 
 .main-content ul li input[type="checkbox"] {
@@ -125,9 +115,11 @@ body {
     margin-left: 10px;
     padding: 20px;
     border-radius: 10px;
-    min-width: 50vh; /* Assurez-vous que le contenu principal utilise toute la hauteur */
+    min-width: 50vh; 
+    color: #033703;
+    
 }
-/* Style de la liste des indicateurs */
+
 .indicators-list ul li {
     color: #ff3366;
 }
@@ -245,23 +237,56 @@ body {
 
 
 
+
 /* Style pour la modale */
+.modal-dialog {
+    width: 500%;
+    height: 1000%;  
+    margin-left: 30%;
+    margin-right: auto;
+    margin-top: 110px;
+    color: #19d62f;
+    border: none; /* Supprime la bordure */
+}
+
+.modal-content {
+    border-radius: 0; /* Coins droits */
+    border: none; 
+    box-shadow: none; 
+}
+
 .modal-title {
     font-weight: bold;
     font-size: 1.5em;
-    color: #333; /* Vous pouvez changer la couleur si nécessaire */
+    color: #333; 
+    text-align: center;
 }
 
 .modal-body {
     font-size: 1em;
-    color: #555; /* Couleur du texte de la description */
+    color: #555;
 }
 
 .modal-footer .btn-secondary {
     background-color: #d11922;
     color: #fff;
+    border: none; /* Supprime la bordure du bouton */
 }
 
 .modal-footer .btn-secondary:hover {
     background-color: #5a6268;
 }
+
+.modal-backdrop {
+    display: none; /* Supprime l'arrière-plan de la modale */
+}
+
+
+#content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+

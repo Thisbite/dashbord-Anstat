@@ -92,7 +92,8 @@
                 <!-- {{ url_for('dashboard', region=region) }}-->
                 {% for region in regions %}
                 <li>
-                    <i class="fas fa-map-marker-alt" style="font-size: 30px;"> </i> <a href="#">{{ region }}</a>
+                    <i class="fas fa-map-marker-alt" style="font-size: 30px;"> </i> <a href="{{ url_for('region_vitrine') }}">{{ region }}</a>
+                  
                 </li>
                 {% endfor %}
             </ul>
