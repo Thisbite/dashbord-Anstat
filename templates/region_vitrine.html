@@ -105,16 +105,97 @@
         </div>
 
         <!-- Sections -->
+        <!--Pour la fiche synoptique        -->
         <div id="synoptique" class="section-content mt-4">
             <h3>Fiche synoptique</h3>
-            <p>Contenu pour la fiche synoptique...</p>
+            <div class="row g-3">
+                <!-- Carte 1 -->
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="{{ url_for('static', filename='img/fiche1.jpg') }}" 
+                             class="card-img-top" alt="Fiche Synoptique 1">
+                        <div class="card-body">
+                            <h5 class="card-title">Fiche Synoptique 2022</h5>
+                            <p class="card-text">Description brève de la fiche synoptique 1.</p>
+                            <a href="#" class="btn btn-success">Télécharger</a>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Carte 2 -->
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="{{ url_for('static', filename='img/fiche2.webp') }}" 
+                             class="card-img-top" alt="Fiche Synoptique 2">
+                        <div class="card-body">
+                            <h5 class="card-title">Fiche Synoptique 2023</h5>
+                            <p class="card-text">Description brève de la fiche synoptique 2.</p>
+                            <a href="#" class="btn btn-success">Télécharger</a>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Carte 3 -->
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="{{ url_for('static', filename='img/fiche3.jpg') }}" 
+                             class="card-img-top" alt="Fiche Synoptique 3">
+                        <div class="card-body">
+                            <h5 class="card-title">Fiche Synoptique 2024</h5>
+                            <p class="card-text">Description brève de la fiche synoptique 3.</p>
+                            <a href="#" class="btn btn-success">Télécharger</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
+        
+<!-- Pour les bulletins mensuels-->
         <div id="ihpc" class="section-content mt-4" style="display: none;">
-            <h3>Tableaux IHPC</h3>
-            <p>Contenu pour les tableaux IHPC...</p>
+            <h3>Indices de prix à la consommation</h3>
+            <div class="row g-3">
+                <!-- Carte 1 -->
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="{{ url_for('static', filename='img/ipc1.webp') }}" 
+                             class="card-img-top" alt="IPC 1">
+                        <div class="card-body">
+                            <h5 class="card-title">Bulletin du mois de Juillet</h5>
+                            <p class="card-text">Description brève du bulletin.</p>
+                            <a href="#" class="btn btn-success">Télécharger</a>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Carte 2 -->
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="{{ url_for('static', filename='img/ipc2.webp') }}" 
+                             class="card-img-top" alt="IPC 2">
+                        <div class="card-body">
+                            <h5 class="card-title">Bulletin du mois de mars 2023</h5>
+                            <p class="card-text">Description brève du bulletin.</p>
+                            <a href="#" class="btn btn-success">Télécharger</a>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Carte 3 -->
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="{{ url_for('static', filename='img/ipc3.png') }}" 
+                             class="card-img-top" alt="IPC 3">
+                        <div class="card-body">
+                            <h5 class="card-title">Bulletin du mois d'Avril 2024</h5>
+                            <p class="card-text">Description brève du bulletin.</p>
+                            <a href="#" class="btn btn-success">Télécharger</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
+        
+<!-- Pour les autres publications-->
         <div id="publications" class="section-content mt-4" style="display: none;">
             <h3>Autres publications</h3>
             <p>Contenu pour les autres publications...</p>
