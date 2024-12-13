@@ -18,7 +18,7 @@
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
- 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     
   
     
@@ -32,8 +32,8 @@
             <a href="{{ url_for('list_regions') }}">
                 <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Statistiques" style="width: 70px; height: auto;">
             </a>            
-            <a href="{{ url_for('search_indicators') }}">Requête</a>
-            <a href="#a propos">A propos</a>
+            <a href="{{ url_for('search_indicators') }}">Base de données indicateurs</a>
+
             <a href="#connexion">Aide</a>
         </div>
 
@@ -143,9 +143,10 @@
             datasets: [{
                 label: 'Population (en millions)',
                 data: population,
-                borderColor: 'green',
-                backgroundColor: 'rgba(0, 255, 0, 0.1)',
-                fill: true
+                borderColor: "hsla(91, 35%, 22%, 0.773)",
+                backgroundColor: 'white',
+              
+              
             }]
         },
         options: {
@@ -185,9 +186,10 @@
             datasets: [{
                 label: 'Taux de scolarisation (%)',
                 data: schoolEnrollmentRate,
-                borderColor: 'green',
-                backgroundColor: 'rgba(0, 255, 0, 0.1)',
-                fill: true
+                borderColor: 'orange',
+                backgroundColor: 'white',
+             
+               
             }]
         },
         options: {
@@ -228,7 +230,7 @@
                 label: "Distribution d'âge",
                 data: ageDistribution,
                 borderColor: 'green',
-                backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                backgroundColor: 'white',
                 borderWidth: 1
             }]
         },
@@ -322,9 +324,9 @@
     const path = d3.geoPath().projection(projection);
 
     // Couleurs pour l'échelle de population
-    const colorScale = d3.scaleLinear()
-        .domain([100000, 5000000])  // Mettre ici les min et max populations
-        .range(["rgba(0, 255, 0, 0.1)", "green"]);
+    const colorScale = d3.scaleLinear()  
+    .domain([100000, 5000000])  // Mettre ici les min et max populations  
+    .range(["hsla(91, 35%, 22%, 0.1)", "hsla(91, 35%, 22%, 0.773)"]);
 
     // Ajouter un SVG pour la carte
     const svg = d3.select("#map")
@@ -346,7 +348,7 @@
    .attr("text-anchor", "middle")  // Centrer le texte par rapport à l'axe X
    .style("font-size", "14px")  // Taille du texte
    .style("font-weight", "bold")  // Mettre le texte en gras
-   .style("fill", "green")  // Couleur du texte
+   .style("fill", "black")   // Couleur du texte
    .html(`<tspan><i class="fas fa-users"></i></tspan> Population de la Côte d'Ivoire selon le RGPH 2021`);
    
 
@@ -371,8 +373,8 @@
         .attr("x1", "0%").attr("y1", "0%")
         .attr("x2", "100%").attr("y2", "0%");
 
-    gradient.append("stop").attr("offset", "0%").attr("stop-color", "rgba(0, 255, 0, 0.1)");
-    gradient.append("stop").attr("offset", "100%").attr("stop-color", "green");
+        gradient.append("stop").attr("offset", "0%").attr("stop-color", "hsla(91, 35%, 22%, 0.1)");  
+        gradient.append("stop").attr("offset", "100%").attr("stop-color", "hsla(91, 35%, 22%, 0.773)");
 
    
     // Ajouter un rectangle avec le dégradé dans la légende
@@ -392,7 +394,7 @@
         .attr("y", 60)  // Position verticale du texte (ajustez selon vos besoins)
         .style("font-size", "12px")  // Taille du texte
         .style("font-weight", "bold") 
-        .style("fill", "green")  // Couleur du texte
+        .style("fill", "black")  // Couleur du texte
         .text("Hommes: 15 344 990");
     
     // Ajouter le texte "Femme: 345267"
@@ -401,7 +403,7 @@
         .attr("y", 45)  // Position verticale du texte (ajustez selon vos besoins)
         .style("font-weight", "bold") 
         .style("font-size", "12px")  // Taille du texte
-        .style("fill", "#036f0c")  // Couleur du texte
+        .style("fill", "black")  // Couleur du texte
         .text("Femmes: 14 044 160");
 
 

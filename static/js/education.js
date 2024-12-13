@@ -1,6 +1,6 @@
 const indicators = {
     Education: ['Taux de scolarisation', 'Nombre d’enseignants', 'Écoles construites', 'Diplômes obtenus', 'Taux de réussite', 'Dépenses en éducation', 'Matériel scolaire distribué'],
-    Economie: ['PIB', 'Taux de chômage', 'Exportations', 'Importations', 'Investissements', 'Croissance économique', 'Inflation'],
+    Economie: ['PIB', 'Taux de chômage','Indice de prix à la consommation','Comptes régionaux','Offre emploi','Demabde emploi','Pourvoir achat', 'Exportations', 'Importations', 'Investissements', 'Croissance économique', 'Inflation'],
 };
 
 function loadDashboard(theme) {
@@ -61,9 +61,9 @@ function generateCharts(selectedIndicators, theme) {
             datasets: [{
                 label: indicator,
                 data: Array.from({ length: 9 }, () => Math.floor(Math.random() * 100)),
-                backgroundColor: `rgba(${50 + index * 30}, ${150 + index * 20}, 200, 0.5)`,
-                borderColor: `rgba(${50 + index * 30}, ${150 + index * 20}, 200, 1)`,
-                borderWidth: 1,
+                borderColor: 'green',
+                backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                borderWidth: 1
             }]
         };
         //const chartType = index % 3 === 0 ? 'pie' : (index % 2 === 0 ? 'bar' : 'line'); // Alterne entre pie, bar, et line
@@ -83,5 +83,15 @@ function generateCharts(selectedIndicators, theme) {
 
 // Initialisation avec le thème par défaut
 loadDashboard('Education');
+document.getElementById('scroll-left').addEventListener('click', () => {
+    const charts = document.getElementById('charts');
+    charts.scrollLeft -= 400; // Défiler vers la gauche de 400px
+});
+
+document.getElementById('scroll-right').addEventListener('click', () => {
+    const charts = document.getElementById('charts');
+    charts.scrollLeft += 400; // Défiler vers la droite de 400px
+});
+
 
 

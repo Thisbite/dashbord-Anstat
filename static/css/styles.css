@@ -8,120 +8,206 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
 }
-.header-secondary {
-    background-color: #468409;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
+
+.header-secondary {  
+    background-color: white;  
+    display: flex;  
+    justify-content: space-between;  
+    align-items: center;  
+    padding: 10px 20px;  
+    border-radius: 5px; /* Optionnel : pour des coins arrondis */  
+    font-family: 'Poppins', sans-serif; /* Police attrayante */  
+    font-weight: 600; /* Optionnel : pour un texte plus épais */  
+}  
+
+.nav-links {  
+    display: flex;  
+    justify-content: center;  
+    align-items: center;  
+}  
+
+.nav-links a {  
+    text-decoration: none;  
+    color: hsla(91, 35%, 22%, 0.773);  
+    padding: 10px 20px;  
+    font-size: 18px;  
+    border: 2px solid hsla(91, 35%, 22%, 0.773); /* Ajout de la bordure */  
+    margin: 0 10px;  
+    border-radius: 5px;  
+    transition: background-color 0.3s ease;  
+    font-family: 'Poppins', sans-serif; /* Police attrayante pour les liens */  
+    font-weight: 400; /* Optionnel : pour un texte plus fin */  
 }
 
-.nav-links {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
-.nav-links a {
-    text-decoration: none;
-    color: white;
-    padding: 10px 20px;
-    font-size: 18px;
-    margin: 0 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
 
 .nav-links a:hover {
-    background-color: #0cc52e;
+    background-color: #d9e6db;
     color: white;
 }
-.search-bar {
-    display: flex;
-    align-items: center;
-}
+.search-bar {  
+    display: flex;  
+    align-items: center;  
+    gap: 10px; /* Ajout d'un espacement uniforme entre les éléments */  
+}  
 
-.search-bar input[type="text"] {
-    padding: 8px;
-    font-size: 16px;
-    border: 1px solid #009E60; /* Bordure verte */
-    border-radius: 4px;
-    width: 300px;
-    margin-right: 10px;
-}
+.search-bar input[type="text"] {  
+    padding: 10px 14px; /* Plus de confort pour l'utilisateur */  
+    font-size: 16px;  
+    border: 2px solid hsla(91, 35%, 22%, 0.773); /* Bordure verte */  
+    border-radius: 6px; /* Coins légèrement plus arrondis */  
+    width: 300px;  
+    outline: none; /* Supprime le contour par défaut */  
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Animation fluide */  
+}  
 
-.search-bar button {
-    padding: 8px 12px;
-    background-color: #1ca208; /* Fond orange pour le bouton */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
+.search-bar input[type="text"]:focus {  
+    border-color: #006B45; /* Bordure plus foncée au focus */  
+    box-shadow: 0 0 5px rgba(0, 158, 96, 0.5); /* Effet lumineux au focus */ 
+     
+}  
 
-.search-bar button:hover {
-    background-color: #009E60; /* Fond vert au survol */
+.search-bar button {  
+    padding: 10px 16px; /* Taille légèrement augmentée pour un meilleur confort */  
+    background-color: hsla(91, 35%, 22%, 0.773); /* Fond vert foncé */  
+    color: white;  
+    border: none;  
+    border-radius: 6px; /* Coins légèrement plus arrondis */  
+    cursor: pointer;  
+    font-size: 16px;  
+    font-weight: 600; /* Texte légèrement plus épais */  
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Animation fluide */  
+}  
+
+.search-bar button:hover {  
+    background-color: #e09705; /* Fond vert au survol */  
+    transform: scale(1.05); /* Légère mise en avant au survol */  
+}  
+
+.search-bar button:active {  
+    transform: scale(0.95); /* Effet de clic */  
+    background-color: #006B45; /* Fond plus foncé au clic */  
 }
 
 .container {
     display: flex;
     justify-content: space-between;
     padding: 30px 20px;
+    font-family: 'Poppins', sans-serif;
     gap: 20px;
 }
+/* La section de gauche */
+.left-column {  
+    flex: 2;  
+    padding: 15px; /* Padding augmenté pour plus d'espace */  
+    border-radius: 12px; /* Coins plus arrondis pour un look moderne */  
+    box-shadow: 0 8px 15px rgba(23, 2, 251, 0.08); /* Ombre plus subtile et élégante */  
+    display: flex;  
+    gap: 20px; /* Espacement augmenté entre les éléments */  
+    box-sizing: border-box;  
+    position: relative;  
+    background-size: cover;  
+    background-position: center;  
+    background-repeat: no-repeat;  
+    z-index: 1;  
+    background-color: rgba(255, 255, 255, 0.95);  
+    transition: all 0.3s ease; /* Animation fluide pour les interactions */  
+}  
 
-.left-column {
-    flex: 2;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(23, 2, 251, 0.1);
-    display: flex;
-    gap: 10px;
-    box-sizing: border-box;
+/* Effet hover sur la colonne */  
+.left-column:hover {  
+    transform: translateY(-2px); /* Léger effet de survol */  
+    box-shadow: 0 12px 30px rgba(23, 2, 251, 0.12);  
+}  
 
-    position: relative; /* Nécessaire pour l'effet de superposition */
- 
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: 1; /* Assure que le contenu reste au-dessus */
+.left-column::before {  
+    content: '';  
+    position: absolute;  
+    inset: 0; /* Raccourci pour top, right, bottom, left: 0 */  
+    background: linear-gradient(  
+        to bottom,  
+        rgba(245, 245, 245, 0.95),  
+        rgba(245, 245, 245, 0.85)  
+    ); /* Dégradé subtil */  
+    z-index: -1;  
+    border-radius: 12px;  
+    transition: opacity 0.3s ease;  
+}  
 
-    /* Superposition semi-transparente pour fondre l'image */
-    background-color:white; /* Couleur principale avec opacité de 80% */
-}
+.left-column h5 {  
+    font-size: 16px; /* Taille de police augmentée */  
+    margin-bottom: 10px;  
+    color: #004085;  
+    font-weight: 600; /* Police plus grasse */  
+    letter-spacing: 0.5px; /* Espacement des lettres */  
+    position: relative;  
+    padding-bottom: 8px;  
+}  
 
-/* Optionnel pour un effet d'opacité plus subtile sur l'image entière */
-.left-column::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgb(245, 245, 245); /* Superposition blanche translucide */
-    z-index: -1; /* Place la superposition sous le contenu */
-    border-radius: 8px; /* Coins arrondis comme le conteneur */
-}
+/* Ligne décorative sous le titre */  
+.left-column h5::after {  
+    content: '';  
+    position: absolute;  
+    bottom: 0;  
+    left: 0;  
+    width: 40px;  
+    height: 2px;  
+    background-color: #004085;  
+    transition: width 0.3s ease;  
+}  
 
-.left-column h5 {
-    font-size: 14px;
-    margin-bottom: 5px;
-    color: #004085;
-}
+/* Animation de la ligne au survol */  
+.left-column h5:hover::after {  
+    width: 100%;  
+}  
 
-.left-column .left-section {
-    flex: 3;
-    display: flex;
-    flex-direction: column;       /* Organiser le contenu en colonne */
-    justify-content: flex-start;  /* Aligner le contenu au début (titre en haut) */
-    align-items: center;          /* Centrer horizontalement */
-    color: #666;
-    font-size: 20px;
-    height: auto;                 /* Ajuster la hauteur en fonction du contenu */
-    border-radius: 8px;
-    padding: 20px;
-    background-color: white; /* Fond blanc avec opacité pour lisibilité */
+.left-column .left-section {  
+    flex: 3;  
+    display: flex;  
+    flex-direction: column;  
+    justify-content: flex-start;  
+    align-items: center;  
+    color: #444; /* Couleur plus foncée pour meilleure lisibilité */  
+    font-size: 18px; /* Taille ajustée */  
+    line-height: 1.6; /* Meilleur espacement des lignes */  
+    height: auto;  
+    border-radius: 12px;  
+    padding: 25px;  
+    background-color: rgba(255, 255, 255, 0.9);  
+    backdrop-filter: blur(5px); /* Effet de flou pour le fond */  
+    border: 1px solid rgba(0, 64, 133, 0.1); /* Bordure subtile */  
+    transition: transform 0.3s ease, box-shadow 0.3s ease;  
+}  
+
+/* Effet hover sur la section */  
+.left-column .left-section:hover {  
+    transform: scale(1.01);  
+    box-shadow: 0 5px 15px rgba(0, 64, 133, 0.1);  
+}  
+
+/* Style pour le texte à l'intérieur de la section */  
+.left-column .left-section p {  
+    margin: 10px 0;  
+    color: #666;  
+    font-size: 16px;  
+    text-align: center;  
+}  
+
+/* Media query pour la responsivité */  
+@media (max-width: 768px) {  
+    .left-column {  
+        padding: 15px;  
+        gap: 15px;  
+    }  
+
+    .left-column .left-section {  
+        padding: 15px;  
+        font-size: 16px;  
+    }  
+
+    .left-column h5 {  
+        font-size: 14px;  
+    }  
 }
 
 .right-column {
@@ -148,14 +234,14 @@ body {
 }
 
 /* Animation de la flèche */
-@keyframes bounce {
-    0%, 100% {
-        transform: translateX(-50%) translateY(0);
-    }
-    50% {
-        transform: translateX(-50%) translateY(5px); /* La flèche se déplace vers le haut et vers le bas */
-    }
-}
+@keyframes bounce {  
+    0%, 100% {  
+        transform: translate(-50%, 0);  
+    }  
+    50% {  
+        transform: translate(-50%, 5px);  
+    }  
+}  
 
 .right-column h2 {
     font-size: 24px;
@@ -163,48 +249,45 @@ body {
     color: white;
     /* position: sticky; Fixer le titre lors du défilement */
     top: 0;
-    background-color: rgb(9, 180, 31);
-    z-index: 2;
-    padding: 10px 15px;
-    text-align: center;
-    border: 4px solid;
-   
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: rgb(254, 145, 4);
+    position: sticky; /* Fixer le titre lors du défilement */  
+    top: 0;  
+
+    z-index: 2;  
+    padding: 10px 15px;  
+    text-align: center;  
+    border: 4px solid #edebeb;  
+    border-radius: 10px;  
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);  
 }
 
-.region-list {
-    list-style: none;
-    padding: 0;
-    background-color:white;
-}
+.region-list {  
+    list-style: none;  
+    padding: 0;  
+    background-color: #fff;  
+}  
 
-.region-list li {
-    padding: 10px;
-    margin-bottom: 10px;
-    background: white;
-    /* border-left: 6px solid #F77F00; Bordure gauche orange */
-   /*  border-right: 6px solid rgb(4, 110, 64);  Bordure droite verte */
-    border-radius: 10px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease, transform 0.3s ease;
-}
+.region-list li {  
+    padding: 10px;  
+    margin-bottom: 10px;  
+    background-color: #fff;  
+    border-radius: 10px;  
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);  
+    transition: background-color 0.3s ease, transform 0.3s ease;  
+}  
 
-.region-list li:hover {
-    background-color: #f7f7f7;
-    transform: scale(1.2);
-}
+.region-list li:hover {  
+    background-color: #f7f7f7;  
+    transform: scale(0.8);  
+}  
 
-.region-list li a {
-    text-decoration: none;
-    color: rgb(10, 177, 63);
-    display: block;
-    text-align: center;
-    font-weight: bold;
-  
-}
-
-
+.region-list li a {  
+    text-decoration: none;  
+    color: rgb(1, 15, 5);  
+    display: block;  
+    text-align: center;  
+    font-weight: bold;  
+}  
 
 /* Encadrement pour le titre */
 /* Encadrement pour le titre */
@@ -309,7 +392,7 @@ body {
 .card-title {
     font-size: 16px;
     font-weight: bold;
-    color: #036f0c;
+    color:  hsla(91, 35%, 22%, 0.773);  
     margin-bottom: 10px;
 }
 /*Pour horloge et naissance */
@@ -325,7 +408,7 @@ body {
 .card-value {
     font-size: 24px;
     font-weight: bold;
-    color: #0cc51e;
+    color: #0f0f0f;
     margin-bottom: 5px;
 }
 
@@ -336,37 +419,9 @@ body {
 }
 
 
-/* Styles pour la barre de flash infos */
-.flash-info-bar {
-    background-color: #007bff; /* Couleur de fond */
-    color: white;               /* Couleur du texte */
-    padding: 10px;             /* Espacement interne */
-    font-size: 16px;           /* Taille de police */
-    font-weight: bold;         /* Texte en gras */
-    position: relative;        /* Pour le positionnement relatif */
-    z-index: 10;               /* Assurer que la barre est au-dessus d'autres éléments */
-}
 
-/* Marquee peut être personnalisé pour plus d'options */
-marquee {
-    white-space: nowrap;       /* Empêche le texte de passer à la ligne */
-}
 
-.flash-info-bar a {
-    text-decoration: none;  /* Enlève le soulignement */
-    color: inherit;  /* Utilise la même couleur que le texte environnant */
-    font-weight: bold;  /* Rend le texte des liens en gras (optionnel) */
-}
 
-.flash-info-bar {
-  
-    padding: 10px;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    overflow: hidden;
-    border-radius: 8px;
-}
 
 
 
