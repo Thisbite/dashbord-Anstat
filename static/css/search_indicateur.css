@@ -125,19 +125,7 @@ body {
 }
 
 
-/* Barre de recherche */
-.search-bar {
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-}
 
-.search-bar input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-}
 
 .search-bar img {
     width: 20px;
@@ -177,64 +165,96 @@ body {
 
 
 
-
-.header-secondary {
-    background-color: #468409;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.nav-links {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
 }
 
-.nav-links a {
-    text-decoration: none;
-    color: white;
-    padding: 10px 20px;
-    font-size: 18px;
-    margin: 0 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+.header-secondary {  
+    background-color: white;  
+    display: flex;  
+    justify-content: space-between;  
+    align-items: center;  
+    padding: 10px 20px;  
+    border-radius: 5px; /* Optionnel : pour des coins arrondis */  
+    font-family: 'Poppins', sans-serif; /* Police attrayante */  
+    font-weight: 600; /* Optionnel : pour un texte plus épais */  
+}  
+
+.nav-links {  
+    display: flex;  
+    justify-content: center;  
+    align-items: center;  
+}  
+
+.nav-links a {  
+    text-decoration: none;  
+    color: #4F645B; 
+    padding: 10px 20px;  
+    font-size: 18px;  
+    border: 2px solid #4F645B; /* Ajout de la bordure */  
+    margin: 0 10px;  
+    border-radius: 5px;  
+    transition: background-color 0.3s ease;  
+    font-family: 'Poppins', sans-serif; /* Police attrayante pour les liens */  
+    font-weight: 400; /* Optionnel : pour un texte plus fin */  
 }
+
+
 
 .nav-links a:hover {
-    background-color: #007bff;
+    background-color: #d9e6db;
     color: white;
 }
+.search-bar {  
+    display: flex;  
+    align-items: center;  
+    gap: 10px; /* Ajout d'un espacement uniforme entre les éléments */  
+}  
 
-.search-bar {
-    display: flex;
-    align-items: center;
+.search-bar input[type="text"] {  
+    padding: 10px 14px; /* Plus de confort pour l'utilisateur */  
+    font-size: 16px;  
+    border: 2px solid #4F645B; /* Bordure verte */  
+    border-radius: 6px; /* Coins légèrement plus arrondis */  
+    width: 300px;  
+    outline: none; /* Supprime le contour par défaut */  
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Animation fluide */  
+}  
+
+.search-bar input[type="text"]:focus {  
+    border-color: #006B45; /* Bordure plus foncée au focus */  
+    box-shadow: 0 0 5px rgba(0, 158, 96, 0.5); /* Effet lumineux au focus */ 
+     
+}  
+
+.search-bar button {  
+    padding: 10px 16px; /* Taille légèrement augmentée pour un meilleur confort */  
+    background-color: #4F645B; /* Fond vert foncé */  
+    color: white;  
+    border: none;  
+    border-radius: 6px; /* Coins légèrement plus arrondis */  
+    cursor: pointer;  
+    font-size: 16px;  
+    font-weight: 600; /* Texte légèrement plus épais */  
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Animation fluide */  
+}  
+
+.search-bar button:hover {  
+    background-color: #e09705; /* Fond vert au survol */  
+    transform: scale(1.05); /* Légère mise en avant au survol */  
+}  
+
+.search-bar button:active {  
+    transform: scale(0.95); /* Effet de clic */  
+    background-color: #006B45; /* Fond plus foncé au clic */  
 }
-
-.search-bar input[type="text"] {
-    padding: 8px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 300px;
-    margin-right: 10px;
-}
-
-.search-bar button {
-    padding: 8px 12px;
-    background-color: #19d62f;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.search-bar button:hover {
-    background-color: #003060;
-}
-
 
 
 

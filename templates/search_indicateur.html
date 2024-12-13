@@ -13,6 +13,24 @@
 </head>
 <body>
 
+  <div class="header-secondary">
+    <div class="nav-links">
+        <a href="{{ url_for('list_regions') }}">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Statistiques" style="width: 70px; height: auto;">
+        </a>            
+        <a href="{{ url_for('search_indicators') }}">Base de données indicateurs</a>
+
+        <a href="#connexion">Aide</a>
+    </div>
+
+    <div class="search-bar">
+        <form method="POST" action="{{ url_for('search') }}">
+            <input type="text" name="query" placeholder="Entrez votre recherche..." required>
+            <button type="submit">Rechercher</button>
+        </form>
+    </div>
+</div>
+
 <!-- Fenêtre modale pour la description -->
 <div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -31,17 +49,6 @@
       </div>
     
     </div>
-  </div>
-</div>
-
-<div class="header-secondary">
-  <div class="nav-links">
-    <a href="{{ url_for('list_regions') }}">
-      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Statistiques" style="width: 70px; height: auto;">
-    </a>
-    <a href="{{ url_for('search_indicators') }}">Requête</a>
-    <a href="#">A propos</a>
-    <a href="#connexion">Aide</a>
   </div>
 </div>
 

@@ -1,348 +1,191 @@
-/* --------- RÉINITIALISATION --------- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* === Variables Globales === */  
+:root {  
+    --primary-color: hsla(91, 35%, 22%, 0.773);  
+    --primary-hover-color: #006B45;  
+    --secondary-color: #d9e6db;  
+    --accent-color: #e09705;  
+    --font-family: 'Poppins', sans-serif;  
+    --font-weight-bold: 600;  
+    --font-weight-regular: 400;  
+    --border-radius: 5px;  
+    --transition-speed: 0.3s;  
+}  
+
+/* === Header secondaire === */  
+.header-secondary {  
+    background-color: white;  
+    display: flex;  
+    justify-content: space-between;  
+    align-items: center;  
+    padding: 10px 20px;  
+    border-radius: var(--border-radius);  
+    font-family: var(--font-family);  
+    font-weight: var(--font-weight-bold);  
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  
+}  
+
+/* === Liens de navigation === */  
+.nav-links {  
+    display: flex;  
+    align-items: center;  
+    gap: 15px;  
+}  
+
+.nav-links a {  
+    text-decoration: none;  
+    color: var(--primary-color);  
+    padding: 8px 16px;  
+    font-size: 16px;  
+    border: 2px solid var(--primary-color);  
+    border-radius: var(--border-radius);  
+    transition: all var(--transition-speed) ease;  
+    font-weight: var(--font-weight-regular);  
+    white-space: nowrap;  
+}  
+
+.nav-links a:hover {  
+    background-color: var(--primary-color);  
+    color: white;  
+}  
+
+/* === Barre de recherche === */  
+.search-bar {  
+    display: flex;  
+    align-items: stretch;  
+    gap: 8px;  
+}  
+
+.search-bar form {  
+    display: flex;  
+    align-items: stretch;  
+    gap: 8px;  
+}  
+
+.search-bar input[type="text"] {  
+    padding: 8px 14px;  
+    font-size: 16px;  
+    border: 2px solid var(--primary-color);  
+    border-radius: var(--border-radius);  
+    width: 300px;  
+    outline: none;  
+    transition: all var(--transition-speed) ease;  
+    box-sizing: border-box;  
+}  
+
+.search-bar input[type="text"]:focus {  
+    border-color: var(--primary-hover-color);  
+    box-shadow: 0 0 5px rgba(0, 158, 96, 0.3);  
+}  
+
+.search-bar button {  
+    padding: 8px 16px;  
+    background-color: var(--primary-color);  
+    color: white;  
+    border: none;  
+    border-radius: var(--border-radius);  
+    cursor: pointer;  
+    font-size: 16px;  
+    font-weight: var(--font-weight-bold);  
+    transition: all var(--transition-speed) ease;  
+    margin: 0; /* Supprime la marge par défaut */  
+    height: 100%; /* Assure la même hauteur que l'input */  
+    display: flex;  
+    align-items: center;  
+    justify-content: center;  
+}  
+
+.search-bar button:hover {  
+    background-color: var(--primary-hover-color);  
+    transform: translateY(-1px);  
+}  
+
+.search-bar button:active {  
+    transform: translateY(1px);  
+}  
+
+/* === Sections et cartes === */  
+.section-nav {  
+    display: flex;  
+    justify-content: center;  
+    gap: 15px;  
+    margin: 20px 0;  
+    flex-wrap: wrap;  
+}  
+
+.section-btn {  
+    background-color: var(--primary-color);  
+    color: white;  
+    border: none;  
+    padding: 10px 20px;  
+    font-size: 16px;  
+    border-radius: var(--border-radius);  
+    cursor: pointer;  
+    transition: all var(--transition-speed) ease;  
+    margin: 0;  
+}  
+
+.section-btn:hover {  
+    background-color: var(--primary-hover-color);  
+    transform: translateY(-2px);  
+}  
+
+/* === Cartes === */  
+.card {  
+    transition: transform var(--transition-speed) ease;  
+    height: 100%;  
+}  
+
+.card:hover {  
+    transform: translateY(-5px);  
+}  
+
+.card-img-top {  
+    height: 200px;  
+    object-fit: cover;  
+    border-radius: var(--border-radius) var(--border-radius) 0 0;  
+}  
+
+/* === Dashboard === */  
+#dashboard-container {  
+    border: none;  
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);  
+    margin: 20px 0;  
+    border-radius: var(--border-radius);  
+}  
+
+#charts-wrapper {  
+    margin: 20px 0;  
+    border-radius: var(--border-radius);  
+    overflow: hidden;  
+}  
+
+#charts {  
+    padding: 20px;  
+    gap: 20px;  
+    scroll-padding: 20px;  
+}  
+
+/* === Responsive === */  
+@media (max-width: 768px) {  
+    .header-secondary {  
+        flex-direction: column;  
+        gap: 15px;  
+    }  
+
+    .nav-links {  
+        flex-wrap: wrap;  
+        justify-content: center;  
+    }  
+
+    .search-bar {  
+        width: 100%;  
+    }  
+
+    .search-bar form {  
+        width: 100%;  
+    }  
+
+    .search-bar input[type="text"] {  
+        width: 100%;  
+    }  
 }
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
-    margin: 0;
-    padding: 0;
-}
-
-/* --------- STYLES GÉNÉRAUX --------- */
-h1, h2 {
-    text-align: center;
-    margin: 20px 0;
-    color: #007bff;
-}
-
-button {
-    display: block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    font-size: 16px;
-    color: #fff;
-    background: #55c207;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-button:hover {
-    background: #0056b3;
-}
-
-canvas {
-    max-width: 100%;
-    height: auto;
-}
-
-/* --------- BARRE D'EN-TÊTE --------- */
-.header-secondary {
-    background-color: #468409;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-}
-
-.nav-links {
-    display: flex;
-    align-items: center;
-}
-
-.nav-links a {
-    text-decoration: none;
-    color: white;
-    padding: 10px 20px;
-    font-size: 18px;
-    margin: 0 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.nav-links a:hover {
-    background-color: #0cc52e;
-}
-
-/* --------- BARRE DE RECHERCHE --------- */
-.search-bar {
-    display: flex;
-    align-items: center;
-}
-
-.search-bar input[type="text"] {
-    padding: 8px;
-    font-size: 16px;
-    border: 1px solid #009E60;
-    border-radius: 4px;
-    width: 300px;
-    margin-right: 10px;
-}
-
-.search-bar button {
-    padding: 8px 12px;
-    background-color: #1ca208;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.search-bar button:hover {
-    background-color: #009E60;
-}
-
-.card-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #0056b3; /* Couleur personnalisée pour les titres */
-}
-
-.card-text {
-    font-size: 0.9rem;
-    color: #555;
-}
-
-.btn-green {
-    background-color: #28a745 !important;
-    color: #fff !important;
-    border: none;
-}
-
-.card-img-top {
-    height: 150px; /* Augmente la hauteur */
-    width: 350px; /* Augmente la largeur tout en restant dans une taille raisonnable */
-    max-width: 100%; /* Empêche les images de dépasser la largeur de leur conteneur */
-    object-fit: contain; /* Affiche l'image entière sans la couper */
-    display: block; /* Nécessaire pour centrer avec margin */
-    margin: 0 auto; /* Centre l'image horizontalement */
-    padding: 10px; /* Ajoute un léger espace autour de l'image */
-    /*border-bottom: 1px solid #ddd;  Optionnel : ligne de séparation subtile */
-    background-color: none; /* Ajoute un fond clair pour une meilleure visibilité (optionnel) */
-    border-radius: 5px; /* Ajoute des coins arrondis */
-}
-
-/* pour les fiches synoptiques */
-.section-nav .section-btn {
-    background-color: #28a745; /* Vert */
-    color: #ffffff; /* Blanc */
-    border: none; 
-    padding: 10px 20px; /* Ajoute du padding */
-    font-size: 16px; /* Ajuste la taille du texte */
-    border-radius: 5px; /* Donne un effet arrondi */
-    cursor: pointer; /* Change le curseur au survol */
-    transition: background-color 0.3s ease; /* Transition pour effet au survol */
-}
-/* Applique une couleur de fond verte et une écriture blanche */
-.section-nav {
-    display: flex; /* Active Flexbox */
-    justify-content: center; /* Centre les boutons horizontalement */
-    gap: 10px; /* Ajoute un espace entre les boutons */
-    margin-top: 20px; /* Ajoute de l'espace au-dessus de la barre */
-}
-
-/* Effet de survol pour les boutons */
-.section-nav .section-btn:hover {
-    background-color: #218838; /* Vert foncé au survol */
-}
-
-/* Espacement entre les boutons */
-.section-nav .section-btn + .section-btn {
-    margin-left: 10px; /* Espacement entre les boutons */
-}
-
-
-
-/*Pour le graphe du dashbord*/
-#dashboard-container {
-    border-top: 4px solid green;
-    padding: 20px;
-    border-bottom: 4px solid green;
-}
-#charts {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-/* La liste des filtres ou des selections*/
-/* Conteneur principal pour les cases à cocher */
-#checkbox-container {
-    display: flex; /* Active le mode Flexbox */
-    flex-wrap: wrap; /* Permet le retour à la ligne si nécessaire */
-    gap: 15px; /* Espacement entre les éléments */
-    align-items: center; /* Centrer verticalement */
-}
-
-/* Style pour chaque case avec son label */
-#checkbox-container div {
-    display: flex; /* Alignement horizontal d'une case et de son label */
-    align-items: center;
-}
-
-/* Ajout d'un espacement entre la case et le texte */
-#checkbox-container input[type="checkbox"] {
-    margin-right: 8px;
-}
-
-/* Ajustement de la taille des textes */
-#checkbox-container label {
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-    color: #333; /* Couleur du texte */
-}
-
-
-/*
-Pour D3 js
-*/
-
-
-/* Titre */
-h1, h2 {
-    text-align: center;
-    margin: 20px 0;
-    color: #007bff;
-}
-
-/* Conteneur des cases à cocher */
-#checkbox-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-    margin: 20px 0;
-    padding: 10px;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Style des cases à cocher */
-#checkbox-container div {
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background: #f1f1f1;
-    transition: background 0.3s, box-shadow 0.3s;
-}
-
-#checkbox-container div:hover {
-    background: #e9ecef;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-}
-
-#checkbox-container input[type="checkbox"] {
-    margin-right: 8px;
-    cursor: pointer;
-}
-
-#checkbox-container label {
-    font-size: 14px;
-    font-weight: bold;
-    color: #555;
-}
-
-
-canvas {
-    max-width: 100%;
-    height: auto;
-}
-
-/* Boutons ou autres éléments interactifs */
-button {
-    display: block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    font-size: 16px;
-    color: #fff;
-    background: #55c207;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-button:hover {
-    background: #55c207;
-}
-/* Conteneur principal au format A4 */
-#page-container {
-    width: 75%;
-  
-    margin: 0 auto;
-    background: #f8f9fa;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
- 
-}
-
-#dashboard-container {
-    border-top: 4px solid green;
-    border-bottom: 4px solid green;
-    padding: 20px;
-}
-
-/* --------- GRAPHIQUES DÉFILANTS --------- */
-#charts-wrapper {
-    display: flex;
-    align-items: center;
-    position: relative;
-    margin-top: 20px;
-    overflow: hidden;
-}
-
-#charts {
-    display: flex;
-    gap: 20px;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    padding: 10px 0;
-}
-
-#charts div {
-    min-width: 400px;
-    flex-shrink: 0;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-/* Boutons de défilement */
-/* Boutons de défilement */
-
-
-
-/* Style général des graphiques */
-#charts div {
-    min-width: 400px; /* Largeur minimale pour les graphiques */
-    flex-shrink: 0;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-
-
-
-
-
-
-
-
