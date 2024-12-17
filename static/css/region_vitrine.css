@@ -189,3 +189,47 @@
         width: 100%;  
     }  
 }
+/* Section graphique */
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+#age-pyramid, #cacao-production {
+    height: 400px;
+    width: 100%;
+}
+
+.indicators-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    gap: 20px;
+}
+
+.indicator-card {
+    text-align: center;
+    background-color: #f9f9f9;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    width: 200px;
+}
+
+.indicator-name {
+    font-size: 1.2rem; /* Taille pour le nom */
+    color: #006B45; /* Vert pour le nom */
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.indicator-value {
+    font-size: 1.5rem; /* Taille plus grande pour la valeur */
+    color: #e09705; /* Orange pour la valeur */
+    font-weight: bold;
+}
+
+#region-title {  
+    text-align: center;  
+  }

@@ -68,9 +68,7 @@
                     <div id="birthsBox" class="card-value">0</div>
                     <div id="dateBox" class="card-date"></div> 
                 </div>
-                
-                
-        
+
                 <div class="indicator-card">
                     <div class="card-title">
                         <i class="fas fa-baby"></i> Naissance cette année
@@ -89,16 +87,21 @@
         <div class="right-column">
             <h2><i class="fas fa-tachometer-alt"></i> Tableau de bord par région</h2>
             <ul class="region-list">
-                <!-- {{ url_for('dashboard', region=region) }}-->
                 {% for region in regions %}
                 <li>
-                    <i class="fas fa-map-marker-alt" style="font-size: 30px;"> </i> <a href="{{ url_for('region_vitrine') }}">{{ region }}</a>
-                  
+                    <i class="fas fa-map-marker-alt" style="font-size: 30px; color: #006B45;"></i>
+                    <a href="{{ url_for('region_vitrine', region=region) }}" 
+                       >
+                        {{ region }}
+                    </a>
                 </li>
                 {% endfor %}
             </ul>
-            <div class="scroll-indicator">▼</div>
+            <div class="scroll-indicator" style="text-align: center; margin-top: 10px; color: #006B45;">
+                ▼
+            </div>
         </div>
+        
         
     </div> 
 <!-- Conteneur principal avec un cadre autour des cartes -->

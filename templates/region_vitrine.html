@@ -40,7 +40,69 @@
     </div>  
 
     <!-- Section des graphiques -->  
- 
+ <!-- Dans ce bloc nous devons realiser un tableau de bord graphique avec une disposition de deux carte (card) contenant une pyramide des ages 
+    et une courbe de production agricole de cacao 
+Dans la deuxieme ligne trois cards contenant des valeur des indicateurs-->
+<h1 id="region-title">{{ region_name }}</h1>
+<!-- Section des graphiques -->
+<div class="row g-3">
+    <!-- Première ligne : Deux graphiques -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Pyramide des âges</h5>
+                <!-- Intégration de la pyramide des âges -->
+                <div id="age-pyramid" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Courbe de production agricole de cacao</h5>
+                <!-- Intégration de la courbe -->
+                <div id="cacao-production" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Deuxième ligne : Trois cartes -->
+<div class="row g-3">
+    <!-- Carte 1 -->
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h5 class="card-title indicator-name">Indicateur 1</h5>
+                <p class="card-text indicator-value"><span id="indicateur1">12345</span></p>
+            </div>
+        </div>
+    </div>
+    <!-- Carte 2 -->
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h5 class="card-title indicator-name">Indicateur 2</h5>
+                <p class="card-text indicator-value"><span id="indicateur2">67890</span></p>
+            </div>
+        </div>
+    </div>
+    <!-- Carte 3 -->
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h5 class="card-title indicator-name">Indicateur 3</h5>
+                <p class="card-text indicator-value"><span id="indicateur3">54321</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Fin du graphe section-->
+
+
+
+
 
     <!-- Contenu principal -->  
     <div class="container mt-5">  
@@ -166,5 +228,25 @@
             });  
         });  
     </script>  
+    
+
+
+    <!--Section graphique du js-->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    // Charger la pyramide des âges
+    var pyramidGraph = {{ pyramid_graph|safe }};
+    Plotly.newPlot('age-pyramid', pyramidGraph);
+
+    // Charger la courbe de production
+    var cacaoGraph = {{ cacao_graph|safe }};
+    Plotly.newPlot('cacao-production', cacaoGraph);
+
+    // Charger les indicateurs
+    document.getElementById('indicateur1').textContent = {{ indicateurs.ind1 }};
+    document.getElementById('indicateur2').textContent = {{ indicateurs.ind2 }};
+    document.getElementById('indicateur3').textContent = {{ indicateurs.ind3 }};
+</script>
+
 </body>  
 </html>

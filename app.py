@@ -327,7 +327,8 @@ def list_regions():
     school_enrollment_rate = [75, 76, 78, 79, 80]
     age_groups = ['0-14 ans', '15-24 ans', '25-54 ans', '55 - 59 ans','60 -64 ','65-69','70-74 ans']
     age_distribution = [40, 20, 30, 10, 18, 20]
-
+    liste_region=regions
+    print(liste_region)
     return render_template('home.html',
                            years=years,
                            population=population,
@@ -336,6 +337,114 @@ def list_regions():
                            age_distribution=age_distribution,
                            regions=regions,
                            )
+
+
+
+
+#Bloc du dashbord------------------------------------------Pour le tableau de bord par région
+data = {  
+    'ABIDJAN': {  
+        'age_data': {"male": [-200, -180, -150, -120, -100], "female": [220, 200, 180, 150, 130], "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']},  
+        'production_data': {"years": [2010, 2012, 2014, 2016, 2018], "production": [500, 600, 700, 800, 900]},  
+        'indicateurs': {"ind1": 45, "ind2": 67, "ind3": 23}  
+    },  
+    'HAUT-SASSANDRA': {  
+        'age_data': {"male": [-150, -120, -100, -80, -60], "female": [180, 150, 120, 100, 80], "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']},  
+        'production_data': {"years": [2010, 2012, 2014, 2016, 2018], "production": [400, 500, 600, 700, 800]},  
+        'indicateurs': {"ind1": 35, "ind2": 57, "ind3": 13}  
+    },  
+    'PORO': {  
+        'age_data': {"male": [-180, -160, -140, -120, -100], "female": [200, 180, 160, 140, 120], "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']},  
+        'production_data': {"years": [2010, 2012, 2014, 2016, 2018], "production": [300, 400, 500, 600, 700]},  
+        'indicateurs': {"ind1": 25, "ind2": 47, "ind3": 33}  
+    },  
+    'GBEKE': {  
+        'age_data': {"male": [-170, -150, -130, -110, -90], "female": [190, 170, 150, 130, 110], "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']},  
+        'production_data': {"years": [2010, 2012, 2014, 2016, 2018], "production": [350, 450, 550, 650, 750]},  
+        'indicateurs': {"ind1": 30, "ind2": 50, "ind3": 20}  
+    },  
+    'INDENIE-DJUABLIN': {  
+        'age_data': {"male": [-160, -140, -120, -100, -80], "female": [180, 160, 140, 120, 100], "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']},  
+        'production_data': {"years": [2010, 2012, 2014, 2016, 2018], "production": [320, 420, 520, 620, 720]},  
+        'indicateurs': {"ind1": 28, "ind2": 48, "ind3": 18}  
+    },  
+    'TONKPI': {  
+        'age_data': {"male": [-190, -170, -150, -130, -110], "female": [210, 190, 170, 150, 130], "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']},  
+        'production_data': {"years": [2010, 2012, 2014, 2016, 2018], "production": [400, 500, 600, 700, 800]},  
+        'indicateurs': {"ind1": 40, "ind2": 60, "ind3": 30}  
+    },  
+    'YAMOUSSOUKRO': {  
+        'age_data': {"male": [-140, -120, -100, -80, -60], "female": [160, 140, 120, 100, 80], "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']},  
+        'production_data': {"years": [2010, 2012, 2014, 2016, 2018], "production": [450, 550, 650, 750, 850]},  
+        'indicateurs': {"ind1": 50, "ind2": 70, "ind3": 40}  
+    },  
+    'GONTOUGO': {  
+        'age_data': {"male": [-130, -110, -90, -70, -50], "female": [150, 130, 110, 90, 70], "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']},  
+        'production_data': {"years": [2010, 2012, 2014, 2016, 2018], "production": [380, 480, 580, 680, 780]},  
+        'indicateurs': {"ind1": 38, "ind2": 58, "ind3": 28}  
+    }  
+} 
+regions = list(data.keys())  
+import plotly.graph_objs as go
+@app.route('/region_vitrine/<region>')  
+def region_vitrine(region):  
+    if region not in regions:  
+        return "Region not found", 404  # Handle invalid region  
+
+    region_data = data[region]  
+    # ... (rest of the code remains the same, using region_data)  
+    pyramid_fig = create_pyramid_chart(region_data['age_data'])  
+    cacao_fig = create_cacao_chart(region_data['production_data'])  
+
+    return render_template('region_vitrine.html',  
+                           pyramid_graph=pyramid_fig.to_json(),  
+                           cacao_graph=cacao_fig.to_json(),  
+                           indicateurs=region_data['indicateurs'],  
+                           region_name=region,  
+                           all_regions=regions) 
+
+
+
+
+
+def create_pyramid_chart(age_data):  
+   # Création des graphiques avec Plotly
+    pyramid_fig = go.Figure()
+   
+
+  # Ajouter les barres pour les hommes
+    pyramid_fig.add_trace(go.Bar(
+        x=age_data["male"],
+        y=age_data["ages"],
+        name='Hommes',
+        orientation='h',
+        marker=dict(color='#006B45')  # Couleur pour les hommes
+    ))
+
+    # Ajouter les barres pour les femmes
+    pyramid_fig.add_trace(go.Bar(
+        x=age_data["female"],
+        y=age_data["ages"],
+        name='Femmes',
+        orientation='h',
+        marker=dict(color='#e09705')  # Couleur pour les femmes
+    ))
+    return pyramid_fig  
+
+
+def create_cacao_chart(production_data):  
+    cacao_fig = go.Figure()  
+    cacao_fig.add_trace(go.Scatter(x=production_data["years"],  
+                                   y=production_data["production"],  
+                                   mode='lines+markers',  
+                                   name='Production de cacao',  
+                                   marker=dict(color='#e09705'),  # Set line and marker color  
+                                   line=dict(color='#e09705')))  # Set line color  
+    return cacao_fig
+
+
+#--------------------------------------------------Fin du tableau de bord
+
 
 
 
@@ -604,10 +713,7 @@ def get_data2():
     return jsonify(data_str_keys)
 
 
-#Bloc du dashbord
-@app.route('/region_vitrine')
-def region_vitrine():
-    return render_template('region_vitrine.html')
+
 
 
 if __name__ == '__main__':
