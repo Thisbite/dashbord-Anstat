@@ -18,10 +18,17 @@
         <div class="nav-links">
             <a href="{{ url_for('list_regions') }}">
                 <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Statistiques" style="width: 70px; height: auto;">
-            </a>   
-            <a href="{{ url_for('search_indicators') }}">Requête</a>
-            <a href="#">A propos</a>
+            </a>            
+            <a href="{{ url_for('search_indicators') }}">Base de données indicateurs</a>
+
             <a href="#connexion">Aide</a>
+        </div>
+
+        <div class="search-bar">
+            <form method="POST" action="{{ url_for('search') }}">
+                <input type="text" name="query" placeholder="Entrez votre recherche..." required>
+                <button type="submit">Rechercher</button>
+            </form>
         </div>
     </div>
     <h3 id="pdf-title" class="titre-indicateur">Données pour {{indicateur2.capitalize()}}</h3>
@@ -51,21 +58,19 @@
             </div>
 
             <div id="depot-filter-container">
-                <div>
+                <div id="droppable-container">
                     <div id="droppable-area-rows">
                         <span id="placeholder-rows">Glissez ici pour modalités en ligne</span>
                     </div>
-                </div>
-
-                <div>
+            
                     <div id="droppable-area-cols">
                         <span id="placeholder-cols">Glissez ici pour modalités en colonne</span>
                     </div>
                 </div>
-
-                <div>
-                    <div id="filter-container"></div>
-                </div>
+            
+                <div id="filter-container"></div>
+            </div>
+            
             </div>
         </div>
 

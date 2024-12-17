@@ -208,7 +208,7 @@ function generateFilters() {
         // Titre du filtre avec fonctionnalité de dépliage/repliage
         const filterTitle = document.createElement('div');
         filterTitle.classList.add('filter-title');
-        filterTitle.textContent = `Filtrer par ${col}`;
+        filterTitle.innerHTML = `<span class="icon-orange">&#43;</span> Filtrer sur ${col}`;
         filterTitle.style.cursor = 'pointer';
 
         // Conteneur des cases à cocher (initialement masqué)

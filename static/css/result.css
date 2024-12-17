@@ -1,13 +1,27 @@
-/* Styles de base pour le corps */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-    margin: 0;
-    padding: 20px;
-    color: #333;
+/* Variables globales */
+:root {
+    --primary-color: #0C6B23;
+    --secondary-color: #0C6B23;
+    --accent-color:#0C6B23;
+    --light-color: #f8f9fa;
+    --text-color: black;
+    --border-radius: 5px;
 }
 
-/* Conteneur global pour la mise en page */
+/* Styles de base */
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--light-color);
+    margin: 0;
+    padding: 20px;
+    color: var(--text-color);
+}
+
+h3 {
+    margin-bottom: 10px;
+}
+
+/* Conteneur global */
 .container {
     display: flex;
     justify-content: space-between;
@@ -15,180 +29,123 @@ body {
     padding: 15px;
 }
 
-/* Colonne de gauche : Liste des colonnes disponibles */
+/* Colonne gauche */
 .container > div:first-child {
-    flex: 1;
-    border: 1px solid #2fd601;
-    padding: 15px;
-    background-color: #ffffff;
-    border-radius: 5px;
+    flex-basis: 20%; /* Ajustez la proportion selon vos besoins */
+    max-width: 250px; /* Limite la largeur maximum */
+    border: 1px solid var(--accent-color);
+    padding: 10px; /* Réduit l'espace intérieur */
+    background-color: #fff;
+    border-radius: var(--border-radius);
 }
+
 
 .container > div:first-child h3 {
-    color: #023e17;
-    margin-bottom: 10px;
+    color: var(--primary-color);
 }
 
+/* Éléments déplaçables */
 .draggable-item {
     display: inline-block;
     padding: 10px;
     margin: 5px 0;
     background-color: #e9ecef;
-    border: 1px solid #6c757d;
+    border: 1px solid #0C6B23;
     border-radius: 10px;
     cursor: grab;
     white-space: nowrap;
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .draggable-item:hover {
-    background-color: #06ba06;
+    background-color: var(--accent-color);
     color: #fff;
 }
 
-
-
-
-/* Zones de dépôt pour les lignes */
-#droppable-area-rows {
-    height: 200px;  /* Hauteur fixe */
-    width: 150px;   /* Largeur fixe */
-    padding: 15px;
-    border: 2px dashed #74e568;
-    border-radius: 5px;
-    background-color: #f8f9fa;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s;
-    overflow-y: auto;  /* Ajout d'une barre de défilement si le contenu dépasse */
+/* Conteneur pour les zones de dépôt */
+/* Conteneur principal pour aligner les zones de dépôt */
+#droppable-container {
+    display: flex; /* Place les zones côte à côte */
+    gap: 20px; /* Espace entre les zones */
+    justify-content: center; /* Centre les zones horizontalement */
+    align-items: stretch; /* Étire les zones verticalement */
+    margin: 20px 0; /* Espacement autour du conteneur */
 }
 
-/* Zones de dépôt pour les colonnes */
-#droppable-area-cols {
-    height: 100px; /* Hauteur fixe */
-    width: 200px;  /* Largeur fixe */
-    padding: 15px;
-    border: 2px dashed #28a745;
-    border-radius: 5px;
-    background-color: #f8f9fa;
+/* Zones de dépôt */
+#droppable-area-rows, #droppable-area-cols {
+    flex: 1; /* Zones de même taille */
+    padding: 20px;
+    min-width: 500px;
+    min-height: 100px;
+    border: 3px dashed var(--primary-color);
+    border-radius: 15px;
+    background-color: var(--light-color);
     text-align: center;
     display: flex;
     flex-direction: column;
     gap: 10px;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.3s;
-    margin-left: -50%;
-    left: 20%;
-    top: 30%;
-    transform: translate(-10%, 10%);
-    overflow-y: auto;  /* Ajout d'une barre de défilement si le contenu dépasse */
-    white-space: nowrap;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 #droppable-area-rows:hover, #droppable-area-cols:hover {
     background-color: #e0f4e0;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Placeholder pour chaque zone de dépôt */
-#placeholder-rows, #placeholder-cols {
-    color: #6c757d;
-    font-style: italic;
-    text-align: center;
-    width: 100%;
-}
-
-/* Zone de filtres */
+/* Conteneur des filtres */
 #filter-container {
-    width: 100%;
-    min-height: 150px;
+    margin-top: 20px;
     padding: 20px;
     border: 2px solid #c3d0bf;
-    border-radius: 5px;
-    background-color: #f8f9fa;
+    border-radius: var(--border-radius);
+    background-color: var(--light-color);
     display: flex;
-    flex-direction: column;
-    gap: 15px;
-    overflow-y: auto;
-    width: 200px;
+    flex-wrap: rap; 
+    gap: 15px; /* Espace entre les éléments */
+    overflow-y: auto; /* Permet le défilement horizontal si nécessaire */
+    width: 100%;
+    justify-content: flex-start; /* Aligne les éléments sur la gauche */
+    align-items: center; /* Aligne les éléments verticalement au centre */
 }
 
-/* Style pour chaque label + select */
+/* Style des labels */
 #filter-container label {
     font-weight: bold;
     margin-right: 10px;
-    
+    white-space: wrap; /* Empêche le retour à la ligne pour les labels */
 }
 
+/* Style des sélecteurs */
 #filter-container select {
     padding: 10px;
-
     border: 1px solid #ced4da;
-    border-radius: 5px;
-    width: 100%;
+    border-radius: var(--border-radius);
     background-color: #fff;
     font-size: 1em;
+    width: auto; /* La largeur des sélecteurs est ajustée automatiquement */
 }
 
-/* Conteneur pour la zone de dépôt et les filtres */
-#depot-filter-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    align-items: flex-start; /* Garde tous les éléments alignés au début */
-    min-height: 200px; /* Ajustez selon la taille souhaitée */
-}
 
-/* Styles spécifiques pour les éléments enfants */
-#depot-filter-container > .filter-element {
-    width: 200px; /* Largeur fixe pour l'élément "filter" */
-    padding: 10px;
-    border: 1px solid #ddd;
-    background-color: #f8f9fa;
-    border-radius: 5px;
-}
 
-#depot-filter-container > .drop-area {
-    flex: 1;
-    min-height: 100px; /* Ajustez la hauteur minimale si nécessaire */
-    padding: 15px;
-    border: 2px dashed #2fd601;
-    background-color: #ffffff;
-    border-radius: 5px;
-}
-/* Zone de dépôt droite */
-.container > div:nth-child(2) {
-    flex: 3;
-    border: 1px solid #28a745;
-    padding: 10px;
-    background-color: #ffffff;
-    border-radius: 5px;
-}
-
-.container > div:nth-child(2) h3 {
-    color: #28a745;
-    margin-bottom: 10px;
-}
-
-/* Conteneur du tableau au centre */
+/* Conteneur tableau */
 #table-container {
     margin-top: 20px;
     border: 2px solid #6c757d;
     padding: 15px;
-    background-color: #ffffff;
-    border-radius: 5px;
-    overflow-y: auto; 
+    background-color: #fff;
+    border-radius: var(--border-radius);
+    overflow-y: auto;
 }
 
-/* Style du tableau */
+/* Styles tableau */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
 }
 
 th, td {
@@ -198,120 +155,45 @@ th, td {
 }
 
 th {
-    background-color: #074120;
-    color: white;
-}
-
-td {
-    background-color: #f8f9fa;
+    background-color: #0C6B23;
+    color: #fff;
 }
 
 tr:hover {
     background-color: #e0e0e0;
 }
 
-/* Style pour le conteneur parent avec la bordure tricolore */
+/* Bordure tricolore */
 .parent-frame {
     border: 1px solid;
     border-image: linear-gradient(to right, orange 33%, white 33%, white 66%, green 66%);
     border-image-slice: 1;
     padding: 20px;
     border-radius: 10px;
-    margin-bottom: 20px;
     background-color: #fff;
 }
 
+/* Titres */
 .titre-indicateur {
     text-align: center;
     font-weight: bold;
     padding: 10px;
-   
-    border-radius: 5px;
-    background-color: #468409;
-    color: #FFFFFF;
+    border-radius: var(--border-radius);
+    background-color: #F39323;
+    color: #fff;
     display: inline-block;
     margin: 20px auto;
     width: fit-content;
 }
 
-.header-secondary {
-    background-color: #468409;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-}
-
-.nav-links {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.nav-links a {
-    text-decoration: none;
-    color: white;
-    padding: 10px 20px;
-    font-size: 18px;
-    margin: 0 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.nav-links a:hover {
-    background-color: #0cce1c;
-}
-
-/* Conteneur de filtre */
-.filter-group {
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.filter-title {
-    background-color: #f0f0f0;
-    padding: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.filter-title::after {
-    content: '+';
-    font-weight: bold;
-    font-size: 16px;
-    color: #333;
-    transition: transform 0.3s;
-}
-
-.checkbox-container {
-    padding: 8px;
-    background-color: #fafafa;
-    display: none;
-}
-
-.filter-group.open .filter-title::after {
-    content: '-';
-}
-
-/* Boutons de téléchargement et Métadonnées */
-.download-buttons {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
+/* Boutons */
 .download-buttons button {
     padding: 12px 20px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    color: #ffffff;
-    background-color: #15c632;
+    color: #fff;
+    background-color: var(--secondary-color);
     font-size: 15px;
     font-weight: bold;
     transition: background-color 0.3s ease, transform 0.2s ease;
@@ -319,19 +201,100 @@ tr:hover {
 }
 
 .download-buttons button:hover {
-    background-color: #efbb71;
+    background-color: #F39323;
     transform: translateY(-3px);
 }
 
 .download-buttons button:active {
-    background-color: #efbb71;
+    background-color: #F39323;
     transform: translateY(0);
 }
 
 #metadonnees {
-    background-color: #468409;
+    background-color: var(--secondary-color);
 }
 
 #metadonnees:hover {
-    background-color: #de7207;
+    background-color: #F39323;
+}
+
+
+.header-secondary {  
+    background-color: white;  
+    display: flex;  
+    justify-content: space-between;  
+    align-items: center;  
+    padding: 10px 20px;  
+    border-radius: 5px; /* Optionnel : pour des coins arrondis */  
+    font-family: 'Poppins', sans-serif; /* Police attrayante */  
+    font-weight: 600; /* Optionnel : pour un texte plus épais */  
+}  
+
+.nav-links {  
+    display: flex;  
+    justify-content: center;  
+    align-items: center;  
+}  
+
+.nav-links a {  
+    text-decoration: none;  
+    color: #0C6B23; 
+    padding: 10px 20px;  
+    font-size: 18px;  
+    border: 2px solid #4F645B; /* Ajout de la bordure */  
+    margin: 0 10px;  
+    border-radius: 5px;  
+    transition: background-color 0.3s ease;  
+    font-family: 'Poppins', sans-serif; /* Police attrayante pour les liens */  
+    font-weight: 400; /* Optionnel : pour un texte plus fin */  
+}
+
+
+
+.nav-links a:hover {
+    background-color: #d9e6db;
+    color: white;
+}
+.search-bar {  
+    display: flex;  
+    align-items: center;  
+    gap: 10px; /* Ajout d'un espacement uniforme entre les éléments */  
+}  
+
+.search-bar input[type="text"] {  
+    padding: 10px 14px; /* Plus de confort pour l'utilisateur */  
+    font-size: 16px;  
+    border: 2px solid #0C6B23; /* Bordure verte */  
+    border-radius: 6px; /* Coins légèrement plus arrondis */  
+    width: 300px;  
+    outline: none; /* Supprime le contour par défaut */  
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Animation fluide */  
+}  
+
+.search-bar input[type="text"]:focus {  
+    border-color: #0C6B23; /* Bordure plus foncée au focus */  
+    box-shadow: 0 0 5px rgba(0, 158, 96, 0.5); /* Effet lumineux au focus */ 
+     
+}  
+
+.search-bar button {  
+    padding: 10px 16px; /* Taille légèrement augmentée pour un meilleur confort */  
+    background-color: #0C6B23; /* Fond vert foncé */  
+    color: white;  
+    border: none;  
+    border-radius: 6px; /* Coins légèrement plus arrondis */  
+    cursor: pointer;  
+    font-size: 16px;  
+    font-weight: 600; /* Texte légèrement plus épais */  
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Animation fluide */  
+}  
+
+.search-bar button:hover {  
+    background-color: #F39323; /* Fond vert au survol */  
+    transform: scale(1.05); /* Légère mise en avant au survol */  
+}  
+
+.search-bar button:active {  
+    transform: scale(0.95); /* Effet de clic */  
+    background-color: #0C6B23; /* Fond plus foncé au clic */  
 }

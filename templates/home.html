@@ -186,7 +186,7 @@
             datasets: [{
                 label: 'Taux de scolarisation (%)',
                 data: schoolEnrollmentRate,
-                borderColor: 'orange',
+                borderColor: '#F39323',
                 backgroundColor: 'white',
              
                
@@ -229,7 +229,7 @@
             datasets: [{
                 label: "Distribution d'âge",
                 data: ageDistribution,
-                borderColor: 'green',
+                borderColor: '#0C6B23',
                 backgroundColor: 'white',
                 borderWidth: 1
             }]
@@ -326,7 +326,7 @@
     // Couleurs pour l'échelle de population
     const colorScale = d3.scaleLinear()  
     .domain([100000, 5000000])  // Mettre ici les min et max populations  
-    .range(["hsla(91, 35%, 22%, 0.1)", "hsla(91, 35%, 22%, 0.773)"]);
+    .range(["hsla(91, 35%, 22%, 0.1)", "#0C6B23"]);
 
     // Ajouter un SVG pour la carte
     const svg = d3.select("#map")
@@ -373,7 +373,7 @@
         .attr("x1", "0%").attr("y1", "0%")
         .attr("x2", "100%").attr("y2", "0%");
 
-        gradient.append("stop").attr("offset", "0%").attr("stop-color", "hsla(91, 35%, 22%, 0.1)");  
+        gradient.append("stop").attr("offset", "0%").attr("stop-color", "#0C6B23");  
         gradient.append("stop").attr("offset", "100%").attr("stop-color", "hsla(91, 35%, 22%, 0.773)");
 
    
