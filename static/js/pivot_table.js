@@ -466,100 +466,70 @@ function downloadCSV() {
 
 
 
-
 function downloadPDF() {
     if (!filteredTableData || filteredTableData.length === 0) {
         alert("Aucune variable sélectionnée");
         return;
     }
-
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+
+    // Calcul de la largeur totale
+    const pageWidth = 210; // Largeur d'une page A4 en mm
+    const columnWidths = tableData.columns.map(() => 30); // Largeur par défaut des colonnes
+    const totalWidth = columnWidths.reduce((sum, width) => sum + width, 0);
+
+    // Choix de l'orientation
+    const orientation = totalWidth > pageWidth ? 'landscape' : 'portrait';
+    const doc = new jsPDF({ orientation });
+
+    // Calcul de la largeur ajustée des colonnes
+    const availablePageWidth = orientation === 'landscape' ? 297 - 20 : 210 - 20; // Largeur en paysage ou portrait, moins les marges
+    const adjustedColumnWidths = columnWidths.map(width =>
+        (width / totalWidth) * availablePageWidth
+    );
 
     // Titre du PDF
-     // Récupérer dynamiquement le nom de l’indicateur depuis l’élément HTML
-     const pdfTitleElement = document.getElementById('pdf-title');
-     const pdfTitle = pdfTitleElement ? pdfTitleElement.textContent.trim() : 'Données Filtrées';
-     doc.setFontSize(16);
+    const pdfTitleElement = document.getElementById('pdf-title');
+    const pdfTitle = pdfTitleElement ? pdfTitleElement.textContent.trim() : 'Données Filtrées';
+    doc.setFontSize(16);
     doc.text(pdfTitle, 10, 15);
 
-    // Gestion des colonnes hiérarchiques
-    const columns = tableData.columns;
-    const levels = columns.length > 0 ? columns[0].length : 0;
-
-    const headerRows = [];
-    for (let level = 0; level < levels; level++) {
-        const headerRow = [];
-        let previousValue = null;
-        let colspan = 0;
-
-        columns.forEach((col, index) => {
-            const currentValue = col[level];
-            if (currentValue === previousValue) {
-                colspan += 1;
-            } else {
-                if (colspan > 0) {
-                    headerRow[headerRow.length - 1].colspan = colspan;
-                }
-                headerRow.push({ content: currentValue || '', colspan: 1 });
-                previousValue = currentValue;
-                colspan = 1;
-            }
-
-            if (index === columns.length - 1 && colspan > 1) {
-                headerRow[headerRow.length - 1].colspan = colspan;
-            }
-        });
-
-        headerRows.push(headerRow);
-    }
-
     // Préparer les données du tableau
+    const columns = tableData.columns;
     const bodyRows = filteredTableData.map(row =>
         columns.map(col => {
             const key = Array.isArray(col) ? col.join(' ') : col;
-            return row[key] || '';
+            const value = row[key] || '';
+            return value.length > 50 ? `${value.substring(0, 47)}...` : value; // Tronquer si nécessaire
         })
-    );
-
-    // Créer les en-têtes avec les fusions
-    const headWithSpans = headerRows.map(row => {
-        return row.map(cell => ({
-            content: cell.content,
-            colSpan: cell.colspan || 1,
-            styles: {
-                halign: 'center',
-                fillColor: [0, 102, 204], // Bleu clair
-                textColor: [255, 255, 255], // Blanc
-                fontStyle: 'bold'
-            }
-        }));
-    });
-
-    // Créer les données avec styles
-    const bodyWithStyles = bodyRows.map(row =>
-        row.map(cell => ({
-            content: cell,
-            styles: { halign: 'center', fontSize: 10 }
-        }))
     );
 
     // Générer le tableau avec autoTable
     doc.autoTable({
         startY: 25,
-        head: headWithSpans,
-        body: bodyWithStyles,
+        head: [columns],
+        body: bodyRows,
         theme: 'grid',
-        headStyles: { fillColor: [0, 102, 204], textColor: [255, 255, 255], fontStyle: 'bold' },
-        bodyStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], fontSize: 10, halign: 'center' },
+        headStyles: { fillColor: [0, 107, 69], textColor: [255, 153, 0], fontStyle: 'bold' },
+        bodyStyles: { fontSize: 10, cellPadding: 2, halign: 'center' },
         alternateRowStyles: { fillColor: [245, 245, 245] },
-
-        columnStyles: {
-            0: { fillColor: [230, 230, 250], halign: 'center', fontStyle: 'bold' } // Exemple pour la première colonne
-        }
+        margin: { left: 10, right: 10 },
+        styles: {
+            overflow: 'linebreak',
+            cellWidth: 'auto',
+        },
+        columnStyles: columns.reduce((acc, _, index) => {
+            acc[index] = { cellWidth: adjustedColumnWidths[index] || 'auto' };
+            return acc;
+        }, {})
     });
 
     // Télécharger le PDF
-    doc.save('donnees_filtrees.pdf');
+    const filename = orientation === 'landscape' ? 'donnees_filtrees_landscape.pdf' : 'donnees_filtrees_portrait.pdf';
+    doc.save(filename);
 }
+
+
+
+
 

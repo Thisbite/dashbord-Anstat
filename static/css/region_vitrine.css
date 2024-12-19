@@ -10,6 +10,11 @@
     --border-radius: 5px;  
     --transition-speed: 0.3s;  
 }  
+body {  
+    margin: 0;  
+    padding: 50px;  
+    width: 100%;  
+}  
 
 /* === Header secondaire === */  
 .header-secondary {  
@@ -42,6 +47,21 @@
     font-weight: var(--font-weight-regular);  
     white-space: nowrap;  
 }  
+/* Suppression de la bordure pour les liens contenant des images */
+.logo-link {
+    border: none !important; /* Supprime toute bordure */
+    padding: 0 !important; /* Supprime les marges internes */
+    margin: 0 !important; /* Supprime les marges externes */
+    display: inline-block; /* S'assurer qu'il reste en ligne */
+}
+
+/* Optionnel : Réinitialiser les styles sur les images */
+.logo-link img {
+    display: block; /* Évite les espaces blancs autour de l'image */
+    border: none; /* Assure qu'aucune bordure n'est appliquée à l'image elle-même */
+    margin: 0;
+    padding: 0;
+}
 
 .nav-links a:hover {  
     background-color: var(--primary-color);  
@@ -225,11 +245,82 @@
 }
 
 .indicator-value {
-    font-size: 1.5rem; /* Taille plus grande pour la valeur */
+    font-size: 2rem; /* Taille plus grande pour la valeur */
     color: #e09705; /* Orange pour la valeur */
     font-weight: bold;
 }
 
-#region-title {  
-    text-align: center;  
-  }
+#region-title {
+    text-align: left; /* Aligne le titre à gauche */
+    color: #006B45; /* Couleur verte */
+    font-size: 24px; /* Ajuste la taille du texte */
+    font-weight: bold; /* Rend le titre en gras */
+    margin: 20px 0; /* Ajoute un espace au-dessus et en dessous */
+    padding-left: 10px; /* Ajoute un léger décalage depuis la gauche */
+    border-left: 5px solid #006B45; /* Optionnel : Une ligne pour démarquer */
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    max-width: 1200px; /* Ajustez selon votre design */
+    margin: 0 auto;
+}
+
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 107, 69, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.carousel-arrow.left-arrow {
+    left: -20px; /* Ajustez pour le positionnement */
+}
+
+.carousel-arrow.right-arrow {
+    right: -20px; /* Ajustez pour le positionnement */
+}
+
+.carousel-arrow:hover {
+    background-color: rgba(0, 107, 69, 1);
+}
+
+.carousel-inner {
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.card {
+    border: 1px solid #0C6B23;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    font-weight: bold;
+    color: #0C6B23;
+}
+
+.card-text {
+    font-size: 24px;
+    color:#e09705;
+}
+
+.card-text small.text-muted {
+    font-size: 15px; /* Taille de police plus petite */
+    color: #6c757d; /* Couleur grise pour discrétion */
+}
+
