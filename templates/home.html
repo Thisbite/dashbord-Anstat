@@ -1,7 +1,4 @@
 
-
-
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -15,29 +12,25 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://d3js.org/d3.v6.min.js"></script>
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    
-  
-    
-  
 </head>
-
 <body>
-
+    <div class="header-title">
+        <h1>Plateforme régionale des données</h1>
+    </div>
+    
     <div class="header-secondary">
         <div class="nav-links">
             <a href="{{ url_for('list_regions') }}" class="logo-link">
                 <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Statistiques" style="width: 150px; height: auto;">
             </a>
-                      
-            <a href="{{ url_for('search_indicators') }}">Base de données des indicateurs</a>
-
+            <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
             <a href="#connexion">Aide</a>
         </div>
-
+    
         <div class="search-bar">
             <form method="POST" action="{{ url_for('search') }}">
                 <input type="text" name="query" placeholder="Entrez votre recherche..." required>
@@ -45,18 +38,14 @@
             </form>
         </div>
     </div>
-
-
-     
+    
     <div class="container">
         <div class="left-column">
             <div class="left-section">
                 <!-- Pour la carte de la cote d'ivoire-->
                 <div id="map">
-                  
                 </div>
                 <div id="tooltip" class="tooltip" style="display: none;">
-               
             </div>
             </div>
 

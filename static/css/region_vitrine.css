@@ -1,4 +1,4 @@
-/* === Variables Globales === */  
+/* === Variables Globales === */
 :root {  
     --primary-color: hsla(91, 35%, 22%, 0.773);  
     --primary-hover-color: #006B45;  
@@ -9,318 +9,172 @@
     --font-weight-regular: 400;  
     --border-radius: 5px;  
     --transition-speed: 0.3s;  
-}  
+}
+
+/* === Styles Globaux === */
 body {  
     margin: 0;  
-    padding: 50px;  
+   /* padding: 220px; */ 
     width: 100%;  
-}  
-
-/* === Header secondaire === */  
-.header-secondary {  
-    background-color: white;  
-    display: flex;  
-    justify-content: space-between;  
-    align-items: center;  
-    padding: 10px 20px;  
-    border-radius: var(--border-radius);  
     font-family: var(--font-family);  
-    font-weight: var(--font-weight-bold);  
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  
 }  
 
-/* === Liens de navigation === */  
-.nav-links {  
-    display: flex;  
-    align-items: center;  
-    gap: 15px;  
-}  
-
-.nav-links a {  
-    text-decoration: none;  
-    color: var(--primary-color);  
-    padding: 8px 16px;  
-    font-size: 16px;  
-    border: 2px solid var(--primary-color);  
-    border-radius: var(--border-radius);  
-    transition: all var(--transition-speed) ease;  
-    font-weight: var(--font-weight-regular);  
-    white-space: nowrap;  
-}  
-/* Suppression de la bordure pour les liens contenant des images */
-.logo-link {
-    border: none !important; /* Supprime toute bordure */
-    padding: 0 !important; /* Supprime les marges internes */
-    margin: 0 !important; /* Supprime les marges externes */
-    display: inline-block; /* S'assurer qu'il reste en ligne */
+/* === Header Principal === */
+.header-title {
+    text-align: center;
+    font-size: 4rem;
+    font-weight: bold;
+    background-color: #f4f4f4;
+    padding: 20px 10px;
+    border-bottom: 2px solid #ddd;
 }
 
-/* Optionnel : Réinitialiser les styles sur les images */
-.logo-link img {
-    display: block; /* Évite les espaces blancs autour de l'image */
-    border: none; /* Assure qu'aucune bordure n'est appliquée à l'image elle-même */
+.header-title h1 {
+    font-size: 2.5rem;
+    color: #0C6B23;
     margin: 0;
-    padding: 0;
+    font-family: 'Arial', sans-serif;
 }
 
-.nav-links a:hover {  
-    background-color: var(--primary-color);  
-    color: white;  
-}  
-
-/* === Barre de recherche === */  
-.search-bar {  
-    display: flex;  
-    align-items: stretch;  
-    gap: 8px;  
-}  
-
-.search-bar form {  
-    display: flex;  
-    align-items: stretch;  
-    gap: 8px;  
-}  
-
-.search-bar input[type="text"] {  
-    padding: 8px 14px;  
-    font-size: 16px;  
-    border: 2px solid var(--primary-color);  
-    border-radius: var(--border-radius);  
-    width: 300px;  
-    outline: none;  
-    transition: all var(--transition-speed) ease;  
-    box-sizing: border-box;  
-}  
-
-.search-bar input[type="text"]:focus {  
-    border-color: var(--primary-hover-color);  
-    box-shadow: 0 0 5px rgba(0, 158, 96, 0.3);  
-}  
-
-.search-bar button {  
-    padding: 8px 16px;  
-    background-color: var(--primary-color);  
-    color: white;  
-    border: none;  
-    border-radius: var(--border-radius);  
-    cursor: pointer;  
-    font-size: 16px;  
-    font-weight: var(--font-weight-bold);  
-    transition: all var(--transition-speed) ease;  
-    margin: 0; /* Supprime la marge par défaut */  
-    height: 100%; /* Assure la même hauteur que l'input */  
-    display: flex;  
-    align-items: center;  
-    justify-content: center;  
-}  
-
-.search-bar button:hover {  
-    background-color: var(--primary-hover-color);  
-    transform: translateY(-1px);  
-}  
-
-.search-bar button:active {  
-    transform: translateY(1px);  
-}  
-
-/* === Sections et cartes === */  
-.section-nav {  
-    display: flex;  
-    justify-content: center;  
-    gap: 15px;  
-    margin: 20px 0;  
-    flex-wrap: wrap;  
-}  
-
-.section-btn {  
-    background-color: var(--primary-color);  
-    color: white;  
-    border: none;  
-    padding: 10px 20px;  
-    font-size: 16px;  
-    border-radius: var(--border-radius);  
-    cursor: pointer;  
-    transition: all var(--transition-speed) ease;  
-    margin: 0;  
-}  
-
-.section-btn:hover {  
-    background-color: var(--primary-hover-color);  
-    transform: translateY(-2px);  
-}  
-
-/* === Cartes === */  
-.card {  
-    transition: transform var(--transition-speed) ease;  
-    height: 100%;  
-}  
-
-.card:hover {  
-    transform: translateY(-5px);  
-}  
-
-.card-img-top {  
-    height: 200px;  
-    object-fit: cover;  
-    border-radius: var(--border-radius) var(--border-radius) 0 0;  
-}  
-
-/* === Dashboard === */  
-#dashboard-container {  
-    border: none;  
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);  
-    margin: 20px 0;  
-    border-radius: var(--border-radius);  
-}  
-
-#charts-wrapper {  
-    margin: 20px 0;  
-    border-radius: var(--border-radius);  
-    overflow: hidden;  
-}  
-
-#charts {  
-    padding: 20px;  
-    gap: 20px;  
-    scroll-padding: 20px;  
-}  
-
-/* === Responsive === */  
-@media (max-width: 768px) {  
-    .header-secondary {  
-        flex-direction: column;  
-        gap: 15px;  
-    }  
-
-    .nav-links {  
-        flex-wrap: wrap;  
-        justify-content: center;  
-    }  
-
-    .search-bar {  
-        width: 100%;  
-    }  
-
-    .search-bar form {  
-        width: 100%;  
-    }  
-
-    .search-bar input[type="text"] {  
-        width: 100%;  
-    }  
-}
-/* Section graphique */
-.card {
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-#age-pyramid, #cacao-production {
-    height: 400px;
-    width: 100%;
+/* === Header Secondaire === */
+.header-secondary {
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.indicators-container {
+/* === Navigation === */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--primary-color);
+    padding: 8px 16px;
+    font-size: 16px;
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    transition: all var(--transition-speed) ease;
+    font-weight: var(--font-weight-regular);
+}
+
+.nav-links a:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* === Barre de Recherche === */
+.search-bar {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.search-bar input[type="text"] {
+    padding: 8px 14px;
+    font-size: 16px;
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    width: 300px;
+    outline: none;
+    transition: all var(--transition-speed) ease;
+    box-sizing: border-box;
+}
+
+.search-bar input[type="text"]:focus {
+    border-color: var(--primary-hover-color);
+    box-shadow: 0 0 5px rgba(0, 158, 96, 0.3);
+}
+
+/* === Section Régionale === */
+.section-regionale {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 20px;
+    gap: 20px;
+    background-color: white;
+    border-radius: 8px;
+}
+
+/* Section Département */
+.section-departementale {
+    padding: 20px;
+    background-color: white; /* Couleur d'arrière-plan */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre douce */
+    text-align: center;
+}
+
+/* Titre de la section */
+.section-titre {
+    font-size: 36px;
+    font-weight: bold;
+    color: #0d0d0e; /* Bleu foncé */
+    margin-bottom: 20px;
+}
+
+/* Conteneur des colonnes */
+.colonnes {
     display: flex;
     justify-content: space-around;
-    margin-top: 20px;
+    align-items: center;
     gap: 20px;
 }
 
-.indicator-card {
-    text-align: center;
-    background-color: #f9f9f9;
-    border: 2px solid #ddd;
-    border-radius: 10px;
+/* Colonne gauche et droite */
+.colonne {
+    flex: 1;
+    min-width: 300px;
     padding: 20px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    width: 200px;
+    border-radius: 8px;
+    background-color: transparent;
+    box-shadow: none;
+    text-align: center;
 }
 
-.indicator-name {
-    font-size: 1.2rem; /* Taille pour le nom */
-    color: #006B45; /* Vert pour le nom */
-    font-weight: bold;
-    display: block;
+.colonne h2 {
+    color: #006B45; /* Vert */
     margin-bottom: 10px;
+    font-size: 16px;
 }
 
-.indicator-value {
-    font-size: 2rem; /* Taille plus grande pour la valeur */
-    color: #e09705; /* Orange pour la valeur */
-    font-weight: bold;
+
+
+/* Barre verticale */
+.separator {
+    width: 2px;
+    background-color: #008000; /* Couleur verte */
+    height: auto;
+    align-self: stretch;
 }
 
-#region-title {
-    text-align: left; /* Aligne le titre à gauche */
-    color: #006B45; /* Couleur verte */
-    font-size: 24px; /* Ajuste la taille du texte */
-    font-weight: bold; /* Rend le titre en gras */
-    margin: 20px 0; /* Ajoute un espace au-dessus et en dessous */
-    padding-left: 10px; /* Ajoute un léger décalage depuis la gauche */
-    border-left: 5px solid #006B45; /* Optionnel : Une ligne pour démarquer */
-}
+/* === Responsive === */
+@media (max-width: 768px) {
+    .header-secondary {
+        flex-direction: column;
+        gap: 15px;
+    }
 
-.carousel-container {
-    position: relative;
-    width: 100%;
-    max-width: 1200px; /* Ajustez selon votre design */
-    margin: 0 auto;
-}
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 
-.carousel-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 107, 69, 0.8);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 10;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
+    .search-bar input[type="text"] {
+        width: 100%;
+    }
 
-.carousel-arrow.left-arrow {
-    left: -20px; /* Ajustez pour le positionnement */
+    .section-regionale {
+        flex-direction: column;
+    }
+    .section-departementale {
+        flex-direction: column;
+    }
 }
-
-.carousel-arrow.right-arrow {
-    right: -20px; /* Ajustez pour le positionnement */
-}
-
-.carousel-arrow:hover {
-    background-color: rgba(0, 107, 69, 1);
-}
-
-.carousel-inner {
-    overflow: hidden;
-    border-radius: 10px;
-}
-
-.card {
-    border: 1px solid #0C6B23;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.card-title {
-    font-weight: bold;
-    color: #0C6B23;
-}
-
-.card-text {
-    font-size: 24px;
-    color:#e09705;
-}
-
-.card-text small.text-muted {
-    font-size: 15px; /* Taille de police plus petite */
-    color: #6c757d; /* Couleur grise pour discrétion */
-}
-

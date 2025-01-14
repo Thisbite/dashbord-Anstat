@@ -11,13 +11,12 @@ import json
 import urllib
 from io import StringIO
 from datetime import datetime
-from itertools import chain
 from unidecode import unidecode
 import folium
 import branca.colormap as cm 
 import mysql.connector
 import redis
-
+from itertools import chain
 import my_queries as qr
 import data as dt
 import config as cf
@@ -155,38 +154,23 @@ def search():
         # Utilisation d'un set pour éviter les doublons
         unique_results = []
         seen = set()
-        
         for hit in hits:
             unique_key = (
-              
                 hit['_source']['indicateur'], 
-             
                 #hit['_source']['annee']
             )
             if unique_key not in seen:
                 unique_results.append(hit)
                 seen.add(unique_key)
-
         total_results = search_result['hits']['total']['value']  # Récupère le nombre total de résultats
         total_pages = (total_results + 9) // 10  # Calcul du nombre total de pages
-        
         return render_template('resultats.html', results=unique_results, query=query, page=page, total_pages=total_pages)
-
-
-
+    
 #index_data_from_excel()
 es.indices.put_settings(index='requete_elastic', body={
     "index.blocks.read_only_allow_delete": None
 })
 #index_data_from_excel()
-
-
-
-
-    
-
-
-
 # Date de départ pour le calcul des naissances (exemple : 1er janvier 2022)
 START_DATE = datetime(2022, 1, 1)
 STORAGE_FILE = 'births_data.json'
@@ -215,21 +199,16 @@ def calculate_accumulated_births():
     birth_data = load_birth_data()
     last_time = birth_data['last_time']
     total_births = birth_data['total_births']
-
     # Temps écoulé depuis la date de départ ou la dernière mise à jour (en secondes)
     current_time = time.time()
     elapsed_time = current_time - last_time
-
     # Calculer les naissances accumulées pendant ce temps
     births_per_minute = get_births_per_minute()
     accumulated_births = (births_per_minute / 60) * elapsed_time  # Convertir en naissances par seconde
-
     # Mettre à jour le total des naissances
     total_births += accumulated_births
-
     # Sauvegarder le nouvel état
     save_birth_data(total_births, current_time)
-
     return total_births
 
 @app.route('/births_data')
@@ -390,15 +369,9 @@ import plotly.graph_objs as go
 def region_vitrine(region):  
     if region not in regions:  
         return "Region not found", 404  # Handle invalid region  
-
     region_data = data[region]  
-    # ... (rest of the code remains the same, using region_data)  
-    pyramid_fig = create_pyramid_chart(region_data['age_data'])  
-    cacao_fig = create_cacao_chart(region_data['production_data'])  
-
     return render_template('region_vitrine.html',  
-                           pyramid_graph=pyramid_fig.to_json(),  
-                           cacao_graph=cacao_fig.to_json(),  
+                            
                            indicateurs=region_data['indicateurs'],  
                            region_name=region,  
                            all_regions=regions) 
@@ -407,40 +380,6 @@ def region_vitrine(region):
 
 
 
-def create_pyramid_chart(age_data):  
-   # Création des graphiques avec Plotly
-    pyramid_fig = go.Figure()
-   
-
-  # Ajouter les barres pour les hommes
-    pyramid_fig.add_trace(go.Bar(
-        x=age_data["male"],
-        y=age_data["ages"],
-        name='Hommes',
-        orientation='h',
-        marker=dict(color='#006B45')  # Couleur pour les hommes
-    ))
-
-    # Ajouter les barres pour les femmes
-    pyramid_fig.add_trace(go.Bar(
-        x=age_data["female"],
-        y=age_data["ages"],
-        name='Femmes',
-        orientation='h',
-        marker=dict(color='#e09705')  # Couleur pour les femmes
-    ))
-    return pyramid_fig  
-
-
-def create_cacao_chart(production_data):  
-    cacao_fig = go.Figure()  
-    cacao_fig.add_trace(go.Scatter(x=production_data["years"],  
-                                   y=production_data["production"],  
-                                   mode='lines+markers',  
-                                   name='Production de cacao',  
-                                   marker=dict(color='#e09705'),  # Set line and marker color  
-                                   line=dict(color='#e09705')))  # Set line color  
-    return cacao_fig
 
 
 #--------------------------------------------------Fin du tableau de bord
@@ -623,9 +562,7 @@ def process_columns():
         except Exception as e:
             return jsonify({"error": f"La colonne '{value_column}' contient des données non numériques : {e}"}), 400
     try:
-        #Applique la nouvelle structure du jeu de données
-        #print('data dabs processus:',df_filtered)
-        #mes_index=[col_columns,row_columns]
+
         my_index= list(chain.from_iterable(my_index))
         data_V1=my_index
         data_V1=sorted(data_V1)
@@ -711,6 +648,12 @@ def get_data2():
 
     # Retourner les données en JSON
     return jsonify(data_str_keys)
+
+
+# Generateur de données excel
+@app.route('/generateur')
+def generateur():
+    return render_template('generateur_excel.html')
 
 
 

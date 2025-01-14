@@ -4,10 +4,26 @@
     box-sizing: border-box;
 }
 
+
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
 }
+
+.header-title {
+    text-align: center;
+    background-color: #f4f4f4; /* Couleur de fond, modifiable */
+    padding: 20px 10px;
+    border-bottom: 2px solid #ddd; /* Ligne séparatrice, si souhaitée */
+}
+
+.header-title h1 {
+    font-size: 2.5rem; /* Taille du texte */
+    color: #0C6B23;
+    margin: 0;
+    font-family: 'Arial', sans-serif; /* Police d'écriture */
+}
+
 
 .header-secondary {  
     background-color: white;  

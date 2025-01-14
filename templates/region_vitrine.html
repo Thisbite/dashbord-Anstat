@@ -20,321 +20,88 @@
     <script src="{{ url_for('static', filename='js/education.js') }}"></script>  
 </head>  
 <body>  
-    <!-- Header secondaire -->  
-    <div class="header-secondary">  
-        <div class="nav-links">  
+    <!-- Header -->  
+    <div class="header-title">
+        <h1>Plateforme régionale des données</h1>
+    </div>
+    
+    <div class="header-secondary">
+        <div class="nav-links">
             <a href="{{ url_for('list_regions') }}" class="logo-link">
                 <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Statistiques" style="width: 150px; height: auto;">
-            </a>          
-            <a href="{{ url_for('search_indicators') }}">Base de données indicateurs</a>  
-            <a href="#connexion">Aide</a>  
-        </div>  
+            </a>
+            <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
+            <a href="#connexion">Aide</a>
+        </div>
+    
+        <div class="search-bar">
+            <form method="POST" action="{{ url_for('search') }}">
+                <input type="text" name="query" placeholder="Entrez votre recherche..." required>
+                <button type="submit">Rechercher</button>
+            </form>
+        </div>
+    </div>
+<!--Presentation de la région-->
 
-        <!-- Barre de recherche -->  
-        <div class="search-bar">  
-            <form method="POST" action="{{ url_for('search') }}">  
-                <input type="text" name="query" placeholder="Entrez votre recherche..." required>  
-                <button type="submit">Rechercher</button>  
-            </form>  
-        </div>  
-    </div>  
+
+<!-- Section régionale -->
+<div class="section-regionale">
+    <!-- Colonne gauche -->
+    <div class="colonne gauche">
+        <h2>Carte de la région</h2>
+        <p>Contenu spécifique à la colonne gauche, tel que les informations régionales ou les filtres.</p>
+        <p>
+            La Région du <strong>Haut-Sassandra</strong>, située au centre-ouest de la Côte d’Ivoire, bénéficie d’une position stratégique grâce à sa localisation au carrefour d’importants axes routiers nationaux et internationaux. Avec une <strong>superficie de 15 200 km²</strong>, elle comprend quatre départements, 23 sous-préfectures, sept communes et 331 villages. 
+        </p>
+        <p>
+            Sa population cosmopolite, composée de divers groupes ethniques ivoiriens et étrangers, vit en harmonie, favorisant un brassage culturel. Le relief varié de la région inclut une pénéplaine, des collines culminant jusqu’à 700 mètres et des vallées alluviales, propices aux cultures irriguées.
+        </p>
+    </div>
+
+    <!-- Colonne droite -->
+    <div class="colonne droite">
+        <h2>Situation géographique</h2>
+        <p>Contenu spécifique à la colonne droite, tel que des graphiques, cartes, ou tableaux.</p>
+    </div>
+</div>
+<!-- Fin régionale -->
+
+<!-- Section Département -->
+<div class="section-departementale">
+    <!-- Titre de la section -->
+    <h1 class="section-titre">Statistiques clés des départements</h1>
+    <!-- Conteneur des colonnes -->
+    <div class="colonnes">
+        <!-- Colonne gauche : Pyramide des âges -->
+        <div class="colonne gauche">
+            <h2>Pyramide des âges</h2>
+            <div id="pyramide-ages"></div>
+        </div>
+        <!-- Colonne du milieu: Taux de natalité -->
+        <div class="colonne droite">
+            <h2>Taux de natalité sur 10 ans</h2>
+            <div id="taux-natalite"></div>
+        </div>
+         <!-- Colonne droite : taux brute  -->
+         <div class="colonne milieu">
+            <h2>Taux brute de scolarité</h2>
+            <div id="taux-brute"></div>
+        </div>
+    </div>
+</div>
+
+
+<script src="{{ url_for('static', filename='js/education.js') }}"></script>
+<!-- Fin département -->
+
+
+
+
+
+
 
     <!-- Section des graphiques -->  
- <!-- Dans ce bloc nous devons realiser un tableau de bord graphique avec une disposition de deux carte (card) contenant une pyramide des ages 
-    et une courbe de production agricole de cacao 
-Dans la deuxieme ligne trois cards contenant des valeur des indicateurs-->
-<h1 id="region-title"> Indicateurs clés en région : {{ region_name }}</h1>
-<!-- Section des graphiques -->
-<div class="row g-3">
-    <!-- Première ligne : Deux graphiques -->
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title " style="text-align: center; color: #006B45;">Pyramide des âges</h5>
-                <!-- Intégration de la pyramide des âges -->
-                <div id="age-pyramid" style="height: 400px;"></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title" style="text-align: center; color: #006B45;">Produit Interieur Brut(PIB)</h5>
-                <!-- Intégration de la courbe -->
-                <div id="cacao-production" style="height: 400px;"></div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Deuxième ligne : Trois cartes , bloc -->
-
-<div class="carousel-container">
-    <!-- Flèche gauche -->
-    <button class="carousel-arrow left-arrow" type="button" data-bs-target="#indicatorCarousel" data-bs-slide="prev">
-        &#8249;
-    </button>
-
-    <!-- Carrousel -->
-    <div id="indicatorCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            <!-- Bloc 1 : Trois premières cartes -->
-            <div class="carousel-item active">
-                <div class="row g-3">
-                    <!-- Carte 1 -->
-                    <div class="col-md-4">
-                        <div class="card mb-4">
-                            <div class="card-body text-center">
-                                <h5 class="card-title indicator-name">Taux de chômage (%)</h5>
-                                <p class="card-text indicator-value">
-                                    <span id="indicateur1">-</span>
-                                    <br>
-                                    <small class="text-muted"> 2023</small>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Carte 2 -->
-                    <div class="col-md-4">
-                        <div class="card mb-4">
-                            <div class="card-body text-center">
-                                <h5 class="card-title indicator-name">Taux brut de scolarisation (%)</h5>
-                                <p class="card-text indicator-value">
-                                    <span id="indicateur2">-</span>
-                                    <br>
-                                    <small class="text-muted"> 2023</small>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Carte 3 -->
-                    <div class="col-md-4">
-                        <div class="card mb-4">
-                            <div class="card-body text-center">
-                                <h5 class="card-title indicator-name">Taux de mortalité infantile (‰)</h5>
-                                <p class="card-text indicator-value">
-                                    <span id="indicateur3">-</span>
-                                    <br>
-                                    <small class="text-muted"> 2023</small>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bloc 2 : Trois cartes suivantes -->
-            <div class="carousel-item">
-                <div class="row g-3">
-                    <!-- Carte 4 -->
-                    <div class="col-md-4">
-                        <div class="card mb-4">
-                            <div class="card-body text-center">
-                                <h5 class="card-title indicator-name">Espérance de vie (ans)</h5>
-                                <p class="card-text indicator-value">
-                                    <span id="indicateur4">-</span>
-                                    <br>
-                                    <small class="text-muted"> 2023</small>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Carte 5 -->
-                    <div class="col-md-4">
-                        <div class="card mb-4">
-                            <div class="card-body text-center">
-                                <h5 class="card-title indicator-name">Taux de fécondité</h5>
-                                <p class="card-text indicator-value">
-                                    <span id="indicateur5">-</span>
-                                    <br>
-                                    <small class="text-muted"> 2023</small>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Carte 6 -->
-                    <div class="col-md-4">
-                        <div class="card mb-4">
-                            <div class="card-body text-center">
-                                <h5 class="card-title indicator-name">Taux de pauvreté (%)</h5>
-                                <p class="card-text indicator-value">
-                                    <span id="indicateur6">-</span>
-                                    <br>
-                                    <small class="text-muted"> 2023</small>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Flèche droite -->
-    <button class="carousel-arrow right-arrow" type="button" data-bs-target="#indicatorCarousel" data-bs-slide="next">
-        &#8250;
-    </button>
-</div>
-
-
-<!--Fin du graphe section-->
-
-
-
-
-<h1 id="region-title"> Autres publications</h1>
-    <!-- Contenu principal -->  
-    <div class="container mt-5">  
-        <!-- Barre de navigation -->  
-        <div class="section-nav mt-4">  
-            <button class="btn btn-success section-btn" data-section="synoptique">Fiches synoptiques</button>  
-            <button class="btn btn-success  section-btn" data-section="ihpc">Bulletins des prix</button> 
-            <button class="btn btn-success  section-btn" data-section="ihpc">Annuaire statistique régional</button>  
-            <button class="btn btn-success  section-btn" data-section="publications">Autres publications</button>  
-        </div>  
-
-        <!-- Sections -->  
-        <!-- Fiches synoptiques -->  
-        <div id="synoptique" class="section-content mt-4">  
-            <h3>Fiche synoptique</h3>  
-            <div class="row g-3">  
-                <!-- Carte 1 -->  
-                <div class="col-md-4">  
-                    <div class="card mb-4">  
-                        <img src="{{ url_for('static', filename='img/fiche1.jpg') }}"   
-                             class="card-img-top" alt="Fiche Synoptique 2022">  
-                        <div class="card-body">  
-                            <h5 class="card-title">Fiche Synoptique 2022</h5>  
-                            <p class="card-text">Description brève de la fiche synoptique 1.</p>  
-                            <a href="#" class="btn btn-success">Télécharger</a>  
-                        </div>  
-                    </div>  
-                </div>  
-        
-                <!-- Carte 2 -->  
-                <div class="col-md-4">  
-                    <div class="card mb-4">  
-                        <img src="{{ url_for('static', filename='img/fiche2.webp') }}"   
-                             class="card-img-top" alt="Fiche Synoptique 2023">  
-                        <div class="card-body">  
-                            <h5 class="card-title">Fiche Synoptique 2023</h5>  
-                            <p class="card-text">Description brève de la fiche synoptique 2.</p>  
-                            <a href="#" class="btn btn-success">Télécharger</a>  
-                        </div>  
-                    </div>  
-                </div>  
-        
-                <!-- Carte 3 -->  
-                <div class="col-md-4">  
-                    <div class="card mb-4">  
-                        <img src="{{ url_for('static', filename='img/fiche3.jpg') }}"   
-                             class="card-img-top" alt="Fiche Synoptique 2024">  
-                        <div class="card-body">  
-                            <h5 class="card-title">Fiche Synoptique 2024</h5>  
-                            <p class="card-text">Description brève de la fiche synoptique 3.</p>  
-                            <a href="#" class="btn btn-success">Télécharger</a>  
-                        </div>  
-                    </div>  
-                </div>  
-            </div>  
-        </div>  
-        
-        <!-- Bulletins mensuels -->  
-        <div id="ihpc" class="section-content mt-4" style="display: none;">  
-            <h3>Indices de prix à la consommation</h3>  
-            <div class="row g-3">  
-                <!-- Carte 1 -->  
-                <div class="col-md-4">  
-                    <div class="card mb-4">  
-                        <img src="{{ url_for('static', filename='img/ipc1.webp') }}"   
-                             class="card-img-top" alt="Bulletin Juillet">  
-                        <div class="card-body">  
-                            <h5 class="card-title">Bulletin du mois de Juillet</h5>  
-                            <p class="card-text">Description brève du bulletin.</p>  
-                            <a href="#" class="btn btn-success">Télécharger</a>  
-                        </div>  
-                    </div>  
-                </div>  
-        
-                <!-- Carte 2 -->  
-                <div class="col-md-4">  
-                    <div class="card mb-4">  
-                        <img src="{{ url_for('static', filename='img/ipc2.webp') }}"   
-                             class="card-img-top" alt="Bulletin Mars 2023">  
-                        <div class="card-body">  
-                            <h5 class="card-title">Bulletin du mois de Mars 2023</h5>  
-                            <p class="card-text">Description brève du bulletin.</p>  
-                            <a href="#" class="btn btn-success">Télécharger</a>  
-                        </div>  
-                    </div>  
-                </div>  
-        
-                <!-- Carte 3 -->  
-                <div class="col-md-4">  
-                    <div class="card mb-4">  
-                        <img src="{{ url_for('static', filename='img/ipc3.png') }}"   
-                             class="card-img-top" alt="Bulletin Avril 2024">  
-                        <div class="card-body">  
-                            <h5 class="card-title">Bulletin du mois d'Avril 2024</h5>  
-                            <p class="card-text">Description brève du bulletin.</p>  
-                            <a href="#" class="btn btn-success">Télécharger</a>  
-                        </div>  
-                    </div>  
-                </div>  
-            </div>  
-        </div>  
-        
-        <!-- Autres publications -->  
-        <div id="publications" class="section-content mt-4" style="display: none;">  
-            <h3>Autres publications</h3>  
-            <p>Contenu pour les autres publications...</p>  
-        </div>  
-    </div>  
-
-    <!-- JS -->  
-    <script>  
-        // Gestion des sections  
-        document.querySelectorAll('.section-btn').forEach(button => {  
-            button.addEventListener('click', () => {  
-                const section = button.getAttribute('data-section');  
-
-                // Masquer toutes les sections  
-                document.querySelectorAll('.section-content').forEach(content => {  
-                    content.style.display = 'none';  
-                });  
-
-                // Afficher la section sélectionnée  
-                document.getElementById(section).style.display = 'block';  
-            });  
-        });  
-    </script>  
-    
-
-
-    <!--Section graphique du js-->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<script>
-    // Charger la pyramide des âges
-    var pyramidGraph = {{ pyramid_graph|safe }};
-    Plotly.newPlot('age-pyramid', pyramidGraph);
-
-    // Charger la courbe de production
-    var cacaoGraph = {{ cacao_graph|safe }};
-    Plotly.newPlot('cacao-production', cacaoGraph);
-
-    // Charger les indicateurs
-    document.getElementById('indicateur1').textContent = {{ indicateurs.ind1 }};
-    document.getElementById('indicateur2').textContent = {{ indicateurs.ind2 }};
-    document.getElementById('indicateur3').textContent = {{ indicateurs.ind3 }};
-   
-
-    const carouselElement = document.getElementById('indicatorCarousel');
-const carousel = new bootstrap.Carousel(carouselElement, {
-    interval: 5000, // Défilement toutes les 5 secondes
-    ride: 'carousel'
-});
-
-</script>
 
 </body>  
 </html>

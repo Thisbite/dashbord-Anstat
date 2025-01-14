@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Génération de Table de Désagrégation</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script>
+        // Définition des indicateurs et leurs niveaux de désagrégation
+        const indicateursNiveaux = {
+            "Effectif de la population": ['Département', 'Groupe d\'âges', 'Sexe', 'Âges'],
+            "Rapport de Masculinité (RM) en %": ['Département', 'Âges'],
+            "Nombre de Centres d'Etat Civil": ['Département', 'Type de centre d\'état civil'],
+            "Nombre de Naissances enregistrées": ['Département', 'Sexe', 'Source de données admnistratives', 'Délai de Déclaration', 'Type de centre d\'état civil'],
+            "Ecart de naissances enregistrées": ['Département'],
+            "Rapport masculinité à la naissance (%)": ['Département'],
+            "Nombre de Décès enregistrés": ['Département', 'Sexe', 'Source de données admnistratives', 'Type de centre d\'état civil'],
+            "Ecart de décès enregistrés": ['Département'],
+            "Rapport masculinité au décès (%)": ['Département'],
+            "Nombre de mariages enregistrés": ['Département', 'Type de centre d\'état civil']
+        };
+
+        // Fonction pour générer les combinaisons
+        function* combinations(arr, r) {
+            if (r === 1) {
+                for (const item of arr) {
+                    yield [item];
+                }
+                return;
+            }
+            for (let i = 0; i <= arr.length - r; i++) {
+                const head = arr[i];
+                const tail = arr.slice(i + 1);
+                for (const c of combinations(tail, r - 1)) {
+                    yield [head, ...c];
+                }
+            }
+        }
+
+        // Fonction pour générer le produit cartésien
+        function* cartesianProduct(arrays) {
+            if (arrays.length === 0) {
+                yield [];
+                return;
+            }
+            const head = arrays[0];
+            const tail = arrays.slice(1);
+            for (const item of head) {
+                for (const rest of cartesianProduct(tail)) {
+                    yield [item, ...rest];
+                }
+            }
+        }
+
+        // Fonction pour mettre à jour les niveaux de désagrégation
+        function updateNiveaux() {
+            const indicateur = document.getElementById("indicateur").value;
+            const niveauxContainer = document.getElementById("niveaux-container");
+            niveauxContainer.innerHTML = ""; // Réinitialiser les niveaux
+
+            if (indicateur && indicateursNiveaux[indicateur]) {
+                indicateursNiveaux[indicateur].forEach(niveau => {
+                    const div = document.createElement("div");
+                    div.className = "niveau";
+
+                    const label = document.createElement("label");
+                    label.textContent = `Modalités pour ${niveau}:`;
+
+                    const input = document.createElement("input");
+                    input.type = "text";
+                    input.placeholder = `Entrez les modalités séparées par des virgules`;
+                    input.dataset.niveau = niveau;
+
+                    div.appendChild(label);
+                    div.appendChild(input);
+                    niveauxContainer.appendChild(div);
+                });
+            }
+        }
+
+        // Fonction pour générer le fichier Excel
+        function genererExcel() {
+            const indicateur = document.getElementById("indicateur").value;
+            const annee = document.getElementById("annee").value;
+            const niveauxInputs = document.querySelectorAll("#niveaux-container input");
+            const niveauChoix = document.querySelector('input[name="niveau"]:checked').value;
+
+            if (!indicateur || !annee) {
+                alert("Veuillez sélectionner un indicateur et entrer une année.");
+                return;
+            }
+
+            // Créer un objet avec les modalités pour chaque niveau
+            const modalites = {};
+            niveauxInputs.forEach(input => {
+                const niveau = input.dataset.niveau;
+                modalites[niveau] = input.value.split(",").map(m => m.trim()).filter(m => m);
+            });
+
+            const result = [];
+            const niveauxAssocies = indicateursNiveaux[indicateur];
+
+            // Logique pour un seul niveau
+            if (niveauChoix === "1") {
+                for (const niveau of niveauxAssocies) {
+                    const modalitesCombinaisons = modalites[niveau];
+
+                    if (modalitesCombinaisons) {
+                        for (const modalite of modalitesCombinaisons) {
+                            result.push({
+                                Dimension: niveau,
+                                Modalites: modalite,
+                                Indicateurs: indicateur,
+                                Année: annee,
+                                Valeurs: null
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Logique pour plusieurs niveaux (à partir de 2)
+            if (niveauChoix === "2") {
+                for (let r = 2; r <= niveauxAssocies.length; r++) {
+                    for (const niveauxCombinaison of combinations(niveauxAssocies, r)) {
+                        const modalitesCombinaisons = niveauxCombinaison.map(niveau => modalites[niveau]);
+
+                        // Générer le produit cartésien des modalités
+                        for (const combinaison of cartesianProduct(modalitesCombinaisons)) {
+                            const dimension = niveauxCombinaison.join(" / ");
+                            const modalite = combinaison.join(" / ");
+                            result.push({
+                                Dimension: dimension,
+                                Modalites: modalite,
+                                Indicateurs: indicateur,
+                                Année: annee,
+                                Valeurs: null
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Générer le fichier Excel
+            const ws = XLSX.utils.json_to_sheet(result);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Désagrégation");
+            XLSX.writeFile(wb, "table_desagregee.xlsx");
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .niveau {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Génération de Table de Désagrégation</h1>
+        <label for="indicateur">Sélectionnez un indicateur :</label>
+        <select id="indicateur" onchange="updateNiveaux()">
+            <option value="">-- Choisir un indicateur --</option>
+            <script>
+                // Remplir la liste des indicateurs
+                Object.keys(indicateursNiveaux).forEach(indicateur => {
+                    const option = document.createElement("option");
+                    option.value = indicateur;
+                    option.textContent = indicateur;
+                    document.getElementById("indicateur").appendChild(option);
+                });
+            </script>
+        </select>
+
+        <label for="annee">Entrez l'année :</label>
+        <input type="number" id="annee" value="2024" placeholder="Exemple : 2024">
+
+        <div>
+            <label>Choisissez le type de désagrégation :</label>
+            <label><input type="radio" name="niveau" value="1" checked> Un seul niveau</label>
+            <label><input type="radio" name="niveau" value="2"> Plusieurs niveaux (à partir de 2)</label>
+        </div>
+
+        <div id="niveaux-container"></div>
+
+        <button onclick="genererExcel()">Générer le fichier Excel</button>
+    </div>
+</body>
+</html>
