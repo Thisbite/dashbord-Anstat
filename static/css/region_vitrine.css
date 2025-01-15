@@ -103,78 +103,151 @@ body {
     border-radius: 8px;
 }
 
-/* Section Département */
-.section-departementale {
-    padding: 20px;
-    background-color: white; /* Couleur d'arrière-plan */
+
+
+
+
+
+
+/* Conteneur principal pour la section région */
+.section-regionales {
+    padding: 40px; /* Réduisez le padding pour rapprocher les éléments */
+    background-color: #f8f9fa;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre douce */
-    text-align: center;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ajout d'une ombre légère pour un effet de continuité */
 }
 
-/* Titre de la section */
+/* Conteneur principal pour la section département */
+.section-departementale {
+    padding: 40px; /* Assurez-vous que le padding soit similaire à la section région */
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin: 0; /* Retirer les marges entre les deux sections pour plus de fluidité */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre similaire pour une continuité */
+    height: auto; /* Utilisez une hauteur automatique pour permettre une expansion fluide */
+}
+
+/* Style pour l'ombre et la bordure */
+.section-regionales, .section-departementale {
+    border: 1px solid #ddd; /* Ajout d'une bordure légère pour un effet homogène */
+}
+
+/* Style pour les titres */
 .section-titre {
+    text-align: center;
     font-size: 36px;
-    font-weight: bold;
-    color: #0d0d0e; /* Bleu foncé */
+    color: #006B45;
     margin-bottom: 20px;
 }
 
-/* Conteneur des colonnes */
-.colonnes {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    gap: 20px;
+
+/* Style pour le titre de la section */
+.section-titre {
+    text-align: center;
+    font-size: 36px;
+    font-weight: bold;
+    color: #006B45; /* Couleur de titre */
+    margin-bottom: 10px; /* Réduisez la marge inférieure pour rapprocher les blocs */
 }
 
-/* Colonne gauche et droite */
+
+/* Conteneur pour les graphiques */
+.conteneur-graphiques {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+/* Colonne pour chaque graphique ou tableau */
 .colonne {
     flex: 1;
-    min-width: 300px;
-    padding: 20px;
-    border-radius: 8px;
-    background-color: transparent;
-    box-shadow: none;
+    margin: 10px;
+    min-width: 280px; /* Minimum width pour chaque colonne */
+    max-width: 600px; /* Maximum width pour chaque colonne */
+}
+
+/* Style pour le tableau */
+#tableauPop {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Style pour l'entête du tableau */
+#tableauPop thead {
+    background-color: #006B45;
+    color: white;
+}
+
+#tableauPop th, #tableauPop td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+#tableauPop tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#tableauPop tr:hover {
+    background-color: #ddd;
+}
+
+/* Espacement du graphique dans la colonne */
+canvas {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+}
+.colonne h2 {
+    font-size: 25px; /* Ajustez la taille de la police ici */
+    /* Facultatif : changez le poids de la police */
     text-align: center;
 }
 
-.colonne h2 {
-    color: #006B45; /* Vert */
-    margin-bottom: 10px;
-    font-size: 16px;
+
+
+/*Section publication ----------------------------------------*/
+#publicationSection {
+    background-color: lightgreen;
+    padding: 20px;
+    margin-top: 20px;
+    display: none;
 }
 
-
-
-/* Barre verticale */
-.separator {
-    width: 2px;
-    background-color: #008000; /* Couleur verte */
-    height: auto;
-    align-self: stretch;
+#publication {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
-/* === Responsive === */
-@media (max-width: 768px) {
-    .header-secondary {
-        flex-direction: column;
-        gap: 15px;
-    }
+.card {
+    width: 200px;
+    padding: 20px;
+    border: 2px solid #004085;
+    border-radius: 10px;
+    text-align: center;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
 
-    .nav-links {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+}
 
-    .search-bar input[type="text"] {
-        width: 100%;
-    }
-
-    .section-regionale {
-        flex-direction: column;
-    }
-    .section-departementale {
-        flex-direction: column;
-    }
+.details {
+    margin-top: 20px;
+    padding: 20px;
+    border: 2px solid #004085;
+    border-radius: 10px;
+    background-color: #f8f9fa;
 }

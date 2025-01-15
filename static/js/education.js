@@ -1,253 +1,374 @@
-// **Pyramide des âges : données et graphique**
+// Pyramide des âges
 var dataPyramide1 = [
-    { age: '0-4 ans', male: -200, female: 180 },
-    { age: '5-9 ans', male: -150, female: 160 },
-    { age: '10-14 ans', male: -180, female: 170 },
-    { age: '15-19 ans', male: -120, female: 140 },
-    { age: '20-24 ans', male: -100, female: 90 },
-    { age: '25-29 ans', male: -50, female: 60 },
+  { age: "25-29 ans", male: -50, female: 60 },
+  { age: "20-24 ans", male: -100, female: 90 },
+  { age: "15-19 ans", male: -120, female: 140 },
+  { age: "10-14 ans", male: -180, female: 170 },
+  { age: "5-9 ans", male: -150, female: 160 },
+  { age: "0-4 ans", male: -200, female: 180 },
+
 ];
 
-// Dimensions du graphique
-// Dimensions du graphique
-var widthPyramide = 400;
-var heightPyramide = 200;
-var marginPyramide = { top: 20, right: 30, bottom: 40, left: 50 };
+var ctx1 = document.getElementById("pyramideAgesChart").getContext("2d");
+new Chart(ctx1, {
+  type: "bar",
+  data: {
+      labels: dataPyramide1.map(d => d.age),
+      datasets: [
+          { label: "Hommes", data: dataPyramide1.map(d => d.male), backgroundColor: "#e09705" },
+          { label: "Femmes", data: dataPyramide1.map(d => d.female), backgroundColor: "#006B45" },
+      ],
+  },
+  options: {
+      indexAxis: "y",
+      scales: {
+          x: { stacked: true, min: -250, max: 250 },
+          y: { stacked: true },
+      },
+  },
+});
 
-// Création des échelles pour les axes
-var xPyramide = d3
-  .scaleLinear()
-  .domain([-250, 250]) // Domaine symétrique pour les hommes (négatif) et les femmes
-  .range([0, widthPyramide]);
-
-var yPyramide = d3
-  .scaleBand()
-  .domain(dataPyramide1.map(d => d.age)) // Référence à dataPyramide1
-  .range([0, heightPyramide])
-  .padding(0.1);
-
-// Création de la zone SVG principale
-var svgPyramide = d3
-  .select("#pyramide-ages")
-  .append("svg")
-  .attr("width", widthPyramide + marginPyramide.left + marginPyramide.right)
-  .attr("height", heightPyramide + marginPyramide.top + marginPyramide.bottom)
-  .append("g")
-  .attr("transform", `translate(${marginPyramide.left}, ${marginPyramide.top})`);
-
-// Ajout des barres pour les hommes
-svgPyramide
-  .selectAll(".bar-male")
-  .data(dataPyramide1) // Référence à dataPyramide1
-  .enter()
-  .append("rect")
-  .attr("class", "bar-male")
-  .attr("x", d => xPyramide(d.male))
-  .attr("y", d => yPyramide(d.age))
-  .attr("width", d => xPyramide(0) - xPyramide(d.male))
-  .attr("height", yPyramide.bandwidth())
-  .attr("fill", "#e09705");
-
-// Ajout des barres pour les femmes
-svgPyramide
-  .selectAll(".bar-female")
-  .data(dataPyramide1) // Référence à dataPyramide1
-  .enter()
-  .append("rect")
-  .attr("class", "bar-female")
-  .attr("x", xPyramide(0))
-  .attr("y", d => yPyramide(d.age))
-  .attr("width", d => xPyramide(d.female) - xPyramide(0))
-  .attr("height", yPyramide.bandwidth())
-  .attr("fill", "#006B45");
-
-// Ajout des axes
-svgPyramide.append("g").call(d3.axisLeft(yPyramide));
-svgPyramide
-  .append("g")
-  .attr("transform", `translate(0, ${heightPyramide})`)
-  .call(d3.axisBottom(xPyramide));
-
-// Données de la légende
-var legendData = [
-  { label: "Hommes (Men)", color: "#e09705" },
-  { label: "Femmes (Women)", color: "#006B45" },
+// Taux de natalité
+var dataNatalite = [
+  { year: 2013, natalite: 20 },
+  { year: 2014, natalite: 22 },
+  { year: 2015, natalite: 18 },
+  { year: 2016, natalite: 21 },
+  { year: 2017, natalite: 19 },
+  { year: 2018, natalite: 24 },
+  { year: 2019, natalite: 23 },
+  { year: 2020, natalite: 22 },
+  { year: 2021, natalite: 25 },
+  { year: 2022, natalite: 26 },
+  { year: 2023, natalite: 27 },
 ];
 
-// Dimensions et marges de la légende
-var legendMargin = { top: 10, right: 10, bottom: 10, left: 10 };
-var legendWidth = widthPyramide - legendMargin.left - legendMargin.right;
-var legendHeight = legendData.length * 20; // Hauteur ajustée en fonction des éléments
+var ctx2 = document.getElementById("tauxNataliteChart").getContext("2d");
+new Chart(ctx2, {
+  type: "line",
+  data: {
+      labels: dataNatalite.map(d => d.year),
+      datasets: [
+          {
+              label: "Taux de natalité",
+              data: dataNatalite.map(d => d.natalite),
+              borderColor: "orange",
+              backgroundColor: "rgba(255,165,0,0.2)",
+              fill: true,
+          },
+      ],
+  },
+  options: {
+      scales: {
+          x: { type: "category", labels: dataNatalite.map(d => d.year) },
+          y: { beginAtZero: true },
+      },
+  },
+});
 
-// Création de la zone SVG pour la légende
-var legendSvg = d3
-  .select("#pyramide-ages")
-  .append("svg")
-  .attr("class", "legend")
-  .attr("width", legendWidth + legendMargin.left + legendMargin.right)
-  .attr("height", legendHeight + legendMargin.top + legendMargin.bottom);
+// Taux brut de scolarité
+var dataTauxBrut = [
+  { year: 2013, taux: 85 },
+  { year: 2014, taux: 87 },
+  { year: 2015, taux: 89 },
+  { year: 2016, taux: 90 },
+  { year: 2017, taux: 88 },
+  { year: 2018, taux: 92 },
+  { year: 2019, taux: 94 },
+  { year: 2020, taux: 91 },
+  { year: 2021, taux: 93 },
+  { year: 2022, taux: 95 },
+  { year: 2023, taux: 96 },
+];
 
-// Fonction pour dessiner les éléments de la légende
-var drawLegendItem = function(g, data, index) {
-  var gItem = g.append("g").attr("transform", `translate(0, ${index * 20})`);
 
-  gItem
-    .append("rect")
-    .attr("x", 0)
-    .attr("y", 0)
-    .attr("width", 10)
-    .attr("height", 10)
-    .attr("fill", data.color);
+// Données fictives pour la population par département et par sexe
+// Données fictives pour la population par département et par sexe
+var dataPopulation = [
+  { departement: "Korhogo", hommes: 60000, femmes: 60000 },
+  { departement: "Sinematiali", hommes: 45000, femmes: 50000 },
+  { departement: "Dikodougou", hommes: 55000, femmes: 55000 },
+  { departement: "M'bengué", hommes: 40000, femmes: 45000 },
+];
 
-  gItem
-    .append("text")
-    .attr("x", 15)
-    .attr("y", 9) // Alignement vertical avec le rectangle
-    .text(data.label);
+// Sélectionner le tableau
+var tableauPop = document.getElementById("tableauPop");
+var headersRow = tableauPop.querySelector("thead tr"); // Ligne d'en-têtes
+
+// Ajouter les colonnes pour les modalités de sexe et le total
+var thHommes = document.createElement("th");
+thHommes.textContent = "Hommes";
+headersRow.appendChild(thHommes);
+
+var thFemmes = document.createElement("th");
+thFemmes.textContent = "Femmes";
+headersRow.appendChild(thFemmes);
+
+var thTotal = document.createElement("th");
+thTotal.textContent = "Total";
+headersRow.appendChild(thTotal);
+
+// Ajouter les lignes des départements et les données correspondantes
+var tbody = tableauPop.querySelector("tbody");
+dataPopulation.forEach(function(d) {
+    var row = document.createElement("tr");
+
+    // Ajouter le nom du département
+    var tdDepartement = document.createElement("td");
+    tdDepartement.textContent = d.departement;
+    row.appendChild(tdDepartement);
+
+    // Ajouter les effectifs pour les hommes
+    var tdHommes = document.createElement("td");
+    tdHommes.textContent = d.hommes;
+    row.appendChild(tdHommes);
+
+    // Ajouter les effectifs pour les femmes
+    var tdFemmes = document.createElement("td");
+    tdFemmes.textContent = d.femmes;
+    row.appendChild(tdFemmes);
+
+    // Ajouter le total
+    var tdTotal = document.createElement("td");
+    tdTotal.textContent = d.hommes + d.femmes;
+    row.appendChild(tdTotal);
+
+    // Ajouter la ligne au tableau
+    tbody.appendChild(row);
+});
+
+
+// Données fictives pour les effectifs médicaux
+var dataMedical = [
+  { "Nombre hôpital":2,corps: "Infirmiers", Korhogo: 80, Sinematiali: 60, Dikodougou: 75, "M'bengué": 50 },
+  { "Nombre hôpital":1,corps: "Sage-femmes", Korhogo: 40, Sinematiali: 30, Dikodougou: 35, "M'bengué": 25 },
+  { "Nombre hôpital":2,corps: "Généralistes", Korhogo: 30, Sinematiali: 25, Dikodougou: 40, "M'bengué": 20 },
+];
+// Extraire les départements et corps médicaux
+var labelsMedical = ["Korhogo", "Sinematiali", "Dikodougou", "M'bengué"];
+var corpsMedical = ["Infirmiers", "Sage-femmes", "Généralistes"];
+
+// Configuration du graphe pour les effectifs médicaux
+var ctxMedical = document.getElementById("effectifMedical").getContext("2d");
+
+new Chart(ctxMedical, {
+  type: "bar",
+  data: {
+    labels: labelsMedical,
+    datasets: corpsMedical.map((corps, index) => ({
+      label: corps,
+      data: labelsMedical.map(departement => {
+        const corpsData = dataMedical.find(d => d.corps === corps);
+        return corpsData ? corpsData[departement] : 0; // Retourne 0 si aucune donnée trouvée
+      }),
+      backgroundColor: ["#e09705", "#006B45", "white","#ddd"][index],
+      borderColor: "#000",
+      borderWidth: 1,
+    })),
+  },
+  options: {
+    scales: {
+      x: { beginAtZero: true },
+      y: { beginAtZero: true, max: 100 },
+    },
+  },
+});
+
+
+
+
+var dataIDH = [
+  { region: "2016", idh: 0.55 },
+  { region: "2020", idh: 0.72 },
+  { region: "2022", idh: 0.60 },
+  { region: "2023", idh: 0.65 },
+];
+
+
+var ctxIDH = document.getElementById("idhChart").getContext("2d");
+new Chart(ctxIDH, {
+  type: "line",
+  data: {
+    labels: dataIDH.map(d => d.region),
+    datasets: [
+      {
+        label: "IDH",
+        data: dataIDH.map(d => d.idh),
+        borderColor: "green",
+        fill: false,
+      },
+    ],
+  },
+  options: {
+    scales: {
+      y: { beginAtZero: true, max: 1 },
+    },
+  },
+});
+
+
+
+
+var dataTauxChomage = [
+  { region: "2008", taux: 12 },
+  { region: "2010", taux: 8 },
+  { region: "2018", taux: 10 },
+  { region: "2023", taux: 9 },
+];
+
+var ctxTauxChomage = document.getElementById("tauxChomageChart").getContext("2d");
+new Chart(ctxTauxChomage, {
+  type: "line",
+  data: {
+    labels: dataTauxChomage.map(d => d.region),
+    datasets: [
+      {
+        label: "Taux de Chômage (%)",
+        data: dataTauxChomage.map(d => d.taux),
+        borderColor: "#e09705", // Couleur de la ligne
+        fill: false, // Pas de remplissage sous la courbe
+        pointBackgroundColor: "#e09705", // Couleur des points
+        pointBorderColor: "#e09705", // Bordure des points
+      },
+    ],
+  },
+  options: {
+    scales: {
+      y: {
+        beginAtZero: true, // L'axe Y commence à zéro
+        ticks: {
+          stepSize: 2, // Intervalle entre les graduations
+        },
+        title: {
+          display: true,
+          text: "Taux (%)",
+        },
+      },
+      x: {
+        title: {
+          display: true,
+          text: "Régions",
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: true, // Affiche la légende
+        position: "top",
+      },
+    },
+  },
+});
+
+var dataPopulationPoro = {
+  labels: ["Population Urbaine", "Population Rurale"],
+  datasets: [
+    {
+      label: "Répartition Population 2022 (Poro)",
+      data: [150000, 250000], // Exemple de données
+      backgroundColor: ["#4CAF50", "#FFC107"], // Couleurs pour les segments
+      hoverBackgroundColor: ["#388E3C", "#FFA000"], // Couleurs au survol
+    },
+  ],
 };
 
-// Ajout des éléments de la légende
-var legendGroup = legendSvg
-  .append("g")
-  .attr("transform", `translate(${legendMargin.left}, ${legendMargin.top})`);
-
-legendData.forEach((data, index) => drawLegendItem(legendGroup, data, index));
-
-
-
-
-
-
-
-// **Taux de natalité sur 10 ans**
-var dataNatalite = [
-    { year: 2013, natalite: 20 },
-    { year: 2014, natalite: 22 },
-    { year: 2015, natalite: 18 },
-    { year: 2016, natalite: 21 },
-    { year: 2017, natalite: 19 },
-    { year: 2018, natalite: 24 },
-    { year: 2019, natalite: 23 },
-    { year: 2020, natalite: 22 },
-    { year: 2021, natalite: 25 },
-    { year: 2022, natalite: 26 },
-    { year: 2023, natalite: 27 },
-];
-
-// Dimensions du graphique
-var widthNatalite = 400;
-var heightNatalite = 200;
-var marginNatalite = { top: 20, right: 30, bottom: 40, left: 50 };
-
-// Création des échelles
-var xNatalite = d3
-    .scalePoint() // Utilisation de scalePoint pour mieux espacer les années
-    .domain(dataNatalite.map(d => d.year))
-    .range([0, widthNatalite])
-    .padding(0.5);
-
-var yNatalite = d3
-    .scaleLinear()
-    .domain([0, d3.max(dataNatalite, d => d.natalite)])
-    .range([heightNatalite, 0]);
-
-// Ajout de la zone SVG
-var svgNatalite = d3
-    .select("#taux-natalite")
-    .append("svg")
-    .attr("width", widthNatalite + marginNatalite.left + marginNatalite.right)
-    .attr("height", heightNatalite + marginNatalite.top + marginNatalite.bottom)
-    .append("g")
-    .attr("transform", `translate(${marginNatalite.left}, ${marginNatalite.top})`);
-
-// Ajout de la ligne
-var line = d3
-    .line()
-    .x(d => xNatalite(d.year))
-    .y(d => yNatalite(d.natalite));
-
-svgNatalite
-    .append("path")
-    .datum(dataNatalite)
-    .attr("fill", "none")
-    .attr("stroke", "orange") // Couleur de la ligne
-    .attr("stroke-width", 2)
-    .attr("d", line);
-
-// Ajout des cercles aux points de données
-svgNatalite
-    .selectAll(".point")
-    .data(dataNatalite)
-    .enter()
-    .append("circle")
-    .attr("class", "point")
-    .attr("cx", d => xNatalite(d.year))
-    .attr("cy", d => yNatalite(d.natalite))
-    .attr("r", 4) // Taille des cercles
-    .attr("fill", "orange");
-
-// Ajout des axes
-svgNatalite.append("g").call(d3.axisLeft(yNatalite));
-svgNatalite
-    .append("g")
-    .attr("transform", `translate(0, ${heightNatalite})`)
-    .call(d3.axisBottom(xNatalite));
+// Initialisation du graphique
+var ctxPopRuralUrbain = document.getElementById("popRuralUrbain").getContext("2d");
+new Chart(ctxPopRuralUrbain, {
+  type: "doughnut",
+  data: dataPopulationPoro,
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: "top",
+      },
+      tooltip: {
+        callbacks: {
+          label: function (tooltipItem) {
+            let label = tooltipItem.label || "";
+            let value = tooltipItem.raw;
+            return `${label}: ${value.toLocaleString()} habitants`;
+          },
+        },
+      },
+    },
+  },
+});
 
 
 
+var dataAlphabetisationPoro = {
+  labels: ["2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023"], // Années
+  datasets: [
+    {
+      label: "Taux d'Alphabétisation (%)",
+      data: [45, 48, 50, 52, 55, 58, 60, 62], // Exemple de données
+      backgroundColor: "#4CAF50", // Couleur des barres
+      borderColor: "#388E3C", // Couleur de bordure des barres
+      borderWidth: 1,
+    },
+  ],
+};
 
-// Données fictives pour le taux brut de scolarisation
-var donnees = [
-  { region: "Abidjan", taux: 85 },
-  { region: "Bouaké", taux: 78 },
-  { region: "Yamoussoukro", taux: 92 },
-  { region: "San Pedro", taux: 75 },
-  { region: "Korhogo", taux: 80 }
-];
+// Initialisation du graphique
+var ctxAlphabetisationPoro = document
+  .getElementById("alphabetisationChartPoro")
+  .getContext("2d");
+new Chart(ctxAlphabetisationPoro, {
+  type: "bar",
+  data: dataAlphabetisationPoro,
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: "top",
+      },
+      tooltip: {
+        callbacks: {
+          label: function (tooltipItem) {
+            let value = tooltipItem.raw;
+            return `Taux : ${value}%`;
+          },
+        },
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "Année",
+        },
+      },
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Taux d'Alphabétisation (%)",
+        },
+      },
+    },
+  },
+});
 
-// Dimensions et marges
-var marge = { top: 20, right: 30, bottom: 40, left: 50 };
-var largeur = 500 - marge.left - marge.right;
-var hauteur = 300 - marge.top - marge.bottom;
 
-// Création du conteneur SVG
-var svg = d3
-    .select("#taux-brute")
-    .append("svg")
-    .attr("width", largeur + marge.left + marge.right)
-    .attr("height", hauteur + marge.top + marge.bottom)
-    .append("g")
-    .attr("transform", `translate(${marge.left},${marge.top})`);
 
-// Axes
-var x = d3.scaleBand()
-    .domain(donnees.map(d => d.region))
-    .range([0, largeur])
-    .padding(0.2);
+function showPublicationFunction(event) {
+  event.preventDefault();  // Empêche le comportement par défaut
 
-var y = d3.scaleLinear()
-    .domain([0, 100])
-    .range([hauteur, 0]);
+  const publicationSection = document.getElementById('connexion');
+  const dashboardSection = document.getElementById('dashbordId');
 
-// Ajout de l'axe X
-svg.append("g")
-    .attr("transform", `translate(0,${hauteur})`)
-    .call(d3.axisBottom(x))
-    .selectAll("text")
-    .attr("transform", "rotate(-25)")
-    .style("text-anchor", "end");
+  // Masquer ou afficher la section Publication
+  if (publicationSection.style.display === "none" || publicationSection.style.display === "") {
+      publicationSection.style.display = "block";
+      dashboardSection.style.display = 'none';
+  } else {
+      publicationSection.style.display = "none";
+  }
+}
 
-// Ajout de l'axe Y
-svg.append("g")
-    .call(d3.axisLeft(y));
 
-// Barres du diagramme
-svg.selectAll("rect")
-    .data(donnees)
-    .enter()
-    .append("rect")
-    .attr("x", d => x(d.region))
-    .attr("y", d => y(d.taux))
-    .attr("width", x.bandwidth())
-    .attr("height", d => hauteur - y(d.taux))
-    .attr("fill", "skyblue");
+
