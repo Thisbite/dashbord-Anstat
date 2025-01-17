@@ -93,11 +93,33 @@ body {
     box-shadow: 0 0 5px rgba(0, 158, 96, 0.3);
 }
 
+.search-bar button {  
+    padding: 10px 16px; /* Taille légèrement augmentée pour un meilleur confort */  
+    background-color: #0C6B23; /* Fond vert foncé */  
+    color: white;  
+    border: none;  
+    border-radius: 6px; /* Coins légèrement plus arrondis */  
+    cursor: pointer;  
+    font-size: 16px;  
+    font-weight: 600; /* Texte légèrement plus épais */  
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Animation fluide */  
+}  
+
+.search-bar button:hover {  
+    background-color: #F39323; /* Fond vert au survol */  
+    transform: scale(1.05); /* Légère mise en avant au survol */  
+}  
+
+.search-bar button:active {  
+    transform: scale(0.95); /* Effet de clic */  
+    background-color: #0C6B23; /* Fond plus foncé au clic */  
+}
+
 /* === Section Régionale === */
 .section-regionale {
     display: flex;
     flex-wrap: wrap;
-    padding: 20px;
+    padding: 100px;
     gap: 20px;
     background-color: white;
     border-radius: 8px;
@@ -212,23 +234,27 @@ canvas {
 }
 
 
-
-/*Section publication ----------------------------------------*/
+/* Section publication ---------------------------------------- */
 #publicationSection {
-    background-color: lightgreen;
+  
     padding: 20px;
     margin-top: 20px;
     display: none;
+    text-align: center; /* Centrer le contenu */
 }
 
 #publication {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
+    justify-content: center; /* Centrer les cartes */
+    max-width: 1200px; /* Limiter la largeur du conteneur */
+    margin: 0 auto; /* Centrer le conteneur */
 }
 
 .card {
-    width: 200px;
+    width: 250px;
+    height: 100px;
     padding: 20px;
     border: 2px solid #004085;
     border-radius: 10px;
@@ -245,9 +271,96 @@ canvas {
 }
 
 .details {
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #004085;
+    margin-top: 0; /* Pas d'espace au-dessus du bloc */
+    padding: 0 250px; /* 0 en haut et en bas, 100px à gauche et à droite */
     border-radius: 10px;
-    background-color: #f8f9fa;
+    background-color: white;
+    display: grid; /* Utilisation de Grid Layout */
+    grid-template-columns: 1fr 1fr; /* Deux colonnes égales */
+    justify-content: center; /* Centre les colonnes dans le conteneur */
+    align-items: flex-start; /* Aligne les contenus en haut des colonnes */
 }
+
+
+
+.details > div {
+    background: #ffffff; /* Couleur de fond pour distinguer chaque section */
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.details ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.details ul li {
+    margin-bottom: 10px;
+}
+
+.details ul li button {
+    margin-left: 10px;
+}
+
+.details form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Espacement uniforme entre les champs */
+}
+
+.details form input {
+    width: 100%; /* S'étend à la largeur du conteneur */
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.details form button {
+    padding: 8px 12px;
+    background-color: #006B45;  
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.details form button:hover {
+    background-color:#006B45;   /* Changer la couleur au survol */
+}
+
+
+#ficheSynoptiqueList button {
+    background-color: #006B45; /* Couleur de fond des boutons */
+    color: #ffffff; /* Couleur du texte */
+    border: none; /* Suppression des bordures */
+    padding: 10px 15px; /* Ajout d'un padding pour agrandir les boutons */
+    border-radius: 10px; /* Bordures arrondies */
+    cursor: pointer; /* Curseur pointeur pour indiquer qu'il est cliquable */
+    transition: background-color 0.3s ease; /* Animation de transition pour le survol */
+}
+
+#ficheSynoptiqueList button:hover {
+    background-color: #006B45; ; /* Couleur de fond au survol */
+}
+
+#ficheSynoptiqueList button:active {
+    background-color: #006B45; ; /* Couleur de fond lorsqu'on clique */
+    transform: scale(0.95); /* Réduction visuelle pour simuler un clic */
+}
+
+#ficheSynoptiqueList button + button {
+    margin-left: 10px; /* Espacement entre les boutons adjacents */
+}
+.details h3 {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 18px;
+    color: #e09705;
+    font-weight: bold;
+}
+
+
+

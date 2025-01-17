@@ -1,26 +1,26 @@
-<!DOCTYPE html>  
-<html lang="fr">  
-<head>  
-    <meta charset="UTF-8">  
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <title>Base de données des statistiques régionales</title>  
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base de données des statistiques régionales</title>
     
-    <!-- CSS -->  
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/region_vitrine.css') }}">  
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">  
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">  
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">  
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/region_vitrine.css') }}">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- JS -->  
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>  
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
-    <script src="https://d3js.org/d3.v6.min.js"></script>  
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>  
-    <script src="{{ url_for('static', filename='js/education.js') }}"></script>  
-</head>  
-<body>  
-    <!-- Header -->  
+    <!-- JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/education.js') }}"></script>
+</head>
+<body>
+    <!-- Header -->
     <div class="header-title">
         <h1>Plateforme régionale des données</h1>
     </div>
@@ -42,90 +42,9 @@
         </div>
     </div>
 
-  
-<!----------------########################Publication-------------------------------------------------------------------------##########-->
-<div id="publicationSection">
-    <!-- Section Publication qui s'affiche au clic -->
-    <div id="publication" >
-        <!-- Carte 1: Fiche Synoptique -->
-        <div class="card" onclick="showDetails('ficheSynoptiqueDetails')">
-            <h3>Fiche Synoptique</h3>
-            <p>Consultez la liste des fiches synoptiques.</p>
-        </div>
-
-        <!-- Carte 2: Annuaire -->
-        <div class="card" onclick="showDetails('annuaireDetails')">
-            <h3>Annuaire</h3>
-            <p>Consultez les informations annuaires disponibles.</p>
-        </div>
-
-        <!-- Carte 3: Bulletin des Prix -->
-        <div class="card" onclick="showDetails('bulletinPrixDetails')">
-            <h3>Bulletin des Prix</h3>
-            <p>Accédez aux derniers bulletins des prix.</p>
-        </div>
-
-        <!-- Carte 4: Autres -->
-        <div class="card" onclick="showDetails('autresDetails')">
-            <h3>Autres</h3>
-            <p>Explorez d'autres publications disponibles.</p>
-        </div>
-    </div>
-
-    <!-- Détails des sections -->
-    <div id="ficheSynoptiqueDetails" class="details" style="display: none;">
-        <h3>Fiches Synoptiques</h3>
-        <ul>
-            <li>Fiche 1</li>
-            <li>Fiche 2</li>
-            <li>Fiche 3</li>
-        </ul>
-    </div>
-
-    <div id="annuaireDetails" class="details" style="display: none;">
-        <h3>Annuaire</h3>
-        <p>Contenu des annuaires ici.</p>
-    </div>
-
-    <div id="bulletinPrixDetails" class="details" style="display: none;">
-        <h3>Bulletin des Prix</h3>
-        <p>Derniers bulletins des prix ici.</p>
-    </div>
-
-    <div id="autresDetails" class="details" style="display: none;">
-        <h3>Autres Publications</h3>
-        <p>Explorez les autres publications ici.</p>
-    </div>
-</div>
-
-    <script>
-        function toggleVisibility() {
-            var element = document.getElementById("publicationSection");
-            if (element.style.display === "none" || element.style.display === "") {
-                element.style.display = "block";
-            } else {
-                element.style.display = "none";
-            }
-        }
-    </script>
-    <script>
-        function showDetails(detailId) {
-            // Masquer tous les détails
-            const details = document.querySelectorAll('.details');
-            details.forEach(detail => detail.style.display = 'none');
-    
-            // Afficher la section sélectionnée
-            const selectedDetail = document.getElementById(detailId);
-            if (selectedDetail) {
-                selectedDetail.style.display = 'block';
-            }
-        }
-    </script>
-
-
-<!--############################Presentation de la région---------------------------------------------------------------------Dashbord    --->
-<!-- Section régionale -->
-<div class="section-regionale">
+    <!-- Affichage par défaut -->
+    <div id="defaultView">
+       <div class="section-regionale">
     <!-- Colonne gauche -->
     <div class="colonne gauche">
         <h2>Carte de la région</h2>
@@ -252,14 +171,210 @@
 
 
 <script src="{{ url_for('static', filename='js/education.js') }}"></script>
-<!-- Fin département -->
-    <!-- Section des graphiques -->  
+</div>
+</div>
+
+<!-- Section Publication --------------------------------------------Publication-->
+<div id="publicationSection" style="display: none;">
+        <!-- Section Publication qui s'affiche au clic -->
+        <div id="publication">
+            <!-- Carte 1: Fiche Synoptique -->
+            <div class="card" onclick="showDetails('ficheSynoptiqueDetails')">
+                <img src="{{url_for('static',filename='img/synoptique.png')}}" alt="Fiche synoptique">
+                <h3>Fiche Synoptique</h3>
+                <p>Consultez la liste des fiches synoptiques.</p>
+            </div>
+
+            <!-- Carte 2: Annuaire -->
+            <div class="card" onclick="showDetails('annuaireDetails')">
+                <img src="{{url_for('static',filename='img/annuaire.jpeg')}}" alt="Annuaire statistique">
+                <h3>Annuaire</h3>
+                <p>Consultez les informations annuaires disponibles.</p>
+            </div>
+
+            <!-- Carte 3: Bulletin des Prix -->
+            <div class="card" onclick="showDetails('bulletinPrixDetails')">
+                <img src="{{url_for('static',filename='img/bulletin.png')}}" alt="Bulletin prix">
+                <h3>Bulletin des Prix</h3>
+                <p>Accédez aux derniers bulletins des prix.</p>
+            </div>
+
+            <!-- Carte 4: Autres -->
+            <div class="card" onclick="showDetails('autresDetails')">
+                <h3>Autres</h3>
+                <p>Explorez d'autres publications disponibles.</p>
+            </div>
+        </div>
+
+        <!-- Détails des sections -->
+        <div id="ficheSynoptiqueDetails" class="details" style="display: none;">
+            <!-- Colonne de gauche : Liste des Fiches Synoptiques -->
+            <div>
+                <h3>Liste des Fiches Synoptiques</h3>
+                <ul id="ficheSynoptiqueList">
+                    <li>
+                        Fiche 1
+                        <button onclick="downloadFile('fiche1')">Télécharger PDF</button>
+                        <button onclick="downloadFile('fiche1Excel')">Télécharger Excel</button>
+                    </li>
+                    <li>
+                        Fiche 2
+                        <button onclick="downloadFile('fiche2')">Télécharger PDF</button>
+                        <button onclick="downloadFile('fiche2Excel')">Télécharger Excel</button>
+                    </li>
+                    <li>
+                        Fiche 3
+                        <button onclick="downloadFile('fiche3')">Télécharger PDF</button>
+                        <button onclick="downloadFile('fiche3Excel')">Télécharger Excel</button>
+                    </li>
+                </ul>
+            </div>
+        
+            <!-- Colonne de droite : Recherche -->
+            <div>
+                <h3>Rechercher dans une période</h3>
+                <form onsubmit="filterList(event, 'ficheSynoptiqueList')">
+                    <label for="startPeriod">Début :</label>
+                    <input type="number" id="endPeriod" required min="1900" max="2100" step="1" placeholder="2024">
+                    <label for="endPeriod">Fin :</label>
+                    <input type="number" id="endPeriod" required min="1900" max="2100" step="1" placeholder="2024">
+                    <button type="submit">Rechercher</button>
+                </form>
+            </div>
+        </div>
+        
+
+    <!-- Ajoutez d'autres détails similaires ici -->
+    <div id="annuaireDetails" class="details" style="display: none;">
+        <div>
+            <h3>Liste des Fiches Synoptiques</h3>
+            <ul id="ficheSynoptiqueList">
+                <li>
+                    Annuaire 2020
+                    <button onclick="downloadFile('fiche1')">Télécharger PDF</button>
+                    <button onclick="downloadFile('fiche1Excel')">Télécharger Excel</button>
+                </li>
+                <li>
+                    Annuaire 2021
+                    <button onclick="downloadFile('fiche2')">Télécharger PDF</button>
+                    <button onclick="downloadFile('fiche2Excel')">Télécharger Excel</button>
+                </li>
+                <li>
+                    Annuaire 2022
+                    <button onclick="downloadFile('fiche3')">Télécharger PDF</button>
+                    <button onclick="downloadFile('fiche3Excel')">Télécharger Excel</button>
+                </li>
+            </ul>
+        </div>
+    
+        <!-- Colonne de droite : Recherche -->
+        <div>
+            <h3>Rechercher dans une période</h3>
+            <form onsubmit="filterList(event, 'ficheSynoptiqueList')">
+                <label for="startPeriod">Début :</label>
+                <input type="number" id="endPeriod" required min="1900" max="2100" step="1" placeholder="2024">
+                <label for="endPeriod">Fin :</label>
+                <input type="number" id="endPeriod" required min="1900" max="2100" step="1" placeholder="2024">
+                <button type="submit">Rechercher</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="bulletinPrixDetails" class="details" style="display: none;">
+        <div>
+            <h3>Liste des Fiches Synoptiques</h3>
+            <ul id="ficheSynoptiqueList">
+                <li>
+                   Bulletins de Mars 2024
+                    <button onclick="downloadFile('fiche1')">Télécharger PDF</button>
+                    <button onclick="downloadFile('fiche1Excel')">Télécharger Excel</button>
+                </li>
+                <li>
+                    Bulletin d'Avril 2024
+                    <button onclick="downloadFile('fiche2')">Télécharger PDF</button>
+                    <button onclick="downloadFile('fiche2Excel')">Télécharger Excel</button>
+                </li>
+                <li>
+                    Bulletin de Mai
+                    <button onclick="downloadFile('fiche3')">Télécharger PDF</button>
+                    <button onclick="downloadFile('fiche3Excel')">Télécharger Excel</button>
+                </li>
+            </ul>
+        </div>
+    
+        <!-- Colonne de droite : Recherche -->
+        <div>
+            <h3>Rechercher dans une période</h3>
+            <form onsubmit="filterList(event, 'ficheSynoptiqueList')">
+                <label for="startPeriod">Début :</label>
+                <input type="number" id="endPeriod" required min="1900" max="2100" step="1" placeholder="2024">
+                <label for="endPeriod">Fin :</label>
+                <input type="number" id="endPeriod" required min="1900" max="2100" step="1" placeholder="2024">
+                <button type="submit">Rechercher</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="autresDetails" class="details" style="display: none;">
+        <h3>Autres Publications</h3>
+        <p>Explorez les autres publications ici.</p>
+    </div>
+</div>
+</div>
+
+<script>
+    function filterList(event, listId) {
+        event.preventDefault();
+
+        const startPeriod = new Date(document.getElementById('startPeriod').value);
+        const endPeriod = new Date(document.getElementById('endPeriod').value);
+
+        const list = document.getElementById(listId);
+        const items = list.getElementsByTagName('li');
+
+        for (const item of items) {
+            const itemDate = new Date(item.getAttribute('data-date')); // Assurez-vous que chaque élément a un attribut data-date
+            if (itemDate >= startPeriod && itemDate <= endPeriod) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        }
+    }
+
+    function downloadFile(fileId) {
+        alert(`Téléchargement de ${fileId}`);
+        // Ajoutez ici votre logique pour le téléchargement du fichier.
+    }
+</script>     
+
+    <script>
+        function toggleVisibility() {
+            var defaultView = document.getElementById("defaultView");
+            var publicationSection = document.getElementById("publicationSection");
+            if (publicationSection.style.display === "none" || publicationSection.style.display === "") {
+                publicationSection.style.display = "block";
+                defaultView.style.display = "none";
+            } else {
+                publicationSection.style.display = "none";
+                defaultView.style.display = "block";
+            }
+        }
+
+        function showDetails(detailId) {
+            // Masquer tous les détails
+            const details = document.querySelectorAll('.details');
+            details.forEach(detail => detail.style.display = 'none');
+    
+            // Afficher la section sélectionnée
+            const selectedDetail = document.getElementById(detailId);
+            if (selectedDetail) {
+                selectedDetail.style.display = 'block';
+            }
+        }
+    </script>
 
 
-    <!-- ########################################Publication-->
- 
 
-
-    <!--                Fin Publication-->
 </body>  
 </html>
