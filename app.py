@@ -237,65 +237,6 @@ def births_data():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Tableau de bord ------------------------------------------------------------------Tableau de bord
-
-@app.route('/dashboard')
-def dashboard():
-    # Définir les années de 2018 à 2024
-    region = request.args.get('region', session.get('region', 'DefaultRegion'))
-    min_year = 2018
-    max_year = 2024
-    annees = list(range(min_year, max_year + 1))
-    sexes = ['M', 'F']
-
-    data = { 'M': [], 'F': [] }
-    data_coton = []
-    
-    # Générer les données pour chaque année et sexe pour la région sélectionnée
-    for sexe in sexes:
-        for annee in annees:
-            total_population = random.randint(50000, 1000000)
-            data[sexe].append({'annee': annee, 'valeur': total_population})
-            
-    # Générer les données du coton pour chaque année
-    for annee in annees:
-        total_population = random.randint(50000, 1000000)
-        data_coton.append(total_population)
-    
-    return render_template('pages/dashboard.html', region=region, data=data, annees=annees, data_coton=data_coton)
-
-#--------------------------------------Fiche synoptique
-#Fiche synoptique
-@app.route('/fiche-synoptique')
-def fiche_synoptique():
-     # Définir les années de 2018 à 2024
-    region = request.args.get('region', session.get('region'))
-    if region is None:
-        return "Veuillez choisir une région.", 400
-    return render_template('pages/notifications.html',region=region)
-    
-
-
-
-
-
-
 #---------------------------------------------------Home page pour accueil
 @app.route('/')
 def list_regions():
@@ -632,9 +573,6 @@ def search_boostrap():
     return render_template('boostrap_search.html')
 
 
-@app.route('/dash_region', methods=['GET', 'POST'])
-def dash_region():
-    return render_template('dash_region.html')
 
 #Pour la liste des indicateur dans template domaine-sous-domaine-indicateur
 @app.route('/get_data2')

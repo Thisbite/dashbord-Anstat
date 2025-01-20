@@ -158,7 +158,7 @@ new Chart(ctxMedical, {
     datasets: corpsMedical.map((corps, index) => ({
       label: corps,
       data: labelsMedical.map(departement => {
-        const corpsData = dataMedical.find(d => d.corps === corps);
+        var corpsData = dataMedical.find(d => d.corps === corps);
         return corpsData ? corpsData[departement] : 0; // Retourne 0 si aucune donnée trouvée
       }),
       backgroundColor: ["#e09705", "#006B45", "white","#ddd"][index],
@@ -358,8 +358,8 @@ new Chart(ctxAlphabetisationPoro, {
 function showPublicationFunction(event) {
   event.preventDefault();  // Empêche le comportement par défaut
 
-  const publicationSection = document.getElementById('connexion');
-  const dashboardSection = document.getElementById('dashbordId');
+  var publicationSection = document.getElementById('connexion');
+  var dashboardSection = document.getElementById('dashbordId');
 
   // Masquer ou afficher la section Publication
   if (publicationSection.style.display === "none" || publicationSection.style.display === "") {
@@ -369,6 +369,75 @@ function showPublicationFunction(event) {
       publicationSection.style.display = "none";
   }
 }
+
+
+// Données fictives pour Taux brut de scolarité
+var tauxBruteData = {
+  labels: ['2018', '2019', '2020', '2021', '2022'],
+  datasets: [{
+      label: 'Taux brut de scolarité (%)',
+      data: [85, 87, 89, 90, 92],
+      backgroundColor: '#e09705',
+      borderColor: '#e09705',
+      borderWidth: 2
+  }]
+};
+
+// Configuration du graphique pour Taux brut de scolarité
+var tauxBruteConfig = {
+  type: 'line',
+  data: tauxBruteData,
+  options: {
+      responsive: true,
+      plugins: {
+          legend: {
+              position: 'top',
+          }
+      }
+  }
+};
+
+// Création du graphique pour Taux brut de scolarité
+var tauxBruteChart = new Chart(
+  document.getElementById('tauxBruteChart'),
+  tauxBruteConfig
+);
+
+// Données fictives pour Taux d'électrification
+var tauxElectData = {
+  labels: ['2018', '2019', '2020', '2021', '2022'],
+  datasets: [{
+      label: 'Taux d\'électrification (%)',
+      data: [60, 65, 70, 75, 80],
+      backgroundColor: '#006B45',
+      borderColor: '#006B45',
+      borderWidth: 1
+  }]
+};
+
+// Configuration du graphique pour Taux d'électrification
+var tauxElectConfig = {
+  type: 'bar',
+  data: tauxElectData,
+  options: {
+      responsive: true,
+      plugins: {
+          legend: {
+              position: 'top',
+          }
+      }
+  }
+};
+
+// Création du graphique pour Taux d'électrification
+var tauxElectChart = new Chart(
+  document.getElementById('tauxElectChart'),
+  tauxElectConfig
+);
+
+// Pour la carte région***********************************************************************************
+
+
 
 
 

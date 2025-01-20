@@ -119,7 +119,7 @@ body {
 .section-regionale {
     display: flex;
     flex-wrap: wrap;
-    padding: 100px;
+    padding:10px 100px;
     gap: 20px;
     background-color: white;
     border-radius: 8px;
@@ -188,6 +188,13 @@ body {
     margin: 10px;
     min-width: 280px; /* Minimum width pour chaque colonne */
     max-width: 600px; /* Maximum width pour chaque colonne */
+}
+.responsive-image {
+    width: 100%;
+    height:400px;
+}
+.justified-text {
+    text-align: justify;
 }
 
 /* Style pour le tableau */
@@ -361,6 +368,34 @@ canvas {
     color: #e09705;
     font-weight: bold;
 }
+
+
+#region {
+    width: 100%; /* S'adapte à la largeur du conteneur parent */
+    height: 50vh; /* Utilisation d'une hauteur relative à la fenêtre */
+    border: 1px solid #ccc;
+    position: relative;
+    overflow: hidden; /* S'assure qu'aucune partie de la carte ne déborde */
+}
+.region, .department {
+    stroke: #333;
+    stroke-width: 0.5;
+}
+.region {
+    fill: #cce5ff;
+}
+.department {
+    fill: #ffddcc;
+}
+#tooltip {
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 5px;
+    font-size: 12px;
+    display: none;
+}
+
 
 
 
