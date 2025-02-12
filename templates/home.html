@@ -19,7 +19,7 @@
 </head>
 <body>
     <div class="header-title">
-        <h1>Plateforme régionale des données</h1>
+        <h1>Plateforme de données régionales </h1>
     </div>
     
     <div class="header-secondary">
@@ -381,7 +381,7 @@
         .attr("transform", "translate(0, 10)")
         .call(legendAxis);
     
-    // Ajouter le texte "Homme: 20909"
+    // Ajouter le texte Homme
     legend.append("text")
         .attr("x",0)  // Position horizontale du texte
         .attr("y", 60)  // Position verticale du texte (ajustez selon vos besoins)
@@ -390,7 +390,7 @@
         .style("fill", "black")  // Couleur du texte
         .text("Hommes: 15 344 990");
     
-    // Ajouter le texte "Femme: 345267"
+    // Ajouter le texte Femme
     legend.append("text")
         .attr("x", 0)  // Position horizontale du texte
         .attr("y", 45)  // Position verticale du texte (ajustez selon vos besoins)
@@ -402,28 +402,35 @@
 
 
     // Charger les données GeoJSON ###############################################Carte de la Côte d'Ivoire
-    d3.json("static/carte/populations_ok.json").then(function(geojsonData) {
+// Charger les données GeoJSON
+d3.json("static/carte/populations_ok.json").then(function(geojsonData) {
+    // Dessiner les régions
+    svg.selectAll(".region")
+        .data(geojsonData.features)
+        .enter().append("path")
+        .attr("class", "region")
+        .attr("d", path)
+        .attr("fill", d => colorScale(d.properties.Population))
+        .style("cursor", "pointer") // Indique que l'élément est cliquable
+        .on("mouseover", function(event, d) {
+            // Afficher la population en survolant
+            d3.select("#tooltip")
+                .style("display", "block")
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 10) + "px")
+                .html(`<strong>${d.properties.REGION}</strong><br>Population: ${d.properties.Population}`);
+        })
+        .on("mouseout", function() {
+            // Masquer le tooltip
+            d3.select("#tooltip").style("display", "none");
+        })
+        .on("click", function(event, d) {
+            // Rediriger vers la page du tableau de bord correspondant à la région
+            const region = d.properties.REGION; // Assure-toi que cette propriété correspond bien au nom de la région
+            window.location.href = `/region_vitrine/${region}`; // Modifie cette URL selon ton routage Flask
+        });
+});
 
-        // Dessiner les régions
-        svg.selectAll(".region")
-            .data(geojsonData.features)
-            .enter().append("path")
-            .attr("class", "region")
-            .attr("d", path)
-            .attr("fill", d => colorScale(d.properties.Population))
-            .on("mouseover", function(event, d) {
-                // Afficher la population en survolant
-                d3.select("#tooltip")
-                    .style("display", "block")
-                    .style("left", (event.pageX + 10) + "px")
-                    .style("top", (event.pageY - 10) + "px")
-                    .html(`<strong>${d.properties.REGION}</strong><br>Population: ${d.properties.Population}`);
-            })
-            .on("mouseout", function() {
-                // Masquer le tooltip
-                d3.select("#tooltip").style("display", "none");
-            });
-    });
 </script>
 
 </body>
