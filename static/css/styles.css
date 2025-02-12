@@ -61,6 +61,21 @@ body {
     background-color: #d9e6db;
     color: white;
 }
+.nav-links .logo-link {  
+    border: none; /* Supprime la bordure uniquement pour le logo */
+    padding: 0; /* Supprime l'espacement supplémentaire */
+    margin: 0 10px; /* Garde un espacement latéral cohérent */
+}
+
+.nav-links .logo-link img {
+    display: block; /* Évite les espaces vides sous l'image */
+}
+
+
+
+
+
+
 .search-bar {  
     display: flex;  
     align-items: center;  
@@ -441,4 +456,16 @@ body {
     font-size: 14px;
     color: #0C6B23;
     margin-bottom: 5px;
+}
+
+
+.header-title h1 {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espace entre le texte et l'image */
+}
+
+.logo {
+    height: 30px; /* Ajuste la taille selon ton besoin */
+    width: auto;
 }

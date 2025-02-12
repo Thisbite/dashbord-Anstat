@@ -19,13 +19,14 @@
 </head>
 <body>
     <div class="header-title">
-        <h1>Plateforme de données régionales </h1>
+        <h1> <img src="{{ url_for('static', filename='img/logo.png') }}"alt="Logo" class="logo">Plateforme de données régionales</h1>
     </div>
+    
     
     <div class="header-secondary">
         <div class="nav-links">
             <a href="{{ url_for('list_regions') }}" class="logo-link">
-                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Statistiques" style="width: 150px; height: auto;">
+                <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" style="width: 50px; height: auto;">
             </a>
             <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
             <a href="#connexion">Aide</a>
@@ -50,6 +51,7 @@
             </div>
 
             <div class="right-section">
+                <h4><i>Horloge démographique</i></h4>
                 <!-- Ajout de deux indicateurs (1 sur l'éducation et 1 sur la santé) et naissance  -->
                 <div class="indicator-card">
                     <div class="card-title">

@@ -262,48 +262,41 @@ def list_regions():
 
 
 #Bloc du dashbord------------------------------------------Pour le tableau de bord par région
-data = {  
-    'ABIDJAN': {  
-        'age_data': {"male": [-200, -180, -150, -120, -100], "female": [220, 200, 180, 150, 130], "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']},  
-        'production_data': {"years": [2010, 2012, 2014, 2016, 2018], "production": [500, 600, 700, 800, 900]},  
-        'indicateurs': {"ind1": 45, "ind2": 67, "ind3": 23}  
-    },  
-    'HAUT-SASSANDRA': {  
-        'age_data': {"male": [-150, -120, -100, -80, -60], "female": [180, 150, 120, 100, 80], "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']},  
-        'production_data': {"years": [2010, 2012, 2014, 2016, 2018], "production": [400, 500, 600, 700, 800]},  
-        'indicateurs': {"ind1": 35, "ind2": 57, "ind3": 13}  
-    },  
-    'PORO': {  
-        'age_data': {"male": [-180, -160, -140, -120, -100], "female": [200, 180, 160, 140, 120], "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']},  
-        'production_data': {"years": [2010, 2012, 2014, 2016, 2018], "production": [300, 400, 500, 600, 700]},  
-        'indicateurs': {"ind1": 25, "ind2": 47, "ind3": 33}  
-    },  
-    'GBEKE': {  
-        'age_data': {"male": [-170, -150, -130, -110, -90], "female": [190, 170, 150, 130, 110], "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']},  
-        'production_data': {"years": [2010, 2012, 2014, 2016, 2018], "production": [350, 450, 550, 650, 750]},  
-        'indicateurs': {"ind1": 30, "ind2": 50, "ind3": 20}  
-    },  
-    'INDENIE-DJUABLIN': {  
-        'age_data': {"male": [-160, -140, -120, -100, -80], "female": [180, 160, 140, 120, 100], "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']},  
-        'production_data': {"years": [2010, 2012, 2014, 2016, 2018], "production": [320, 420, 520, 620, 720]},  
-        'indicateurs': {"ind1": 28, "ind2": 48, "ind3": 18}  
-    },  
-    'TONKPI': {  
-        'age_data': {"male": [-190, -170, -150, -130, -110], "female": [210, 190, 170, 150, 130], "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']},  
-        'production_data': {"years": [2010, 2012, 2014, 2016, 2018], "production": [400, 500, 600, 700, 800]},  
-        'indicateurs': {"ind1": 40, "ind2": 60, "ind3": 30}  
-    },  
-    'YAMOUSSOUKRO': {  
-        'age_data': {"male": [-140, -120, -100, -80, -60], "female": [160, 140, 120, 100, 80], "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']},  
-        'production_data': {"years": [2010, 2012, 2014, 2016, 2018], "production": [450, 550, 650, 750, 850]},  
-        'indicateurs': {"ind1": 50, "ind2": 70, "ind3": 40}  
-    },  
-    'GONTOUGO': {  
-        'age_data': {"male": [-130, -110, -90, -70, -50], "female": [150, 130, 110, 90, 70], "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']},  
-        'production_data': {"years": [2010, 2012, 2014, 2016, 2018], "production": [380, 480, 580, 680, 780]},  
-        'indicateurs': {"ind1": 38, "ind2": 58, "ind3": 28}  
-    }  
-} 
+import random
+
+
+
+def generate_region_data():
+    age_data = {
+        "male": [random.randint(-200, -50) for _ in range(5)],
+        "female": [random.randint(50, 220) for _ in range(5)],
+        "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']
+    }
+    
+    production_data = {
+        "years": [2010, 2012, 2014, 2016, 2018],
+        "production": [random.randint(300, 900) for _ in range(5)]
+    }
+    
+    indicateurs = {
+        "ind1": random.randint(20, 60),
+        "ind2": random.randint(40, 80),
+        "ind3": random.randint(10, 40)
+    }
+    
+    return {
+        "age_data": age_data,
+        "production_data": production_data,
+        "indicateurs": indicateurs
+    }
+regions = qr.options_regions()
+# Générer les données pour toutes les régions restantes
+data = {region: generate_region_data() for region in regions}
+
+# Afficher les premières données générées
+#import json
+#print(json.dumps(data, indent=4))
+
 regions = list(data.keys())  
 import plotly.graph_objs as go
 @app.route('/region_vitrine/<region>')  
