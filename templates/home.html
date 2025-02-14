@@ -21,8 +21,6 @@
     <div class="header-title">
         <h1> <img src="{{ url_for('static', filename='img/logo.png') }}"alt="Logo" class="logo">Plateforme de données régionales</h1>
     </div>
-    
-    
     <div class="header-secondary">
         <div class="nav-links">
             <a href="{{ url_for('list_regions') }}" class="logo-link">
@@ -33,11 +31,13 @@
         </div>
     
         <div class="search-bar">
-            <form method="POST" action="{{ url_for('search') }}">
-                <input type="text" name="query" placeholder="Entrez votre recherche..." required>
-                <button type="submit">Rechercher</button>
+            <form method="POST" action="{{ url_for('search') }}" onsubmit="return submitSearch();">
+                <input type="text" id="search-input" name="query" placeholder="Entrez votre recherche..." required autocomplete="off">
+                <div id="suggestions" class="suggestions-list"></div>
+                <button type="submit" id="search-button">Rechercher</button>
             </form>
         </div>
+        
     </div>
     
     <div class="container">
@@ -435,5 +435,46 @@ d3.json("static/carte/populations_ok.json").then(function(geojsonData) {
 
 </script>
 
+<!-- Autocompletion pour les indicateurs non trouvés-->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("search-input");
+        const suggestionsContainer = document.getElementById("suggestions");
+    
+        searchInput.addEventListener("input", function () {
+            const query = searchInput.value.trim();
+            if (query.length < 2) {
+                suggestionsContainer.innerHTML = "";
+                return;
+            }
+    
+            fetch(`/autocomplete?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestionsContainer.innerHTML = "";
+                    if (data.length > 0) {
+                        data.forEach(item => {
+                            const div = document.createElement("div");
+                            div.textContent = item;
+                            div.onclick = function () {
+                                searchInput.value = item;
+                                suggestionsContainer.innerHTML = "";
+                                window.location.href = `/search_indicators2/${encodeURIComponent(item)}`;
+                            };
+                            suggestionsContainer.appendChild(div);
+                        });
+                    }
+                });
+        });
+    
+        // Cacher les suggestions si on clique ailleurs
+        document.addEventListener("click", function (event) {
+            if (!searchInput.contains(event.target) && !suggestionsContainer.contains(event.target)) {
+                suggestionsContainer.innerHTML = "";
+            }
+        });
+    });
+    </script>
+    
 </body>
 </html>

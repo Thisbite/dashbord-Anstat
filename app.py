@@ -20,11 +20,12 @@ from itertools import chain
 import my_queries as qr
 import data as dt
 import config as cf
+import io
 
 #https://colab.research.google.com/drive/1oBqwcSMb4YTrn0NFUiQzJCiZ65uIay_S?hl=fr#scrollTo=CJAQGVAWNNPw
 #brew services restart elastic/tap/elasticsearch-full
 #redis-server
-
+# -*- coding: utf-8 -*-
 app = Flask(__name__)
 # Configuration du logger pour le débogage
 logging.basicConfig(level=logging.DEBUG)
@@ -471,7 +472,28 @@ def request_indicateur2(indicateur):
         indicateur2=indicateur_SELECT,  # Indicateur sélectionné
         df_filtered=df_filtered_json  # Data JSON pour le filtrage
     )
-import io
+
+
+#----------------Autocomplétion
+from flask import jsonify, request
+
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    query = request.args.get('query', '').strip().lower()
+    if not query:
+        return jsonify([])
+    # Charger les données depuis MySQL
+    df = qr.get_data_from_mysql_V1()
+    # Vérifier que la colonne 'Indicateurs' existe
+    if 'Indicateurs' not in df.columns:
+        return jsonify([])
+    # Convertir en minuscule pour une recherche insensible à la casse
+    df['Indicateurs'] = df['Indicateurs'].astype(str).str.strip().str.lower()
+    # Filtrer les indicateurs qui contiennent le texte saisi
+    suggestions = df[df['Indicateurs'].str.contains(query, na=False)]['Indicateurs'].unique().tolist()
+    return jsonify(suggestions)
+
+
 
 @app.route('/process_columns', methods=['POST'])
 def process_columns():

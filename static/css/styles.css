@@ -1,125 +1,130 @@
+/* === Réinitialisation et Styles Globaux === */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
 }
 
+/* === Header === */
 .header-title {
     text-align: center;
-    background-color: #f4f4f4; /* Couleur de fond, modifiable */
+    background-color: #f4f4f4;
     padding: 20px 10px;
-    border-bottom: 2px solid #ddd; /* Ligne séparatrice, si souhaitée */
+    border-bottom: 2px solid #ddd;
 }
 
 .header-title h1 {
-    font-size: 2.5rem; /* Taille du texte */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 100px; /* Espace entre le texte et l'image */
+    font-size: 2.5rem;
     color: #0C6B23;
     margin: 0;
-    font-family: 'Arial', sans-serif; /* Police d'écriture */
+    font-family: 'Arial', sans-serif;
 }
 
+.logo {
+    height: 30px;
+    width: auto;
+}
 
-.header-secondary {  
-    background-color: white;  
-    display: flex;  
-    justify-content: space-between;  
-    align-items: center;  
-    padding: 10px 20px;  
-    border-radius: 5px; /* Optionnel : pour des coins arrondis */  
-    font-family: 'Poppins', sans-serif; /* Police attrayante */  
-    font-weight: 600; /* Optionnel : pour un texte plus épais */  
-}  
+.header-secondary {
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
 
-.nav-links {  
-    display: flex;  
-    justify-content: center;  
-    align-items: center;  
-}  
+/* === Navigation === */
+.nav-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-.nav-links a {  
-    text-decoration: none;  
+.nav-links a {
+    text-decoration: none;
     color: #0C6B23;
-    padding: 10px 20px;  
-    font-size: 18px;  
-    border: 2px solid #0C6B23; /* Ajout de la bordure */  
-    margin: 0 10px;  
-    border-radius: 5px;  
-    transition: background-color 0.3s ease;  
-    font-family: 'Poppins', sans-serif; /* Police attrayante pour les liens */  
-    font-weight: 400; /* Optionnel : pour un texte plus fin */  
+    padding: 10px 20px;
+    font-size: 18px;
+    border: 2px solid #0C6B23;
+    margin: 0 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
 }
-
-
 
 .nav-links a:hover {
     background-color: #d9e6db;
     color: white;
 }
-.nav-links .logo-link {  
-    border: none; /* Supprime la bordure uniquement pour le logo */
-    padding: 0; /* Supprime l'espacement supplémentaire */
-    margin: 0 10px; /* Garde un espacement latéral cohérent */
+
+.nav-links .logo-link {
+    border: none;
+    padding: 0;
+    margin: 0 10px;
 }
 
 .nav-links .logo-link img {
-    display: block; /* Évite les espaces vides sous l'image */
+    display: block;
 }
 
-
-
-
-
-
-.search-bar {  
-    display: flex;  
-    align-items: center;  
-    gap: 10px; /* Ajout d'un espacement uniforme entre les éléments */  
-}  
-
-.search-bar input[type="text"] {  
-    padding: 10px 14px; /* Plus de confort pour l'utilisateur */  
-    font-size: 16px;  
-    border: 2px solid #0C6B23;; /* Bordure verte */  
-    border-radius: 6px; /* Coins légèrement plus arrondis */  
-    width: 300px;  
-    outline: none; /* Supprime le contour par défaut */  
-    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Animation fluide */  
-}  
-
-.search-bar input[type="text"]:focus {  
-    border-color: #006B45; /* Bordure plus foncée au focus */  
-    box-shadow: 0 0 5px rgba(0, 158, 96, 0.5); /* Effet lumineux au focus */ 
-     
-}  
-
-.search-bar button {  
-    padding: 10px 16px; /* Taille légèrement augmentée pour un meilleur confort */  
-    background-color: #0C6B23; /* Fond vert foncé */  
-    color: white;  
-    border: none;  
-    border-radius: 6px; /* Coins légèrement plus arrondis */  
-    cursor: pointer;  
-    font-size: 16px;  
-    font-weight: 600; /* Texte légèrement plus épais */  
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Animation fluide */  
-}  
-
-.search-bar button:hover {  
-    background-color: #F39323; /* Fond vert au survol */  
-    transform: scale(1.05); /* Légère mise en avant au survol */  
-}  
-
-.search-bar button:active {  
-    transform: scale(0.95); /* Effet de clic */  
-    background-color: #0C6B23; /* Fond plus foncé au clic */  
+/* === Barre de Recherche === */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
+.search-bar input[type="text"] {
+    padding: 10px 14px;
+    font-size: 16px;
+    border: 2px solid #0C6B23;
+    border-radius: 6px;
+    width: 300px;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-bar input[type="text"]:focus {
+    border-color: #006B45;
+    box-shadow: 0 0 5px rgba(0, 158, 96, 0.5);
+}
+
+.search-bar button {
+    padding: 10px 16px;
+    background-color: #0C6B23;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.search-bar button:hover {
+    background-color: #F39323;
+    transform: scale(1.05);
+}
+
+.search-bar button:active {
+    transform: scale(0.95);
+    background-color: #0C6B23;
+}
+
+/* === Conteneur Principal === */
 .container {
     display: flex;
     justify-content: space-between;
@@ -127,105 +132,93 @@ body {
     font-family: 'Poppins', sans-serif;
     gap: 20px;
 }
-/* La section de gauche */
-.left-column {  
-    flex: 2;  
-    padding: 15px; /* Padding augmenté pour plus d'espace */  
-    border-radius: 12px; /* Coins plus arrondis pour un look moderne */  
-    box-shadow: 0 8px 15px rgba(23, 2, 251, 0.08); /* Ombre plus subtile et élégante */  
-    display: flex;  
-    gap: 20px; /* Espacement augmenté entre les éléments */  
-    box-sizing: border-box;  
-    position: relative;  
-    background-size: cover;  
-    background-position: center;  
-    background-repeat: no-repeat;  
-    z-index: 1;  
-    background-color: rgba(255, 255, 255, 0.95);  
-    transition: all 0.3s ease; /* Animation fluide pour les interactions */  
-}  
 
-/* Effet hover sur la colonne */  
-.left-column:hover {  
-    transform: translateY(-2px); /* Léger effet de survol */  
-    box-shadow: 0 12px 30px rgba(23, 2, 251, 0.12);  
-}  
-
-.left-column::before {  
-    content: '';  
-    position: absolute;  
-    inset: 0; /* Raccourci pour top, right, bottom, left: 0 */  
-    background: linear-gradient(  
-        to bottom,  
-        rgba(245, 245, 245, 0.95),  
-        rgba(245, 245, 245, 0.85)  
-    ); /* Dégradé subtil */  
-    z-index: -1;  
-    border-radius: 12px;  
-    transition: opacity 0.3s ease;  
-}  
-
-.left-column h5 {  
-    font-size: 16px; /* Taille de police augmentée */  
-    margin-bottom: 10px;  
-    color: #004085;  
-    font-weight: 600; /* Police plus grasse */  
-    letter-spacing: 0.5px; /* Espacement des lettres */  
-    position: relative;  
-    padding-bottom: 8px;  
-}  
-
-
-
-.left-column .left-section {  
-    flex: 3;  
-    display: flex;  
-    flex-direction: column;  
-    justify-content: flex-start;  
-    align-items: center;  
-    color: #0C6B23;; /* Couleur plus foncée pour meilleure lisibilité */  
-    font-size: 18px; /* Taille ajustée */  
-    line-height: 1.6; /* Meilleur espacement des lignes */  
-    height: auto;  
-    border-radius: 12px;  
-    padding: 25px;  
-    background-color: rgba(255, 255, 255, 0.9);  
-    backdrop-filter: blur(5px); /* Effet de flou pour le fond */  
-    border: 1px solid rgba(0, 64, 133, 0.1); /* Bordure subtile */  
-    transition: transform 0.3s ease, box-shadow 0.3s ease;  
-}  
-
-/* Effet hover sur la section */  
-.left-column .left-section:hover {  
-    transform: scale(1.01);  
-    box-shadow: 0 5px 15px rgba(0, 64, 133, 0.1);  
-}  
-
-/* Style pour le texte à l'intérieur de la section */  
-.left-column .left-section p {  
-    margin: 10px 0;  
-    color: #0C6B23;  
-    font-size: 16px;  
-    text-align: center;  
-}  
-
-/* Media query pour la responsivité */  
-@media (max-width: 768px) {  
-    .left-column {  
-        padding: 15px;  
-        gap: 15px;  
-    }  
-
-    .left-column .left-section {  
-        padding: 15px;  
-        font-size: 16px;  
-    }  
-
-    .left-column h5 {  
-        font-size: 14px;  
-    }  
+/* === Colonne de Gauche === */
+.left-column {
+    flex: 2;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 8px 15px rgba(23, 2, 251, 0.08);
+    display: flex;
+    gap: 20px;
+    box-sizing: border-box;
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.95);
+    transition: all 0.3s ease;
 }
 
+.left-column:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(23, 2, 251, 0.12);
+}
+
+.left-column::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(245, 245, 245, 0.95), rgba(245, 245, 245, 0.85));
+    z-index: -1;
+    border-radius: 12px;
+    transition: opacity 0.3s ease;
+}
+
+.left-column h5 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #004085;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    position: relative;
+    padding-bottom: 8px;
+}
+
+.left-column .left-section {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    color: #0C6B23;
+    font-size: 18px;
+    line-height: 1.6;
+    height: auto;
+    border-radius: 12px;
+    padding: 25px;
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(0, 64, 133, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.left-column .left-section:hover {
+    transform: scale(1.01);
+    box-shadow: 0 5px 15px rgba(0, 64, 133, 0.1);
+}
+
+.left-column .left-section p {
+    margin: 10px 0;
+    color: #0C6B23;
+    font-size: 16px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .left-column {
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .left-column .left-section {
+        padding: 15px;
+        font-size: 16px;
+    }
+
+    .left-column h5 {
+        font-size: 14px;
+    }
+}
+
+/* === Colonne de Droite === */
 .right-column {
     flex: 1;
     background-color: white;
@@ -235,100 +228,72 @@ body {
     overflow-y: auto;
     max-height: 550px;
     box-sizing: border-box;
-    position: relative; /* Pour positionner la flèche à l'intérieur */
+    position: relative;
 }
 
-/* Ajout de la flèche en bas du bloc */
 .scroll-indicator {
     position: absolute;
-    bottom: 10px; /* Positionner la flèche en bas */
+    bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
     font-size: 24px;
-    color: #0C6B23; /* Couleur orange pour correspondre au thème ivoirien */
-    animation: bounce 1.5s infinite; /* Animation pour attirer l'attention */
+    color: #0C6B23;
+    animation: bounce 1.5s infinite;
 }
 
-/* Animation de la flèche */
-@keyframes bounce {  
-    0%, 100% {  
-        transform: translate(-50%, 0);  
-    }  
-    50% {  
-        transform: translate(-50%, 5px);  
-    }  
-}  
+@keyframes bounce {
+    0%, 100% {
+        transform: translate(-50%, 0);
+    }
+    50% {
+        transform: translate(-50%, 5px);
+    }
+}
 
 .right-column h2 {
     font-size: 20px;
     margin-bottom: 20px;
     color: white;
-    /* position: sticky; Fixer le titre lors du défilement */
+    position: sticky;
     top: 0;
     background-color: #F39323;
-    position: sticky; /* Fixer le titre lors du défilement */  
-    top: 0;  
-
-    z-index: 2;  
-    padding: 10px 15px;  
-    text-align: center;  
-    border: 4px solid #edebeb;  
-    border-radius: 10px;  
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);  
+    z-index: 2;
+    padding: 10px 15px;
+    text-align: center;
+    border: 4px solid #edebeb;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.region-list {  
-    list-style: none;  
-    padding: 0;  
-    background-color: #fff;  
-}  
-
-.region-list li {  
-    padding: 10px;  
-    margin-bottom: 10px;  
-    background-color: #fff;  
-    border-radius: 10px;  
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);  
-    transition: background-color 0.3s ease, transform 0.3s ease;  
-}  
-
-.region-list li:hover {  
-    background-color: #f7f7f7;  
-    transform: scale(0.8);  
-}  
-
-.region-list li a {  
-    text-decoration: none;  
-    color: rgb(1, 15, 5);  
-    display: block;  
-    text-align: center;  
-    font-weight: bold;  
-}  
-
-/* Encadrement pour le titre */
-/* Encadrement pour le titre */
-.map-title-frame {
-      /*   border: 2px solid #333;    Bordure de l'encadrement */
-    padding: 5px;               /* Espace intérieur du cadre */
-    border-radius: 8px;          /* Coins arrondis */
-    margin-bottom: 15px;         /* Espace entre le cadre et la carte */
-    background-color:transparent;   /* Couleur d'arrière-plan douce */
-    width: 100%;                 /* Prendre toute la largeur disponible */
-    text-align: center;          /* Centrer le contenu (le titre) */
-    box-sizing: border-box;      /* Inclure la bordure et le padding dans la largeur */
+.region-list {
+    list-style: none;
+    padding: 0;
+    background-color: #fff;
 }
 
-
-
-/* Conteneur principal pour trois colonnes */
-.frame-container {
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-    padding: 20px;
+.region-list li {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-/* Conteneur principal pour trois colonnes */
+.region-list li:hover {
+    background-color: #f7f7f7;
+    transform: scale(0.8);
+}
+
+.region-list li a {
+    text-decoration: none;
+    color: rgb(1, 15, 5);
+    display: block;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* === Cartes et Graphiques === */
 .frame-container {
     width: 100%;
     display: flex;
@@ -337,48 +302,41 @@ body {
     padding: 20px;
 }
 
-
-/* Conteneur pour aligner les cartes de graphiques sur une ligne */
 .charts-row-container {
     display: flex;
     justify-content: space-between;
-    gap: 20px; /* Espace entre les cartes */
+    gap: 20px;
     padding: 20px;
     box-sizing: border-box;
 }
 
-/* Style pour les cartes de graphique individuelles */
 .chart-card {
     background-color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    width: calc(33.33% - 20px); /* Pour avoir 3 cartes sur une ligne */
+    width: calc(33.33% - 20px);
     padding: 20px;
     text-align: center;
     box-sizing: border-box;
 }
 
-/* S'assurer que les graphiques s'adaptent à la carte */
 .chart-container {
     width: 100%;
     height: auto;
     margin-bottom: 20px;
 }
 
-/* Ajustement pour les petits écrans */
 @media (max-width: 768px) {
     .charts-row-container {
-        flex-direction: column; /* Les graphiques passent en colonne sur les petits écrans */
+        flex-direction: column;
     }
 
     .chart-card {
-        width: 100%; /* Chaque carte occupe toute la largeur sur petit écran */
+        width: 100%;
     }
 }
 
-
-
-/* Styles pour le conteneur de la colonne droite */
+/* === Indicateurs === */
 .right-section {
     display: flex;
     flex-direction: column;
@@ -387,40 +345,29 @@ body {
     margin-top: 20px;
 }
 
-/* Styles pour les cartes */
 .indicator-card {
-    background-color: #f8f9fa; /* Couleur de fond des cartes */
-    border: 1px solid #ddd;    /* Bordure fine et claire */
-    border-radius: 10px;       /* Coins arrondis */
-    width: 200px;              /* Largeur des cartes */
-    padding: 20px;             /* Espacement interne */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre légère */
-    text-align: center;        /* Centrer le texte */
-    margin: 10px;              /* Marges entre les cartes */
-    transition: transform 0.3s ease; /* Animation au survol */
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    width: 200px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 10px;
+    transition: transform 0.3s ease;
 }
 
 .indicator-card:hover {
-    transform: scale(1.05);    /* Zoom léger lors du survol */
+    transform: scale(1.05);
 }
 
-/* Style pour le titre des indicateurs */
 .card-title {
     font-size: 16px;
     font-weight: bold;
-    color:  #0C6B23;  
+    color: #0C6B23;
     margin-bottom: 10px;
 }
-/*Pour horloge et naissance */
-.clock-icon {
-    font-size: 2em; /* Ajustez cette valeur selon vos besoins */
-}
-.fa-baby, .fa-skull {
-    font-size: 1.5em; /* Ajustez cette valeur selon vos besoins */
-}
 
-
-/* Style pour la valeur des indicateurs */
 .card-value {
     font-size: 24px;
     font-weight: bold;
@@ -428,19 +375,21 @@ body {
     margin-bottom: 5px;
 }
 
-/* Style pour la description des indicateurs */
 .card-description {
     font-size: 14px;
     color: #555;
 }
 
+.clock-icon, .fa-baby, .fa-skull {
+    font-size: 1.5em;
+}
 
-
-/* Pour la carte de la côte d'Ivoire*/
+/* === Carte de la Côte d'Ivoire === */
 .region {
     stroke: black;
     stroke-width: 1;
 }
+
 .tooltip {
     position: absolute;
     background-color: white;
@@ -451,21 +400,28 @@ body {
     font-size: 12px;
 }
 
-
 .subtitle {
     font-size: 14px;
     color: #0C6B23;
     margin-bottom: 5px;
 }
 
-
-.header-title h1 {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* Espace entre le texte et l'image */
+/*Autocomplétion */
+.suggestions-list {
+    position: absolute;
+    background: white;
+    border: 1px solid #ddd;
+    max-height: 200px;
+    overflow-y: auto;
+    width: calc(100% - 2px);
+    z-index: 1000;
 }
 
-.logo {
-    height: 30px; /* Ajuste la taille selon ton besoin */
-    width: auto;
+.suggestions-list div {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.suggestions-list div:hover {
+    background: #f0f0f0;
 }

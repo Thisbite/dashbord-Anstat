@@ -23,50 +23,49 @@
 <body>
     <!-- Header -->
     <div class="header-title">
-        <h1>Plateforme de données régionales </h1>
+        <h1> <img src="{{ url_for('static', filename='img/logo.png') }}"alt="Logo" class="logo">Plateforme de données régionales {{region_name}}</h1>
     </div>
-    
     <div class="header-secondary">
+
         <div class="nav-links">
             <a href="{{ url_for('list_regions') }}" class="logo-link">
-                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Statistiques" style="width: 150px; height: auto;">
+                <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" style="width: 50px; height: auto;">
             </a>
             <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
             <a href="#publication" onclick="toggleVisibility()">Publications</a>
         </div>
     
         <div class="search-bar">
-            <form method="POST" action="{{ url_for('search') }}">
-                <input type="text" name="query" placeholder="Entrez votre recherche..." required>
-                <button type="submit">Rechercher</button>
+            <form method="POST" action="{{ url_for('search') }}" onsubmit="return submitSearch();">
+                <input type="text" id="search-input" name="query" placeholder="Entrez votre recherche..." required autocomplete="off">
+                <div id="suggestions" class="suggestions-list"></div>
+                <button type="submit" id="search-button">Rechercher</button>
             </form>
         </div>
     </div>
 
     <!-- Affichage par défaut -->
     <div id="defaultView">
-       <div class="section-regionale">
-    <!-- Colonne gauche -->
-    <div class="colonne gauche">
-        <h2>Carte de la région</h2>
-        <img src="{{url_for('static',filename='img/PORO.jpg')}}" alt="Région" class="responsive-image">
-    </div>
-
-    <!-- Colonne droite -->
-    <div class="colonne droite">
-        <h2><i>Description de la région </i></h2>
-        <p class="justified-text">
-            La région du <strong>Poro </strong>, située dans le nord de la Côte d'Ivoire, bénéficie d'un climat tropical de type soudanais, marqué par deux saisons principales : une saison des pluies et une saison sèche.
-        </p>
-        <p class="justified-text">
-            Les précipitations annuelles varient entre 1 000 et 1 200 mm, favorisant les activités agricoles, notamment la culture du maïs, du coton, et du riz. La région du Poro, avec Korhogo comme chef-lieu, est l'une des plus vastes régions administratives de la Côte d'Ivoire.
-        </p>
-        <p class="justified-text">
-            Elle est composée de quatre départements principaux : <strong>Korhogo, Dikodougou, Sinématiali, et M'Bengué </strong>.Sur le plan économique, le Poro est un centre agricole clé, produisant non seulement des cultures vivrières mais aussi des cultures de rente comme le coton, contribuant à l'économie nationale. 
-        </p>
-       
-    </div>
-</div>
+        <div class="section-regionaless">
+            <!-- Colonne gauche -->
+            <div class="colonness gauche">
+                <img src="{{url_for('static',filename='img/PORO.jpg')}}" alt="Région" class="responsive-imagess">
+            </div>
+        
+            <!-- Colonne droite -->
+            <div class="colonnes droite">
+                <h2><i>Description de la région </i></h2>
+                <p class="justified-text">
+                    La région du <strong>Poro </strong>, située dans le nord de la Côte d'Ivoire, bénéficie d'un climat tropical de type soudanais, marqué par deux saisons principales : une saison des pluies et une saison sèche.
+                </p>
+                <p class="justified-text">
+                    Les précipitations annuelles varient entre 1 000 et 1 200 mm, favorisant les activités agricoles, notamment la culture du maïs, du coton, et du riz. La région du Poro, avec Korhogo comme chef-lieu, est l'une des plus vastes régions administratives de la Côte d'Ivoire.
+                </p>
+                <p class="justified-text">
+                    Elle est composée de quatre départements principaux : <strong>Korhogo, Dikodougou, Sinématiali, et M'Bengué </strong>.Sur le plan économique, le Poro est un centre agricole clé, produisant non seulement des cultures vivrières mais aussi des cultures de rente comme le coton, contribuant à l'économie nationale. 
+                </p>
+            </div>
+        </div>
 <!-- Fin régionale -->
 <!-- Section régionale autres partie -->
 <div class="section-regionale">
@@ -76,7 +75,7 @@
 <!-- -------------------------------------------------Section Régionale -->
 <div class="section-regionales">
     <!-- Titre de la section -->
-    <h1 class="section-titre">Statistiques clés de la  région  {{region_name}}</h1>
+    <h1 class="section-titre">Statistiques clés de la  région </h1>
     
     <!-- Conteneur des graphiques -->
     <div class="conteneur-graphiques">
@@ -376,6 +375,45 @@
     </script>
 
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchInput = document.getElementById("search-input");
+            const suggestionsContainer = document.getElementById("suggestions");
+        
+            searchInput.addEventListener("input", function () {
+                const query = searchInput.value.trim();
+                if (query.length < 2) {
+                    suggestionsContainer.innerHTML = "";
+                    return;
+                }
+        
+                fetch(`/autocomplete?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestionsContainer.innerHTML = "";
+                        if (data.length > 0) {
+                            data.forEach(item => {
+                                const div = document.createElement("div");
+                                div.textContent = item;
+                                div.onclick = function () {
+                                    searchInput.value = item;
+                                    suggestionsContainer.innerHTML = "";
+                                    window.location.href = `/search_indicators2/${encodeURIComponent(item)}`;
+                                };
+                                suggestionsContainer.appendChild(div);
+                            });
+                        }
+                    });
+            });
+        
+            // Cacher les suggestions si on clique ailleurs
+            document.addEventListener("click", function (event) {
+                if (!searchInput.contains(event.target) && !suggestionsContainer.contains(event.target)) {
+                    suggestionsContainer.innerHTML = "";
+                }
+            });
+        });
+        </script>
 
 </body>  
 </html>

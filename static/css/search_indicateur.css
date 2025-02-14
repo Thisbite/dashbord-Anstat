@@ -1,19 +1,28 @@
-/* Style général */
+/* ==================== */
+/* Reset et styles de base */
+/* ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f8f8f8;
-    margin: 0;
-    padding: 0;
+    color: #333;
 }
 
-/* Style de la barre latérale gauche (Domaines) */
+/* ==================== */
+/* Barre latérale (Sidebar) */
+/* ==================== */
 .sidebar {
-    width: 220px; /* Réduire légèrement la largeur */
+    width: 220px;
     background-color: #fff;
-    padding: 10px; /* Réduire le padding */
+    padding: 10px;
     box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1);
-    overflow-y: auto; /* Ajouter un défilement si le contenu dépasse */
-    min-width: 40vh; 
+    overflow-y: auto;
+    min-width: 40vh;
 }
 
 .sidebar h5 {
@@ -22,23 +31,22 @@ body {
     color: #fff;
     text-align: center;
     border-radius: 5px;
+    margin-bottom: 15px;
 }
 
 .sidebar ul {
     list-style-type: none;
     padding: 0;
-    border: none;
 }
 
 .sidebar ul li {
-    padding: 8px; /* Réduire le padding */
-    margin-bottom: 5px; /* Réduire l'espacement */
+    padding: 8px;
+    margin-bottom: 5px;
     display: flex;
     align-items: center;
     cursor: pointer;
     border-radius: 8px;
     transition: background-color 0.3s;
-    border: none;
     color: #0C6B23;
     font-weight: bold;
 }
@@ -48,27 +56,27 @@ body {
 }
 
 .sidebar ul li img {
-    border: none;
     width: 20px;
     height: 20px;
     margin-right: 5px;
 }
 
+/* Style pour l'élément actif (domaine sélectionné) */
 .sidebar ul li.active {
-    border: none;
-    background-color: #ffe6e6;
-    font-weight: bold;
-    border: none;
+    background-color: white; /* Couleur de fond */
+    color: #0C6B23; /* Couleur du texte */
+    font-weight: bold; /* Texte en gras */
 }
+/* ==================== */
+/* Contenu principal */
+/* ==================== */
 .main-content {
-    color: #0C6B23;
     flex: 2;
     background-color: #fff;
     margin-left: 10px;
     padding: 20px;
     border-radius: 10px;
-    min-width: 40vh; /* Assurez-vous que le contenu principal utilise toute la hauteur */
-    border: none;
+    min-width: 40vh;
 }
 
 .main-content h5 {
@@ -77,26 +85,18 @@ body {
     color: #fff;
     text-align: center;
     border-radius: 5px;
+    margin-bottom: 15px;
 }
 
 .main-content ul {
     list-style-type: none;
     padding: 0;
-    color: #0C6B23;
-    border: none;
-}
-.main-content a {
-    list-style-type: none;
-    padding: 0;
-    color: #0C6B23;
-    border: none;
 }
 
 .main-content ul li {
-    padding: 8px; /* Gardez un padding cohérent */
+    padding: 8px;
     display: flex;
     align-items: center;
-    border: none;
     color: #0C6B23;
 }
 
@@ -108,32 +108,22 @@ body {
     color: #ff3366;
 }
 
-
-.indicators-list{
+.indicators-list {
     flex: 3;
     background-color: #fff;
     margin-left: 10px;
     padding: 20px;
     border-radius: 10px;
-    min-width: 50vh; 
-    color: #0C6B23;
-    
+    min-width: 50vh;
 }
 
 .indicators-list ul li {
     color: #ff3366;
 }
 
-
-
-
-.search-bar img {
-    width: 20px;
-    margin-left: 10px;
-    cursor: pointer;
-}
-
-/* Style du header et des icônes */
+/* ==================== */
+/* Header et navigation */
+/* ==================== */
 .header {
     background-color: #ffe6e6;
     padding: 10px;
@@ -142,143 +132,168 @@ body {
     align-items: center;
 }
 
-.header .logo img {
-    height: 50px;
-}
-
-.header .search input {
-    border: none;
-    padding: 10px;
-    border-radius: 10px;
-}
-
-.header .search img {
-    margin-left: 10px;
-    width: 20px;
-    cursor: pointer;
-}
-
-
-
-/* Champ de recherche*/
-
-
-
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, sans-serif;
+/* === Header === */
+.header-title {
+    text-align: center;
     background-color: #f4f4f4;
+    padding: 20px 10px;
+    border-bottom: 2px solid #ddd;
 }
 
-.header-secondary {  
-    background-color: white;  
-    display: flex;  
-    justify-content: space-between;  
-    align-items: center;  
-    padding: 10px 20px;  
-    border-radius: 5px; /* Optionnel : pour des coins arrondis */  
-    font-family: 'Poppins', sans-serif; /* Police attrayante */  
-    font-weight: 600; /* Optionnel : pour un texte plus épais */  
-}  
-
-.nav-links {  
-    display: flex;  
-    justify-content: center;  
-    align-items: center;  
-}  
-
-.nav-links a {  
-    text-decoration: none;  
-    color: #0C6B23; 
-    padding: 10px 20px;  
-    font-size: 18px;  
-    border: 2px solid #0C6B23; /* Ajout de la bordure */  
-    margin: 0 10px;  
-    border-radius: 5px;  
-    transition: background-color 0.3s ease;  
-    font-family: 'Poppins', sans-serif; /* Police attrayante pour les liens */  
-    font-weight: 400; /* Optionnel : pour un texte plus fin */  
+.header-title h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 100px; /* Espace entre le texte et l'image */
+    font-size: 2.5rem;
+    color: #0C6B23;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
 }
 
+.logo {
+    height: 30px;
+    width: auto;
+}
 
+.header-secondary {
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
+
+/* === Navigation === */
+.nav-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #0C6B23;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: 2px solid #0C6B23;
+    margin: 0 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+}
 
 .nav-links a:hover {
     background-color: #d9e6db;
     color: white;
 }
-.search-bar {  
-    display: flex;  
-    align-items: center;  
-    gap: 10px; /* Ajout d'un espacement uniforme entre les éléments */  
-}  
 
-.search-bar input[type="text"] {  
-    padding: 10px 14px; /* Plus de confort pour l'utilisateur */  
-    font-size: 16px;  
-    border: 2px solid #0C6B23; /* Bordure verte */  
-    border-radius: 6px; /* Coins légèrement plus arrondis */  
-    width: 300px;  
-    outline: none; /* Supprime le contour par défaut */  
-    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Animation fluide */  
-}  
+.nav-links .logo-link {
+    border: none;
+    padding: 0;
+    margin: 0 10px;
+}
 
-.search-bar input[type="text"]:focus {  
-    border-color: #0C6B23; /* Bordure plus foncée au focus */  
-    box-shadow: 0 0 5px rgba(0, 158, 96, 0.5); /* Effet lumineux au focus */ 
-     
-}  
-
-.search-bar button {  
-    padding: 10px 16px; /* Taille légèrement augmentée pour un meilleur confort */  
-    background-color: #0C6B23; /* Fond vert foncé */  
-    color: white;  
-    border: none;  
-    border-radius: 6px; /* Coins légèrement plus arrondis */  
-    cursor: pointer;  
-    font-size: 16px;  
-    font-weight: 600; /* Texte légèrement plus épais */  
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Animation fluide */  
-}  
-
-.search-bar button:hover {  
-    background-color: #F39323; /* Fond vert au survol */  
-    transform: scale(1.05); /* Légère mise en avant au survol */  
-}  
-
-.search-bar button:active {  
-    transform: scale(0.95); /* Effet de clic */  
-    background-color: #0C6B23; /* Fond plus foncé au clic */  
+.nav-links .logo-link img {
+    display: block;
 }
 
 
+/* ==================== */
+/* Barre de recherche */
+/* ==================== */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-/* Style pour la modale */
+.search-bar input[type="text"] {
+    padding: 10px 14px;
+    font-size: 16px;
+    border: 2px solid #0C6B23;
+    border-radius: 6px;
+    width: 300px;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-bar input[type="text"]:focus {
+    border-color: #0C6B23;
+    box-shadow: 0 0 5px rgba(0, 158, 96, 0.5);
+}
+
+.search-bar button {
+    padding: 10px 16px;
+    background-color: #0C6B23;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.search-bar button:hover {
+    background-color: #F39323;
+    transform: scale(1.05);
+}
+
+.search-bar button:active {
+    transform: scale(0.95);
+    background-color: #0C6B23;
+}
+
+/* ==================== */
+/* Autocomplétion */
+/* ==================== */
+.suggestions-list {
+    position: absolute;
+    background: white;
+    border: 1px solid #ddd;
+    max-height: 200px;
+    overflow-y: auto;
+    width: calc(100% - 2px);
+    z-index: 1000;
+}
+
+.suggestions-list div {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.suggestions-list div:hover {
+    background: #f0f0f0;
+}
+
+/* ==================== */
+/* Modale */
+/* ==================== */
 .modal-dialog {
     width: 500%;
-    height: 1000%;  
+    height: 1000%;
     margin-left: 30%;
     margin-right: auto;
     margin-top: 110px;
     color: #19d62f;
-    border: none; /* Supprime la bordure */
+    border: none;
 }
 
 .modal-content {
-    border-radius: 0; /* Coins droits */
-    border: none; 
-    box-shadow: none; 
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
 }
 
 .modal-title {
     font-weight: bold;
     font-size: 1.5em;
-    color: #333; 
+    color: #333;
     text-align: center;
 }
 
@@ -290,7 +305,7 @@ body {
 .modal-footer .btn-secondary {
     background-color: #d11922;
     color: #fff;
-    border: none; /* Supprime la bordure du bouton */
+    border: none;
 }
 
 .modal-footer .btn-secondary:hover {
@@ -298,10 +313,12 @@ body {
 }
 
 .modal-backdrop {
-    display: none; /* Supprime l'arrière-plan de la modale */
+    display: none;
 }
 
-
+/* ==================== */
+/* Conteneur principal */
+/* ==================== */
 #content-container {
     display: flex;
     flex-direction: column;
@@ -309,4 +326,22 @@ body {
 }
 
 
+/* Info sur indicateur*/
+#btn-en-savoir-plus {
+    background-color: #0C6B23;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
 
+  #btn-en-savoir-plus:hover {
+    background-color: #F39323;
+  }
+
+  #domaine-info {
+    background-color: #f8f8f8;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
