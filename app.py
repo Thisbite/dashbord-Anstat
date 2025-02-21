@@ -21,7 +21,9 @@ import my_queries as qr
 import data as dt
 import config as cf
 import io
-
+global region_publication
+region_publication="PORO"# Cette variable va nous permettre 
+print(" Région détectée par défaut",region_publication )
 #https://colab.research.google.com/drive/1oBqwcSMb4YTrn0NFUiQzJCiZ65uIay_S?hl=fr#scrollTo=CJAQGVAWNNPw
 #brew services restart elastic/tap/elasticsearch-full
 #redis-server
@@ -84,16 +86,13 @@ else:
 def index_data_from_excel():
     # Lire le fichier Excel
     data = pd.read_excel('lexique.xlsx')
-
     # Vérifie si les données sont récupérées correctement
     if data.empty:
         print("Aucune donnée récupérée du fichier Excel.")
     else:
         print(f"{len(data)} lignes récupérées depuis Excel.")
-
     # Nettoyer les données (remplacer les NaN par des chaînes vides)
     data = data.fillna('')
-
     # Convertir toutes les valeurs en minuscules
     data = data.applymap(lambda x: x.lower() if isinstance(x, str) else x)
     # Indexer chaque ligne du fichier Excel
@@ -106,7 +105,6 @@ def index_data_from_excel():
             print(f"Indexing: {document}")
         except Exception as e:
             print(f"Erreur d'indexation pour le document {document}: {e}")
-
     print("Données indexées avec succès.")
     
     
@@ -263,10 +261,40 @@ def list_regions():
 
 
 #Bloc du dashbord------------------------------------------Pour le tableau de bord par région
+from flask import render_template, request
+
+@app.route('/publication_detail/<title>')
+def publication_detail(title):
+    # Map the title to publication data (e.g., from a database or static data)
+    publications = {
+        'comptes_regionaux_annuels': {
+            'title': 'Comptes Régionaux Annuels',
+            'description': 'La comptabilité nationale est un outil permettant d’analyser les...',
+            'date': 'Décembre 2024',
+            'number': '002'
+        },
+        'annuaires_statistiques_regionaux': {
+            'title': 'Annuaires Statistiques Régionaux',
+            'description': 'La comptabilité nationale est un outil permettant d’analyser les...',
+            'date': 'Janvier 2025',
+            'number': '003'
+        },
+        # Add other publications...
+    }
+
+    publication = publications.get(title.replace('_', ' ').lower())
+    if not publication:
+        return "Publication non trouvée", 404
+
+    return render_template('publication_detail.html', 
+                          publication_title=publication['title'],
+                          publication_description=publication['description'],
+                          publication_date=publication['date'],
+                          publication_number=publication['number'],
+                          region_name="Votre Région")  # Adjust region_name as needed
+
+
 import random
-
-
-
 def generate_region_data():
     age_data = {
         "male": [random.randint(-200, -50) for _ in range(5)],
@@ -304,7 +332,9 @@ import plotly.graph_objs as go
 def region_vitrine(region):  
     if region not in regions:  
         return "Region not found", 404  # Handle invalid region  
-    region_data = data[region]  
+    region_data = data[region]
+    region_publication=region
+    print("Nouvelle région détectée",region_publication )
     return render_template('region_vitrine.html',  
                             
                            indicateurs=region_data['indicateurs'],  
@@ -312,25 +342,15 @@ def region_vitrine(region):
                            all_regions=regions) 
 
 
-
-
-
-
-
 #--------------------------------------------------Fin du tableau de bord
 
-
-
-
-
 #Affichage de pdf
-@app.route('/region/<region>')
-def show_region_pdf(region):
-    pdf_path = f"static/pdfs/{region}.pdf"  # Chemin vers le fichier PDF
-    try:
-        return render_template('region_pdf.html', region=region)
-    except FileNotFoundError:
-        return f"PDF pour la région {region} non trouvé.", 404
+@app.route('/publications')
+def publications_region():
+    return render_template('publications.html')
+
+
+
 
 
 # Route pour afficher la page avec les indicateurs et les régions
@@ -457,8 +477,6 @@ def request_indicateur2(indicateur):
             return render_template('no_data.html')  # Rediriger vers la page 'Aucune donnée disponible'
     # Stocker le DataFrame filtré dans la session pour une utilisation ultérieure
     df_filtered_json = df_filtered.to_json(orient='split')  # Convertir en JSON pour le stockage
-    print('Definitions associée:',definitions)
-    print('Mode de calcul:',mode_calcul)
     session['df_filtered'] = df_filtered_json
     # Obtenir les colonnes valables pour les désagrégations
     existing_columns = df_filtered.columns.tolist()
@@ -494,7 +512,6 @@ def autocomplete():
     return jsonify(suggestions)
 
 
-
 @app.route('/process_columns', methods=['POST'])
 def process_columns():
     # Récupérer les colonnes envoyées par la requête AJAX
@@ -521,8 +538,6 @@ def process_columns():
 
         my_index= list(chain.from_iterable(my_index))
         data_V1=my_index
-        data_V1=sorted(data_V1)
-        print('mes index:',data_V1)
         #Ordonnée la data
         df_filtered['cle_pivot_table'] = sorted(df_filtered['cle_pivot_table'])
         # Convertir my_index en un ensemble pour faciliter la comparaison

@@ -192,7 +192,7 @@ new Chart(ctxIDH, {
     labels: dataIDH.map(d => d.region),
     datasets: [
       {
-        label: "IDH",
+        label: "IDF",
         data: dataIDH.map(d => d.idh),
         borderColor: "green",
         fill: false,

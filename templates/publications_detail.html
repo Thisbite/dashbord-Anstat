@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail de la Publication - {{ publication_title }}</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/publications_detail.css') }}">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header (similar to main page) -->
+    <div class="header-title">
+        <h1><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="logo">Plateforme de données régionales {{region_name}}</h1>
+    </div>
+    <div class="header-secondary">
+        <div class="nav-links">
+            <a href="{{ url_for('list_regions') }}" class="logo-link">
+                <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" style="width: 50px; height: auto;">
+            </a>
+            <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
+            <a href="{{ url_for('publications_region') }}">Publications</a>
+        </div>
+        <div class="search-bar">
+            <form method="POST" action="{{ url_for('search') }}" onsubmit="return submitSearch();">
+                <input type="text" id="search-input" name="query" placeholder="Entrez votre recherche..." required autocomplete="off">
+                <div id="suggestions" class="suggestions-list"></div>
+                <button type="submit" id="search-button">Rechercher</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Publication Detail Section -->
+    <div class="publication-detail">
+        <h2>LES COMPTES NATIONAUX</h2>
+        
+        <div class="detail-container">
+            <!-- Left: Publication Cover -->
+            <div class="detail-cover">
+                <img src="{{ url_for('static', filename='img/instat_logo.png') }}" alt="INSTAT Logo" class="instat-logo">
+                <h3>{{ publication_title }}</h3>
+                <p class="publication-number">N°{{ publication_number }}</p>
+                <div class="publication-background">
+                    <h4>COMPRENDRE LES CHIFFRES</h4>
+                    <p>{{ publication_title }}</p>
+                </div>
+            </div>
+
+            <!-- Right: Publication Content -->
+            <div class="detail-content">
+                <h3>Détail de la publication</h3>
+                <h4>UTILITÉ DE LA COMPTABILITÉ NATIONALE</h4>
+                <p>
+                    La comptabilité nationale est un outil permettant d’analyser les relations entre les différents acteurs économiques, comme les ménages, les entreprises, le gouvernement, le reste du monde, etc., afin de mieux expliquer leur rôle et leur impact sur l’économie globale. Les résultats obtenus grâce à cet outil permettent aux décideurs politiques, aux économistes et aux chercheurs de suivre et d’analyser la performance d’une économie internationale, notamment à partir du PIB par tête. Outre le PIB, les principaux résultats de la comptabilité nationale incluent :
+                </p>
+                <ul>
+                    <li>les Tableaux d’Entrées-Sorties (TES) ou Tableaux des Ressources et Emplois (TRE) qui détaillent les flux économiques entre différents secteurs d’activité ;</li>
+                    <li>les Tableaux Économiques d’Ensemples (TEE) ou Tableaux des Comptes Économiques Intégrés (TCEI) qui offrent un cadre synthétique d’analyse de la distribution des revenus dans une économie.</li>
+                </ul>
+
+                <h3>Indicateurs</h3>
+                <p>Contenu des indicateurs ici...</p>
+
+                <h3>Communiqués et événements</h3>
+                <p>Informations sur les communiqués et événements ici...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript (unchanged for brevity) -->
+</body>
+</html>

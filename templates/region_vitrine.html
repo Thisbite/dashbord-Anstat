@@ -32,7 +32,7 @@
                 <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" style="width: 50px; height: auto;">
             </a>
             <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
-            <a href="#publication" onclick="toggleVisibility()">Publications</a>
+            <a href="{{ url_for('publications_region') }}">Publications</a>
         </div>
     
         <div class="search-bar">
@@ -86,7 +86,7 @@
         </div>
         <!-- Colonne du milieu: Indice de développement humain -->
         <div class="colonne">
-            <h2>Indice de Développement Humain (IDH) </h2>
+            <h2>Indice de fécondité </h2>
             <canvas id="idhChart" width="600" height="250"></canvas>
         </div>
     </div>
@@ -136,7 +136,7 @@
         </div>
         <!-- Colonne du milieu: Taux de natalité -->
         <div class="colonne">
-            <h2>Taux de natalité sur 10 ans</h2>
+            <h2>Taux de natalité </h2>
             <canvas id="tauxNataliteChart" width="600" height="250"></canvas>
         </div>
     </div>
@@ -171,155 +171,6 @@
 
 
 <script src="{{ url_for('static', filename='js/education.js') }}"></script>
-</div>
-</div>
-
-<!-- Section Publication --------------------------------------------Publication-->
-<div id="publicationSection" style="display: none;">
-        <!-- Section Publication qui s'affiche au clic -->
-        <div id="publication">
-            <!-- Carte 1: Fiche Synoptique -->
-            <div class="card" onclick="showDetails('ficheSynoptiqueDetails')">
-                <img src="{{url_for('static',filename='img/synoptique.png')}}" alt="Fiche synoptique">
-                <h3>Fiche Synoptique</h3>
-                <p>Consultez la liste des fiches synoptiques.</p>
-            </div>
-
-            <!-- Carte 2: Annuaire -->
-            <div class="card" onclick="showDetails('annuaireDetails')">
-                <img src="{{url_for('static',filename='img/annuaire.jpeg')}}" alt="Annuaire statistique">
-                <h3>Annuaire</h3>
-                <p>Consultez les informations annuaires disponibles.</p>
-            </div>
-
-            <!-- Carte 3: Bulletin des Prix -->
-            <div class="card" onclick="showDetails('bulletinPrixDetails')">
-                <img src="{{url_for('static',filename='img/bulletin.png')}}" alt="Bulletin prix">
-                <h3>Bulletin des Prix</h3>
-                <p>Accédez aux derniers bulletins des prix.</p>
-            </div>
-
-            <!-- Carte 4: Autres -->
-            <div class="card" onclick="showDetails('autresDetails')">
-                <h3>Autres</h3>
-                <p>Explorez d'autres publications disponibles.</p>
-            </div>
-        </div>
-
-        <!-- Détails des sections -->
-        <div id="ficheSynoptiqueDetails" class="details" style="display: none;">
-            <!-- Colonne de gauche : Liste des Fiches Synoptiques -->
-            <div>
-                <h3>Liste des Fiches Synoptiques</h3>
-                <ul id="ficheSynoptiqueList">
-                    <li>
-                        Fiche 1
-                        <button onclick="downloadFile('fiche1')">Télécharger PDF</button>
-                        <button onclick="downloadFile('fiche1Excel')">Télécharger Excel</button>
-                    </li>
-                    <li>
-                        Fiche 2
-                        <button onclick="downloadFile('fiche2')">Télécharger PDF</button>
-                        <button onclick="downloadFile('fiche2Excel')">Télécharger Excel</button>
-                    </li>
-                    <li>
-                        Fiche 3
-                        <button onclick="downloadFile('fiche3')">Télécharger PDF</button>
-                        <button onclick="downloadFile('fiche3Excel')">Télécharger Excel</button>
-                    </li>
-                </ul>
-            </div>
-        
-            <!-- Colonne de droite : Recherche -->
-            <div>
-                <h3>Rechercher dans une période</h3>
-                <form onsubmit="filterList(event, 'ficheSynoptiqueList')">
-                    <label for="startPeriod">Début :</label>
-                    <input type="number" id="endPeriod" required min="1900" max="2100" step="1" placeholder="2024">
-                    <label for="endPeriod">Fin :</label>
-                    <input type="number" id="endPeriod" required min="1900" max="2100" step="1" placeholder="2024">
-                    <button type="submit">Rechercher</button>
-                </form>
-            </div>
-        </div>
-        
-
-    <!-- Ajoutez d'autres détails similaires ici -->
-    <div id="annuaireDetails" class="details" style="display: none;">
-        <div>
-            <h3>Liste des Fiches Synoptiques</h3>
-            <ul id="ficheSynoptiqueList">
-                <li>
-                    Annuaire 2020
-                    <button onclick="downloadFile('fiche1')">Télécharger PDF</button>
-                    <button onclick="downloadFile('fiche1Excel')">Télécharger Excel</button>
-                </li>
-                <li>
-                    Annuaire 2021
-                    <button onclick="downloadFile('fiche2')">Télécharger PDF</button>
-                    <button onclick="downloadFile('fiche2Excel')">Télécharger Excel</button>
-                </li>
-                <li>
-                    Annuaire 2022
-                    <button onclick="downloadFile('fiche3')">Télécharger PDF</button>
-                    <button onclick="downloadFile('fiche3Excel')">Télécharger Excel</button>
-                </li>
-            </ul>
-        </div>
-    
-        <!-- Colonne de droite : Recherche -->
-        <div>
-            <h3>Rechercher dans une période</h3>
-            <form onsubmit="filterList(event, 'ficheSynoptiqueList')">
-                <label for="startPeriod">Début :</label>
-                <input type="number" id="endPeriod" required min="1900" max="2100" step="1" placeholder="2024">
-                <label for="endPeriod">Fin :</label>
-                <input type="number" id="endPeriod" required min="1900" max="2100" step="1" placeholder="2024">
-                <button type="submit">Rechercher</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="bulletinPrixDetails" class="details" style="display: none;">
-        <div>
-            <h3>Liste des Fiches Synoptiques</h3>
-            <ul id="ficheSynoptiqueList">
-                <li>
-                   Bulletins de Mars 2024
-                    <button onclick="downloadFile('fiche1')">Télécharger PDF</button>
-                    <button onclick="downloadFile('fiche1Excel')">Télécharger Excel</button>
-                </li>
-                <li>
-                    Bulletin d'Avril 2024
-                    <button onclick="downloadFile('fiche2')">Télécharger PDF</button>
-                    <button onclick="downloadFile('fiche2Excel')">Télécharger Excel</button>
-                </li>
-                <li>
-                    Bulletin de Mai
-                    <button onclick="downloadFile('fiche3')">Télécharger PDF</button>
-                    <button onclick="downloadFile('fiche3Excel')">Télécharger Excel</button>
-                </li>
-            </ul>
-        </div>
-    
-        <!-- Colonne de droite : Recherche -->
-        <div>
-            <h3>Rechercher dans une période</h3>
-            <form onsubmit="filterList(event, 'ficheSynoptiqueList')">
-                <label for="startPeriod">Début :</label>
-                <input type="number" id="endPeriod" required min="1900" max="2100" step="1" placeholder="2024">
-                <label for="endPeriod">Fin :</label>
-                <input type="number" id="endPeriod" required min="1900" max="2100" step="1" placeholder="2024">
-                <button type="submit">Rechercher</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="autresDetails" class="details" style="display: none;">
-        <h3>Autres Publications</h3>
-        <p>Explorez les autres publications ici.</p>
-    </div>
-</div>
 </div>
 
 <script>

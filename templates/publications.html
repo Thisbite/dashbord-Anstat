@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base de données des statistiques régionales</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/publications.css') }}">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <!-- Header (unchanged for brevity) -->
+    <div class="header-title">
+        <h1><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="logo">Plateforme de données régionales {{region_name}}</h1>
+    </div>
+    <div class="header-secondary">
+        <div class="nav-links">
+            <a href="{{ url_for('list_regions') }}" class="logo-link">
+                <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" style="width: 50px; height: auto;">
+            </a>
+            <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
+            <a href="{{ url_for('publications_region') }}">Publications</a>
+        </div>
+        <div class="search-bar">
+            <form method="POST" action="{{ url_for('search') }}" onsubmit="return submitSearch();">
+                <input type="text" id="search-input" name="query" placeholder="Entrez votre recherche..." required autocomplete="off">
+                <div id="suggestions" class="suggestions-list"></div>
+                <button type="submit" id="search-button">Rechercher</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Publication Section -->
+    <div id="publicationSection" >
+        <div class="publication-grid">
+            <!-- Card 1: Comptes Nationaux Annuels Provisoires 2023 -->
+            <div class="publication-card">
+                <img src="{{ url_for('static', filename='img/annuaire.jpeg') }}" alt="Description de l'image" style="width:90%; height:200px;">
+                <h3>COMPTES RÉGIONAUX ANNUELS</h3>
+                <p>La comptabilité nationale est un outil permettant d’analyser les...</p>
+                <p>Décembre 2024</p>
+                <a href="#" class="read-more">Lire →</a>
+            </div>
+
+            <!-- Card 2: Utilité de la Comptabilité Nationale -->
+            <div class="publication-card">
+                <h3>ANNUAIRES STATISTIQUES RÉGIONAUX</h3>
+                <p>La comptabilité nationale est un outil permettant d’analyser les...</p>
+                <p>Janvier 2025</p>
+                <a href="#" class="read-more">Lire →</a>
+            </div>
+
+            <!-- Card 3: Changement de l'Année de Base -->
+            <div class="publication-card">
+                <img src="{{ url_for('static', filename='img/synoptique.png') }}" alt="Description de l'image" style="width:90%; height:200px;">
+                <h3>FICHES SYNOPTIQUES RÉGIONALES</h3>
+                <p>Les comptes nationaux fournissent une évaluation complète, détaillée et chiffrée de l’activité...</p>
+                <p>Janvier 2025</p>
+                <a href="#" class="read-more">Lire →</a>
+            </div>
+
+            <!-- Card 4: Indice Harmonisé des Prix à la Consommation -->
+            <div class="publication-card">
+                <h3>INDICE HARMONISÉ DES PRIX À LA CONSOMMATION DES MÉNAGES DE DÉCEMBRE 2024</h3>
+                <p>En ce mois de décembre 2024, l’Indice Harmonisé des Prix à la Consommation (IHPC) enregistre une hausse...</p>
+                <p>Décembre 2024</p>
+                <a href="#" class="read-more">Lire →</a>
+            </div>
+
+            <!-- Card 5: Indice du Chiffre d'Affaires dans le Commerce -->
+            <div class="publication-card">
+                <h3>INDICE DU CHIFFRE D’AFFAIRES DANS LE COMMERCE DÉCEMBRE 2024</h3>
+                <p>Hausse notable des activités commerciales en décembre 2024, le secteur du Commerce en Côte d’I...</p>
+                <p>Décembre 2024</p>
+                <a href="#" class="read-more">Lire →</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
