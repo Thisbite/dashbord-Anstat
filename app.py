@@ -171,9 +171,10 @@ es.indices.put_settings(index='requete_elastic', body={
 })
 #index_data_from_excel()
 # Date de départ pour le calcul des naissances (exemple : 1er janvier 2022)
+
 START_DATE = datetime(2022, 1, 1)
 STORAGE_FILE = 'births_data.json'
-# Fonction pour calculer les naissances par minute avec variation
+
 def get_births_per_minute():
     moyenne_naissance = 1.3  # naissances par seconde
     variation = random.uniform(-0.034, 0.034)
@@ -181,11 +182,12 @@ def get_births_per_minute():
 
 # Fonction pour charger l'état actuel du compteur
 def load_birth_data():
+    # Fonction pour calculer les naissances par minute avec variation
     if os.path.exists(STORAGE_FILE):
         with open(STORAGE_FILE, 'r') as f:
             data = json.load(f)
             return data
-    return {'total_births': 29090897, 'last_time': START_DATE.timestamp()} #Date de depart
+    return {'total_births': 29090897, 'last_time': START_DATE.timestamp()}
 
 # Fonction pour sauvegarder l'état actuel du compteur
 def save_birth_data(total_births, last_time):

@@ -6,68 +6,121 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #f4f4f4, #e9ecef);
+    color: #333;
+}
+
+/* === Frame Container === */
+.frame-container {
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 30px;
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 2px solid #006B45; /* Green border for a framed look */
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.frame-container::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 2px solid #F39323; /* Orange outer glow */
+    border-radius: 18px;
+    z-index: -1;
+    animation: glow 4s infinite ease-in-out;
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 10px #F39323, 0 0 20px #F39323; }
+    50% { box-shadow: 0 0 15px #F39323, 0 0 25px #F39323; }
+}
+
+.frame-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
 }
 
 /* === Header === */
 .header-title {
     text-align: center;
-    background-color: #f4f4f4;
-    padding: 20px 10px;
-    border-bottom: 2px solid #ddd;
+    background: linear-gradient(45deg, #ffffff, #d9e6db);
+    padding: 30px 10px;
+    border-bottom: 3px solid #006B45;
+    border-radius: 15px 15px 0 0;
 }
 
 .header-title h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 100px; /* Espace entre le texte et l'image */
-    font-size: 2.5rem;
-    color: #0C6B23;
+    gap: 30px;
+    font-size: 2.8rem;
+    color: #006B45;
     margin: 0;
-    font-family: 'Arial', sans-serif;
+    font-weight: 600;
+    text-shadow: 1px 1px 3px rgba(0, 107, 69, 0.3);
 }
 
 .logo {
-    height: 30px;
+    height: 40px;
     width: auto;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.1);
 }
 
 .header-secondary {
-    background-color: white;
+    background-color: #ffffff;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+}
+
+.header-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 /* === Navigation === */
 .nav-links {
     display: flex;
-    justify-content: center;
     align-items: center;
+    gap: 15px;
 }
 
 .nav-links a {
     text-decoration: none;
-    color: #0C6B23;
-    padding: 10px 20px;
-    font-size: 18px;
-    border: 2px solid #0C6B23;
-    margin: 0 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-    font-family: 'Poppins', sans-serif;
+    color: #006B45;
+    padding: 12px 22px;
+    font-size: 1.1rem;
+    border: 2px solid #006B45;
+    border-radius: 8px;
+    transition: all 0.3s ease;
     font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .nav-links a:hover {
-    background-color: #d9e6db;
-    color: white;
+    background: linear-gradient(45deg, #006B45, #004D32);
+    color: #ffffff;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 107, 69, 0.3);
 }
 
 .nav-links .logo-link {
@@ -78,51 +131,61 @@ body {
 
 .nav-links .logo-link img {
     display: block;
+    height: 45px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.nav-links .logo-link img:hover {
+    transform: scale(1.1);
 }
 
 /* === Barre de Recherche === */
 .search-bar {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .search-bar input[type="text"] {
-    padding: 10px 14px;
-    font-size: 16px;
-    border: 2px solid #0C6B23;
-    border-radius: 6px;
-    width: 300px;
+    padding: 12px 18px;
+    font-size: 1rem;
+    border: 2px solid #006B45;
+    border-radius: 10px;
+    width: 320px;
     outline: none;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .search-bar input[type="text"]:focus {
-    border-color: #006B45;
-    box-shadow: 0 0 5px rgba(0, 158, 96, 0.5);
+    border-color: #004D32;
+    box-shadow: 0 0 10px rgba(0, 107, 69, 0.5);
 }
 
 .search-bar button {
-    padding: 10px 16px;
-    background-color: #0C6B23;
-    color: white;
+    padding: 12px 20px;
+    background: linear-gradient(45deg, #006B45, #004D32);
+    color: #ffffff;
     border: none;
-    border-radius: 6px;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .search-bar button:hover {
-    background-color: #F39323;
+    background: linear-gradient(45deg, #004D32, #003820);
     transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 107, 69, 0.3);
 }
 
 .search-bar button:active {
     transform: scale(0.95);
-    background-color: #0C6B23;
 }
+
 
 /* === Conteneur Principal === */
 .container {
@@ -385,25 +448,36 @@ body {
 }
 
 /* === Carte de la Côte d'Ivoire === */
+/* === Carte de la Côte d'Ivoire === */
 .region {
-    stroke: black;
-    stroke-width: 1;
+    stroke: #006B45;
+    stroke-width: 1.5;
+    transition: stroke 0.3s ease;
+}
+
+.region:hover {
+    stroke: #F39323;
+    stroke-width: 4;
 }
 
 .tooltip {
     position: absolute;
-    background-color: white;
-    padding: 5px;
-    border: 1px solid black;
-    border-radius: 5px;
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+    padding: 8px 12px;
+    border: 1px solid #006B45;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     pointer-events: none;
-    font-size: 12px;
+    font-size: 0.9rem;
+    color: #333;
 }
 
 .subtitle {
-    font-size: 14px;
-    color: #0C6B23;
-    margin-bottom: 5px;
+    font-size: 1rem;
+    color: #006B45;
+    margin-bottom: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
 }
 
 /*Autocomplétion */
