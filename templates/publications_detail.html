@@ -3,18 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Détail de la Publication - {{ publication_title }}</title>
+    <title>{{ publication_title }} - Détails</title>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/publications_detail.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/publications.css') }}">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        .publication-details {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .tabs {
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #F39323;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            margin-right: 0.5rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: #2c3e50;
+        }
+
+        .tab-button.active {
+            border-bottom: 2px solid #F39323;
+            color: #F39323;
+        }
+
+        .tab-content {
+            padding: 1rem;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .back-button {
+            background-color: #F39323;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .back-button:hover {
+            background-color: #d65a3c;
+        }
+    </style>
 </head>
 <body>
-    <!-- Header (similar to main page) -->
+    <!-- Header (unchanged for consistency) -->
     <div class="header-title">
-        <h1><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="logo">Plateforme de données régionales {{region_name}}</h1>
+        <h1><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="logo">Plateforme de données régionales {{ region_name }}</h1>
     </div>
     <div class="header-secondary">
         <div class="nav-links">
@@ -33,43 +88,67 @@
         </div>
     </div>
 
-    <!-- Publication Detail Section -->
-    <div class="publication-detail">
-        <h2>LES COMPTES NATIONAUX</h2>
-        
-        <div class="detail-container">
-            <!-- Left: Publication Cover -->
-            <div class="detail-cover">
-                <img src="{{ url_for('static', filename='img/instat_logo.png') }}" alt="INSTAT Logo" class="instat-logo">
-                <h3>{{ publication_title }}</h3>
-                <p class="publication-number">N°{{ publication_number }}</p>
-                <div class="publication-background">
-                    <h4>COMPRENDRE LES CHIFFRES</h4>
-                    <p>{{ publication_title }}</p>
-                </div>
-            </div>
+    <!-- Publication Details Section -->
+    <div class="publication-details">
+        <h2>{{ publication_title }}</h2>
+        <p><strong>Date d'édition:</strong> {{ publication_date }}</p>
+        <p><strong>Numéro:</strong> {{ publication_number }}</p>
 
-            <!-- Right: Publication Content -->
-            <div class="detail-content">
-                <h3>Détail de la publication</h3>
-                <h4>UTILITÉ DE LA COMPTABILITÉ NATIONALE</h4>
-                <p>
-                    La comptabilité nationale est un outil permettant d’analyser les relations entre les différents acteurs économiques, comme les ménages, les entreprises, le gouvernement, le reste du monde, etc., afin de mieux expliquer leur rôle et leur impact sur l’économie globale. Les résultats obtenus grâce à cet outil permettent aux décideurs politiques, aux économistes et aux chercheurs de suivre et d’analyser la performance d’une économie internationale, notamment à partir du PIB par tête. Outre le PIB, les principaux résultats de la comptabilité nationale incluent :
-                </p>
-                <ul>
-                    <li>les Tableaux d’Entrées-Sorties (TES) ou Tableaux des Ressources et Emplois (TRE) qui détaillent les flux économiques entre différents secteurs d’activité ;</li>
-                    <li>les Tableaux Économiques d’Ensemples (TEE) ou Tableaux des Comptes Économiques Intégrés (TCEI) qui offrent un cadre synthétique d’analyse de la distribution des revenus dans une économie.</li>
-                </ul>
-
-                <h3>Indicateurs</h3>
-                <p>Contenu des indicateurs ici...</p>
-
-                <h3>Communiqués et événements</h3>
-                <p>Informations sur les communiqués et événements ici...</p>
-            </div>
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab('description')">Description de la publication</button>
+            <button class="tab-button" onclick="openTab('downloads')">Téléchargements</button>
+            <button class="tab-button" onclick="openTab('others')">Autres</button>
         </div>
+
+        <div class="tab-content active" id="description">
+            <p>{{ publication_description }}</p>
+        </div>
+        <div class="tab-content" id="downloads">
+            <p>Liste des fichiers téléchargeables :</p>
+            <ul>
+                {% if publication_title == 'COMPTES REGIONAUX' %}
+                    <li><a href="{{ url_for('static', filename='pdf/comptes_regionaux.pdf') }}" download>Comptes Régionaux Annuels 2024 (PDF)</a></li>
+                {% elif publication_title == 'Annuaire' %}
+                    <li><a href="{{ url_for('static', filename='pdf/annuaires_statistiques.pdf') }}" download>Annuaires Statistiques Régionaux 2025 (PDF)</a></li>
+                {% elif publication_title == 'Fiches Synoptiques Régionales' %}
+                    <li><a href="{{ url_for('static', filename='pdf/fiches_synoptiques.pdf') }}" download>Fiches Synoptiques Régionales 2025 (PDF)</a></li>
+                {% elif publication_title == 'Indice Harmonisé des Prix à la Consommation des Ménages de Décembre 2024' %}
+                    <li><a href="{{ url_for('static', filename='pdf/ihpc_decembre2024.pdf') }}" download>IHPC Décembre 2024 (PDF)</a></li>
+                {% elif publication_title == 'Indice du Chiffre d’Affaires dans le Commerce Décembre 2024' %}
+                    <li><a href="{{ url_for('static', filename='pdf/commerce_decembre2024.pdf') }}" download>Commerce Décembre 2024 (PDF)</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="tab-content" id="others">
+            <p>Autres informations utiles sur cette publication, telles que des liens vers des études complémentaires ou des données connexes...</p>
+        </div>
+
+        <button class="back-button" onclick="window.location.href='{{ url_for('publications_region') }}'">Retour aux publications</button>
     </div>
 
-    <!-- JavaScript (unchanged for brevity) -->
+    <script>
+        function openTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+
+            // Remove active class from all buttons
+            const tabButtons = document.getElementsByClassName('tab-button');
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('active');
+            }
+
+            // Show the selected tab content and mark button as active
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Set default tab on page load
+        window.onload = function() {
+            openTab('description');
+        };
+    </script>
 </body>
 </html>

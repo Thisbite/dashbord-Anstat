@@ -1,27 +1,208 @@
-/* Variables globales */
+/* === Variables globales === */
 :root {
     --primary-color: #0C6B23;
     --secondary-color: #0C6B23;
-    --accent-color:#0C6B23;
+    --secondary-color2: #bbcbbf;
+    --accent-color: #0C6B23;
     --light-color: #f8f9fa;
     --text-color: black;
+    --font-family: 'Open Sans', sans-serif; /* Police standardisée ici */
     --border-radius: 5px;
 }
 
-/* Styles de base */
-body {
-    font-family: Arial, sans-serif;
-    background-color: var(--light-color);
+/* === Réinitialisation et Styles Globaux === */
+* {
     margin: 0;
-    padding: 20px;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family); /* Utilise la variable pour Open Sans */
+    line-height: 1.6;
+    background-color: var(--light-color);
     color: var(--text-color);
 }
 
-h3 {
-    margin-bottom: 10px;
+/* === Frame Container === */
+.frame-container {
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 30px;
+    background: linear-gradient(135deg, #ffffff, var(--light-color));
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 2px solid var(--primary-color); /* Green border for a framed look */
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Conteneur global */
+.frame-container::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 2px solid var(--accent-color); /* Orange outer glow */
+    border-radius: 18px;
+    z-index: -1;
+    animation: glow 4s infinite ease-in-out;
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 10px var(--accent-color), 0 0 20px var(--accent-color); }
+    50% { box-shadow: 0 0 15px var(--accent-color), 0 0 25px var(--accent-color); }
+}
+
+.frame-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* === Header === */
+.header-title {
+    text-align: center;
+    background: linear-gradient(45deg, #ffffff, var(--secondary-color2));
+    padding: 30px 10px;
+    border-bottom: 3px solid var(--primary-color);
+    border-radius: 15px 15px 0 0;
+}
+
+.header-title h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    font-size: 2.8rem;
+    color: var(--primary-color);
+    margin: 0;
+    font-weight: var(--font-weight-bold); /* Utilise la variable pour la police */
+    text-shadow: 1px 1px 3px rgba(0, 107, 69, 0.3);
+}
+
+.logo {
+    height: 40px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.1);
+}
+
+.header-secondary {
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+    font-family: var(--font-family); /* Open Sans pour cohérence */
+}
+
+.header-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* === Navigation === */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--primary-color);
+    padding: 12px 22px;
+    font-size: 1.1rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: var(--font-weight-regular); /* Utilise la variable pour Open Sans */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: var(--font-family); /* Open Sans pour cohérence */
+}
+
+.nav-links a:hover {
+    background: linear-gradient(45deg, var(--primary-color), var(--primary-hover-color));
+    color: #ffffff;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 107, 69, 0.3);
+}
+
+.nav-links .logo-link {
+    border: none;
+    padding: 0;
+    margin: 0 10px;
+}
+
+.nav-links .logo-link img {
+    display: block;
+    height: 45px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.nav-links .logo-link img:hover {
+    transform: scale(1.1);
+}
+
+/* === Barre de Recherche === */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.search-bar input[type="text"] {
+    padding: 12px 18px;
+    font-size: 1rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 10px;
+    width: 320px;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-family: var(--font-family); /* Open Sans pour cohérence */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.search-bar input[type="text"]:focus {
+    border-color: var(--primary-hover-color);
+    box-shadow: 0 0 10px rgba(0, 107, 69, 0.5);
+}
+
+.search-bar button {
+    padding: 12px 20px;
+    background: linear-gradient(45deg, var(--primary-color), var(--primary-hover-color));
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: var(--font-weight-bold); /* Utilise la variable pour Open Sans */
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    font-family: var(--font-family); /* Open Sans pour cohérence */
+}
+
+.search-bar button:hover {
+    background: linear-gradient(45deg, var(--primary-hover-color), #003820);
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 107, 69, 0.3);
+}
+
+.search-bar button:active {
+    transform: scale(0.95);
+}
+
+/* Styles de base */
 .container {
     display: flex;
     justify-content: space-between;
@@ -31,17 +212,18 @@ h3 {
 
 /* Colonne gauche */
 .container > div:first-child {
-    flex-basis: 20%; /* Ajustez la proportion selon vos besoins */
-    max-width: 250px; /* Limite la largeur maximum */
+    flex-basis: 20%;
+    max-width: 250px;
     border: 1px solid var(--accent-color);
-    padding: 10px; /* Réduit l'espace intérieur */
+    padding: 10px;
     background-color: #fff;
     border-radius: var(--border-radius);
+    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
-
 
 .container > div:first-child h3 {
     color: var(--primary-color);
+    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
 
 /* Éléments déplaçables */
@@ -50,11 +232,12 @@ h3 {
     padding: 10px;
     margin: 5px 0;
     background-color: #e9ecef;
-    border: 1px solid #0C6B23;
+    border: 1px solid var(--primary-color);
     border-radius: 10px;
     cursor: grab;
     white-space: nowrap;
     transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
 
 .draggable-item:hover {
@@ -62,19 +245,18 @@ h3 {
     color: #fff;
 }
 
-/* Conteneur pour les zones de dépôt */
 /* Conteneur principal pour aligner les zones de dépôt */
 #droppable-container {
-    display: flex; /* Place les zones côte à côte */
-    gap: 20px; /* Espace entre les zones */
-    justify-content: center; /* Centre les zones horizontalement */
-    align-items: stretch; /* Étire les zones verticalement */
-    margin: 20px 0; /* Espacement autour du conteneur */
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: stretch;
+    margin: 20px 0;
 }
 
 /* Zones de dépôt */
 #droppable-area-rows, #droppable-area-cols {
-    flex: 1; /* Zones de même taille */
+    flex: 1;
     padding: 20px;
     min-width: 500px;
     min-height: 100px;
@@ -90,11 +272,17 @@ h3 {
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
     overflow-y: auto;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
 
 #droppable-area-rows:hover, #droppable-area-cols:hover {
     background-color: #e0f4e0;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+#droppable-area-cols p.vertical {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
 }
 
 /* Conteneur des filtres */
@@ -105,19 +293,20 @@ h3 {
     border-radius: var(--border-radius);
     background-color: var(--light-color);
     display: flex;
-    flex-wrap: rap; 
-    gap: 15px; /* Espace entre les éléments */
-    overflow-y: auto; /* Permet le défilement horizontal si nécessaire */
+    flex-wrap: wrap; 
+    gap: 15px;
+    overflow-y: auto;
     width: 100%;
-    justify-content: flex-start; /* Aligne les éléments sur la gauche */
-    align-items: center; /* Aligne les éléments verticalement au centre */
+    justify-content: flex-start;
+    align-items: center;
+    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
 
 /* Style des labels */
 #filter-container label {
-    font-weight: bold;
+    font-weight: var(--font-weight-bold); /* Utilise la variable pour Open Sans */
     margin-right: 10px;
-    white-space: wrap; /* Empêche le retour à la ligne pour les labels */
+    white-space: nowrap;
 }
 
 /* Style des sélecteurs */
@@ -127,10 +316,9 @@ h3 {
     border-radius: var(--border-radius);
     background-color: #fff;
     font-size: 1em;
-    width: auto; /* La largeur des sélecteurs est ajustée automatiquement */
+    font-family: var(--font-family); /* Open Sans pour cohérence */
+    width: auto;
 }
-
-
 
 /* Conteneur tableau */
 #table-container {
@@ -140,6 +328,7 @@ h3 {
     background-color: #fff;
     border-radius: var(--border-radius);
     overflow-y: auto;
+    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
 
 /* Styles tableau */
@@ -152,10 +341,11 @@ th, td {
     border: 1px solid #ccc;
     padding: 10px;
     text-align: left;
+    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
 
 th {
-    background-color: #0C6B23;
+    background-color: var(--primary-color);
     color: #fff;
 }
 
@@ -166,24 +356,26 @@ tr:hover {
 /* Bordure tricolore */
 .parent-frame {
     border: 1px solid;
-    border-image: linear-gradient(to right, orange 33%, white 33%, white 66%, green 66%);
+    border-image: linear-gradient(to right, var(--accent-color) 33%, #fff 33%, #fff 66%, var(--primary-color) 66%);
     border-image-slice: 1;
     padding: 20px;
     border-radius: 10px;
     background-color: #fff;
+    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
 
 /* Titres */
 .titre-indicateur {
     text-align: center;
-    font-weight: bold;
+    font-weight: var(--font-weight-bold); /* Utilise la variable pour Open Sans */
     padding: 10px;
     border-radius: var(--border-radius);
-    background-color: #F39323;
+    background-color: var(--accent-color);
     color: #fff;
     display: inline-block;
     margin: 20px auto;
     width: fit-content;
+    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
 
 /* Boutons */
@@ -195,18 +387,19 @@ tr:hover {
     color: #fff;
     background-color: var(--secondary-color);
     font-size: 15px;
-    font-weight: bold;
+    font-weight: var(--font-weight-bold); /* Utilise la variable pour Open Sans */
     transition: background-color 0.3s ease, transform 0.2s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
 
 .download-buttons button:hover {
-    background-color: #F39323;
+    background-color: var(--accent-color);
     transform: translateY(-3px);
 }
 
 .download-buttons button:active {
-    background-color: #F39323;
+    background-color: var(--accent-color);
     transform: translateY(0);
 }
 
@@ -215,86 +408,5 @@ tr:hover {
 }
 
 #metadonnees:hover {
-    background-color: #F39323;
-}
-
-
-.header-secondary {  
-    background-color: white;  
-    display: flex;  
-    justify-content: space-between;  
-    align-items: center;  
-    padding: 10px 20px;  
-    border-radius: 5px; /* Optionnel : pour des coins arrondis */  
-    font-family: 'Poppins', sans-serif; /* Police attrayante */  
-    font-weight: 600; /* Optionnel : pour un texte plus épais */  
-}  
-
-.nav-links {  
-    display: flex;  
-    justify-content: center;  
-    align-items: center;  
-}  
-
-.nav-links a {  
-    text-decoration: none;  
-    color: #0C6B23; 
-    padding: 10px 20px;  
-    font-size: 18px;  
-    border: 2px solid #4F645B; /* Ajout de la bordure */  
-    margin: 0 10px;  
-    border-radius: 5px;  
-    transition: background-color 0.3s ease;  
-    font-family: 'Poppins', sans-serif; /* Police attrayante pour les liens */  
-    font-weight: 400; /* Optionnel : pour un texte plus fin */  
-}
-
-
-
-.nav-links a:hover {
-    background-color: #d9e6db;
-    color: white;
-}
-.search-bar {  
-    display: flex;  
-    align-items: center;  
-    gap: 10px; /* Ajout d'un espacement uniforme entre les éléments */  
-}  
-
-.search-bar input[type="text"] {  
-    padding: 10px 14px; /* Plus de confort pour l'utilisateur */  
-    font-size: 16px;  
-    border: 2px solid #0C6B23; /* Bordure verte */  
-    border-radius: 6px; /* Coins légèrement plus arrondis */  
-    width: 300px;  
-    outline: none; /* Supprime le contour par défaut */  
-    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Animation fluide */  
-}  
-
-.search-bar input[type="text"]:focus {  
-    border-color: #0C6B23; /* Bordure plus foncée au focus */  
-    box-shadow: 0 0 5px rgba(0, 158, 96, 0.5); /* Effet lumineux au focus */ 
-     
-}  
-
-.search-bar button {  
-    padding: 10px 16px; /* Taille légèrement augmentée pour un meilleur confort */  
-    background-color: #0C6B23; /* Fond vert foncé */  
-    color: white;  
-    border: none;  
-    border-radius: 6px; /* Coins légèrement plus arrondis */  
-    cursor: pointer;  
-    font-size: 16px;  
-    font-weight: 600; /* Texte légèrement plus épais */  
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Animation fluide */  
-}  
-
-.search-bar button:hover {  
-    background-color: #F39323; /* Fond vert au survol */  
-    transform: scale(1.05); /* Légère mise en avant au survol */  
-}  
-
-.search-bar button:active {  
-    transform: scale(0.95); /* Effet de clic */  
-    background-color: #0C6B23; /* Fond plus foncé au clic */  
+    background-color: var(--accent-color);
 }

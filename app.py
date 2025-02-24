@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file, jsonify,abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_session import Session
@@ -263,37 +263,8 @@ def list_regions():
 
 
 #Bloc du dashbord------------------------------------------Pour le tableau de bord par région
-from flask import render_template, request
 
-@app.route('/publication_detail/<title>')
-def publication_detail(title):
-    # Map the title to publication data (e.g., from a database or static data)
-    publications = {
-        'comptes_regionaux_annuels': {
-            'title': 'Comptes Régionaux Annuels',
-            'description': 'La comptabilité nationale est un outil permettant d’analyser les...',
-            'date': 'Décembre 2024',
-            'number': '002'
-        },
-        'annuaires_statistiques_regionaux': {
-            'title': 'Annuaires Statistiques Régionaux',
-            'description': 'La comptabilité nationale est un outil permettant d’analyser les...',
-            'date': 'Janvier 2025',
-            'number': '003'
-        },
-        # Add other publications...
-    }
 
-    publication = publications.get(title.replace('_', ' ').lower())
-    if not publication:
-        return "Publication non trouvée", 404
-
-    return render_template('publication_detail.html', 
-                          publication_title=publication['title'],
-                          publication_description=publication['description'],
-                          publication_date=publication['date'],
-                          publication_number=publication['number'],
-                          region_name="Votre Région")  # Adjust region_name as needed
 
 
 import random
@@ -335,21 +306,91 @@ def region_vitrine(region):
     if region not in regions:  
         return "Region not found", 404  # Handle invalid region  
     region_data = data[region]
+    global region_publication
     region_publication=region
     print("Nouvelle région détectée",region_publication )
     return render_template('region_vitrine.html',  
                             
                            indicateurs=region_data['indicateurs'],  
-                           region_name=region,  
+                           region_name=region_publication,  
                            all_regions=regions) 
 
-
+print('la region issue des fonctions',region_publication)
 #--------------------------------------------------Fin du tableau de bord
 
-#Affichage de pdf
+# Load Excel data (assuming the Excel file is named 'publications.xlsx' in a 'data' folder)
+
+
+def load_publications():
+    try:
+        df = pd.read_excel('static/data/publications2.xlsx')  # Chemin vers le fichier Excel
+        print("DataFrame chargé avec succès :")
+        print(df)  # Affiche le contenu du DataFrame pour vérification
+
+        # Convertit le DataFrame en dictionnaire avec des clés uniques basées sur le titre normalisé
+        publications = {}
+        for _, row in df.iterrows():
+            # Normalise le titre pour la clé (minuscules, underscores)
+            title_key = row['nom de la publication'].lower().replace(' ', '_')
+            # Crée un dictionnaire pour chaque publication
+            publications[title_key] = {
+                'title': row['nom de la publication'],
+                'region': row['Région'],
+                'date': row['Date d\'édition'],
+                'description': row['Description de la publication'],
+                'year': row['Annee de publication']
+            }
+        print("Dictionnaire publications créé :")
+        print(publications)  # Affiche le dictionnaire final
+        return publications
+    except FileNotFoundError:
+        print("Erreur : Le fichier publications2.xlsx n'a pas été trouvé dans /static/data/")
+        return {}  # Retourne un dictionnaire vide si le fichier n'est pas trouvé
+    except Exception as e:
+        print(f"Une erreur s'est produite : {e}")
+        return {}  # Retourne un dictionnaire vide en cas d'erreur
+
+# Cache les données des publications
+publications_data = load_publications()
+print("Données mises en cache dans publications_data :")
+print(publications_data)
+
 @app.route('/publications')
 def publications_region():
-    return render_template('publications.html')
+    region_name=region_publication
+    print('publication ',region_name)
+    return render_template('publications.html',region_name=region_name)
+
+@app.route('/publications/<title>')  # Changé de '/publications' à '/publication' pour correspondre à vos logs
+def publication_detail(title):
+    # Nettoie et normalise le titre pour correspondre (minuscules avec underscores, puis espaces pour la comparaison)
+    normalized_title = title.lower().replace('_', ' ')  # Transforme "comptes_regionaux" en "comptes regionaux"
+    print('Le titre de la publication', normalized_title)
+    
+    # Recherche la publication dans les données
+    publication = None
+    for pub_title, data in publications_data.items():
+        print('v1', pub_title)  # Pour débogage : affiche la clé brute
+        # Normalise pub_title en minuscules avec espaces pour correspondre à normalized_title
+        normalized_pub_title = pub_title.replace('_', ' ').lower()
+        print('publication, ok', normalized_pub_title)  # Pour débogage : affiche la clé normalisée
+        if normalized_pub_title == normalized_title:
+            print('v2', pub_title)  # Pour débogage : affiche la clé brute correspondante
+            publication = data
+            break
+
+    if not publication:
+        abort(404, description=f"Publication '{normalized_title}' non trouvée")
+
+    # Génère le numéro de publication en utilisant normalized_title pour être cohérent
+    publication_number = f"P{list(publications_data.keys()).index(pub_title) + 1:03d}"
+    print('vue de region dans publication',region_publication)
+    return render_template('publications_detail.html',
+                          publication_title=publication['title'],
+                          publication_description=publication['description'],
+                          publication_date=publication['date'],
+                          publication_number=publication_number,  # Utilise la clé normalisée
+                          region_name=region_publication)
 
 
 
