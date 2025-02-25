@@ -345,3 +345,33 @@ body {
     border-radius: 5px;
     border: 1px solid #ddd;
   }
+
+
+  #indicatorSearch {
+    border-radius: 0.25rem 0 0 0.25rem;
+  }
+  
+  #clearSearch {
+    border-radius: 0 0.25rem 0.25rem 0;
+  }
+  
+  #indicateurs .list-group-item {
+    transition: opacity 0.3s ease;
+  }
+  
+  #indicateurs .list-group-item.hidden {
+    display: none; /* ou opacity: 0; si vous voulez un effet de fondu */
+  }
+
+  #indicateurs .list-group-item.hidden {
+    display: none; /* Cache complètement l'élément */
+    /* Ou, pour un effet de fondu :
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    */
+  }
+  
+  #indicatorSearch:focus {
+    border-color: #e76f51; /* Couleur orange pour le focus, comme votre branding */
+    box-shadow: 0 0 5px rgba(231, 111, 81, 0.3);
+  }

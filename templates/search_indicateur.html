@@ -66,6 +66,11 @@
     </div>
     <div class="col-md-4 indicators-list main-content">
       <h5>Indicateurs</h5>
+      <!-- Ajout du champ de recherche -->
+      <div class="input-group mb-3">
+        <input type="text" id="indicatorSearch" class="form-control" placeholder="Rechercher un indicateur...">
+        <button class="btn btn-outline-secondary" type="button" id="clearSearch">Effacer</button>
+      </div>
       <ul id="indicateurs" class="list-group">
         <!-- Les indicateurs apparaîtront ici dynamiquement -->
       </ul>
@@ -73,12 +78,12 @@
   </div>
 </div>
 
-<!-- Ajoutez ceci après la section des indicateurs -->
+<!-- Ajoutez ceci après la section des indicateurs (inchangé pour l’instant) -->
 <div class="container mt-4">
   <div class="row">
     <div class="col-md-12">
       <button id="btn-en-savoir-plus" class="btn btn-primary" style="display: none;">
-       Informations sur le domaine
+        Informations sur le domaine
       </button>
       <div id="domaine-info" class="mt-3" style="display: none;">
         <h5>Informations sur le domaine</h5>
@@ -185,33 +190,74 @@
         thematiquesList.appendChild(li);
     });
 }
-  function toggleIndicateurs(domaine, thematique, isChecked) {
-    const indicateursList = document.getElementById('indicateurs');
-    if (isChecked) {
-      domaines[domaine].thematiques[thematique].forEach((indicateur) => {
-        const li = document.createElement('li');
-        li.classList.add('list-group-item');
-        li.id = `indicateur-${indicateur.replace(/\s+/g, '-')}`;
-        const a = document.createElement('a');
-        a.href = `#`;
-        a.innerHTML = indicateur;
-        a.classList.add('indicateur-link');
-        li.appendChild(a);
-        indicateursList.appendChild(li);
-        a.onclick = function (event) {
-          event.preventDefault();
-          searchIndicatorInElastic(indicateur);
-        };
-      });
-    } else {
-      domaines[domaine].thematiques[thematique].forEach((indicateur) => {
-        const li = document.getElementById(`indicateur-${indicateur.replace(/\s+/g, '-')}`);
-        if (li) {
-          indicateursList.removeChild(li);
-        }
-      });
+function toggleIndicateurs(domaine, thematique, isChecked) {
+  const indicateursList = document.getElementById('indicateurs');
+  if (isChecked) {
+    domaines[domaine].thematiques[thematique].forEach((indicateur) => {
+      const li = document.createElement('li');
+      li.classList.add('list-group-item');
+      li.id = `indicateur-${indicateur.replace(/\s+/g, '-')}`;
+      const a = document.createElement('a');
+      a.href = `#`;
+      a.innerHTML = indicateur;
+      a.classList.add('indicateur-link');
+      li.appendChild(a);
+      indicateursList.appendChild(li);
+      a.onclick = function (event) {
+        event.preventDefault();
+        searchIndicatorInElastic(indicateur);
+      };
+      
+      // Applique le filtre immédiatement après l'ajout (si une recherche est en cours)
+      const currentQuery = document.getElementById('indicatorSearch').value.toLowerCase().trim();
+      if (currentQuery && !indicateur.toLowerCase().includes(currentQuery)) {
+        li.classList.add('hidden');
+      }
+    });
+  } else {
+    domaines[domaine].thematiques[thematique].forEach((indicateur) => {
+      const li = document.getElementById(`indicateur-${indicateur.replace(/\s+/g, '-')}`);
+      if (li) {
+        indicateursList.removeChild(li);
+      }
+    });
+  }
+}
+
+// Ajoutez ceci après la définition de `toggleIndicateurs` ou dans un nouveau bloc
+document.addEventListener('DOMContentLoaded', function () {
+  const descriptionModal = new bootstrap.Modal(document.getElementById('descriptionModal'));
+  descriptionModal.show(); // Affiche la fenêtre de description au chargement de la page
+
+  fetchData(); // Appel de la fonction de récupération des données
+
+  // Gestion du filtre de recherche pour les indicateurs
+  const indicatorSearch = document.getElementById('indicatorSearch');
+  const clearSearchBtn = document.getElementById('clearSearch');
+  const indicateursList = document.getElementById('indicateurs');
+
+  indicatorSearch.addEventListener('input', function () {
+    const query = this.value.toLowerCase().trim();
+    filterIndicators(query);
+  });
+
+  clearSearchBtn.addEventListener('click', function () {
+    indicatorSearch.value = ''; // Efface le champ de recherche
+    filterIndicators(''); // Affiche tous les indicateurs
+  });
+
+  function filterIndicators(query) {
+    const indicatorItems = indicateursList.getElementsByClassName('list-group-item');
+    for (let item of indicatorItems) {
+      const indicatorText = item.textContent.toLowerCase();
+      if (indicatorText.includes(query)) {
+        item.classList.remove('hidden'); // Affiche l'indicateur si correspond
+      } else {
+        item.classList.add('hidden'); // Cache l'indicateur si ne correspond pas
+      }
     }
   }
+});
   function searchIndicatorInElastic(indicateur) {
     const encodedIndicateur = encodeURIComponent(indicateur);
     window.location.href = `/search_indicators2/${encodedIndicateur}`;
