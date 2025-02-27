@@ -121,6 +121,27 @@ body {
     color: #ff3366;
 }
 
+.indicators-list ul#indicateurs {
+    max-height: 400px; /* Hauteur maximale avant défilement (ajustez selon vos besoins) */
+    overflow-y: auto; /* Active le défilement vertical si le contenu dépasse */
+    border: 1px solid #ddd; /* Bordure optionnelle pour délimiter la liste */
+    padding: 10px; /* Espacement interne */
+  }
+  
+  /* Optionnel : Personnaliser la barre de défilement */
+  .indicators-list ul#indicateurs::-webkit-scrollbar {
+    width: 8px; /* Largeur de la barre de défilement */
+  }
+  
+  .indicators-list ul#indicateurs::-webkit-scrollbar-thumb {
+    background-color: #006B45; /* Couleur de la barre (vert foncé, par exemple) */
+    border-radius: 4px;
+  }
+  
+  .indicators-list ul#indicateurs::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Couleur de l'arrière-plan de la piste */
+  }
+
 /* ==================== */
 /* Header et navigation */
 /* ==================== */
@@ -274,47 +295,105 @@ body {
 /* ==================== */
 /* Modale */
 /* ==================== */
+
+/* Style pour le fond sombre (backdrop) */
+/* Supprimez cette règle ou remplacez-la par une version correcte */
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.7); /* Fond semi-transparent noir */
+    backdrop-filter: blur(5px); /* Effet de flou (optionnel, moderne) */
+}
+
+/* Style pour la boîte de dialogue du modal */
 .modal-dialog {
-    width: 500%;
-    height: 1000%;
-    margin-left: 30%;
-    margin-right: auto;
-    margin-top: 110px;
-    color: #19d62f;
-    border: none;
+    max-width: 600px; /* Largeur maximale raisonnable pour une modale */
+    margin: 50px auto; /* Centre la modale verticalement et horizontalement */
+    border-radius: 15px; /* Coins arrondis pour un look moderne */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); /* Ombre douce pour un effet 3D */
+    overflow: hidden; /* Assure que le contenu ne déborde pas */
+    animation: slideIn 0.5s ease-out; /* Animation d’entrée */
 }
 
+/* Animation pour l'apparition du modal */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Style du contenu du modal */
 .modal-content {
-    border-radius: 0;
-    border: none;
-    box-shadow: none;
+    border: none; /* Supprime la bordure par défaut */
+    border-radius: 15px; /* Coins arrondis cohérents */
+    background-color: #ffffff; /* Fond blanc pour contraste */
+    padding: 20px; /* Espacement interne pour un look aéré */
 }
 
+/* Style du titre du modal */
 .modal-title {
     font-weight: bold;
     font-size: 1.5em;
-    color: #333;
+    color: #333; /* Gris foncé pour lisibilité */
     text-align: center;
+    padding-bottom: 10px; /* Espacement sous le titre */
+    border-bottom: 2px solid #F39323; /* Ligne orange pour un accent visuel */
 }
 
+/* Style du corps du modal */
 .modal-body {
-    font-size: 1em;
-    color: #555;
+    font-size: 1.1em; /* Taille de police légèrement plus grande pour lisibilité */
+    color: #555; /* Gris moyen pour le texte */
+    line-height: 1.6; /* Espacement entre les lignes pour une lecture confortable */
+    padding: 15px 0; /* Espacement vertical */
 }
 
+/* Style des boutons dans le footer */
 .modal-footer .btn-secondary {
-    background-color: #d11922;
+    background-color: #F39323; /* Rouge comme dans votre design */
     color: #fff;
     border: none;
+    padding: 10px 20px; /* Plus grand pour un look moderne */
+    border-radius: 8px; /* Coins arrondis */
+    transition: background-color 0.3s ease; /* Animation de transition pour le hover */
 }
 
 .modal-footer .btn-secondary:hover {
-    background-color: #5a6268;
+    background-color: #F39323; /* Orange au hover pour un effet attractif */
 }
 
-.modal-backdrop {
-    display: none;
+/* Style du bouton de fermeture (btn-close) */
+.btn-close {
+    background-color: #fff; /* Fond blanc pour contraste */
+    border: 1px solid #F39323; /* Bordure rouge */
+    border-radius: 50%; /* Cercle pour un look moderne */
+    opacity: 0.8; /* Légèrement transparent */
 }
+
+.btn-close:hover {
+    opacity: 1; /* Plus opaque au hover */
+    background-color: #F39323; /* Orange au hover */
+}
+
+/* Ajustement pour les écrans plus petits (responsivité) */
+@media (max-width: 768px) {
+    .modal-dialog {
+        max-width: 90%; /* Moins large sur mobile */
+        margin: 20px auto; /* Moins de marge */
+    }
+
+    .modal-title {
+        font-size: 1.2em; /* Titre plus petit sur mobile */
+    }
+
+    .modal-body {
+        font-size: 1em; /* Texte plus petit sur mobile */
+    }
+}
+
 
 /* ==================== */
 /* Conteneur principal */

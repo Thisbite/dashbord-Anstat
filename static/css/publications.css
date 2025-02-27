@@ -251,15 +251,15 @@ body {
     color: #ffffff;
 }
 
-/* Horizontal Line Styling (like in the image) */
+/* Horizontal Line Styling (like in the image)  juste pour afficher un trait apres les cards
 .publication-grid::after {
     content: "";
     display: block;
     height: 2px;
-    background-color: #2b7a2e; /* Green line */
+    background-color: #2b7a2e; /* Green line 
     margin: 20px 0;
 }
-
+*/
 @media (max-width: 768px) {
     .publication-grid {
         grid-template-columns: 1fr; /* Stack cards on smaller screens */

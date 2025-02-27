@@ -6,7 +6,7 @@ def options_regions():
     try:
         with cf.create_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT nom_region FROM Region")
+            cursor.execute("SELECT nom_region FROM Region ORDER BY nom_region ASC")
             # Récupérer les résultats sous forme de liste de tuples
             regions = cursor.fetchall()
     except Error as e:

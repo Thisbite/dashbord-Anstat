@@ -19,7 +19,13 @@
 </head>
 <body>
     <div class="header-title">
-        <h1> <img src="{{ url_for('static', filename='img/logo.png') }}"alt="Logo" class="logo">Plateforme de données régionales</h1>
+        <h1>
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="logo">
+                <a href="https://www.anstat.ci/" target="_blank" class="under-logo-link">Visitez notre site officiel</a>
+            </div>
+            Plateforme de données régionales
+        </h1>
     </div>
     <div class="header-secondary">
         <div class="nav-links">
@@ -63,16 +69,17 @@
 
                 <div class="indicator-card">
                     <div class="card-title">
-                        <i class="fas fa-baby"></i> Naissance cette année
+                        <i class="fas fa-baby"></i> Naissance
                     </div>
                     <div class="card-value">502 150</div>
+                    <p id="birthDateRange"> Du 01-01-2025 au - </p> <!-- Placeholder for dynamic date -->
                     <div class="card-description"></div>
                     <div class="card-title">
-                        <i class="fas fa-skull"></i> Décès cette année
+                        <i class="fas fa-skull"></i> Décès
                     </div>
                     <div class="card-value">401 234</div>
+                    <p id="deathDateRange">Du 01-01-2025 au - </p> <!-- Placeholder for dynamic date -->
                 </div>
-                
             </div>
         </div>
 
@@ -80,10 +87,9 @@
             <h2><i class="fas fa-tachometer-alt"></i> Tableau de bord par région</h2>
             <ul class="region-list">
                 {% for region in regions %}
-                <li>
+                <li onmouseover="highlightRegion('{{ region }}')" onmouseout="resetRegionHighlight(event)">
                     <i class="fas fa-map-marker-alt" style="font-size: 30px; color: #006B45;"></i>
-                    <a href="{{ url_for('region_vitrine', region=region) }}" 
-                       >
+                    <a href="{{ url_for('region_vitrine', region=region) }}">
                         {{ region }}
                     </a>
                 </li>
@@ -136,7 +142,7 @@
         data: {
             labels: years,
             datasets: [{
-                label: 'Population (en millions)',
+                label: 'Population',
                 data: population,
                 borderColor: "hsla(91, 35%, 22%, 0.773)",
                 backgroundColor: 'white',
@@ -209,7 +215,7 @@
                 y: {
                     title: {
                         display: true,
-                        text: 'Taux de scolarisation (%)'
+                        text: 'Taux de scolarisation'
                     }
                 }
             }
@@ -222,7 +228,7 @@
         data: {
             labels: ageGroups,
             datasets: [{
-                label: "Population (en million)",
+                label: "Population",
                 data: ageDistribution,
                 borderColor: '#0C6B23',
                 backgroundColor: 'white',
@@ -247,7 +253,7 @@
                 y: {
                     title: {
                         display: true,
-                        text: 'Pourcentage (%)'
+                        text: 'Population(million)'
                     },
                     beginAtZero: true
                 }
@@ -416,6 +422,7 @@
 
     // Charger les données GeoJSON ###############################################Carte de la Côte d'Ivoire
 // Charger les données GeoJSON
+// Charger les données GeoJSON
 d3.json("static/carte/populations_ok.json").then(function(geojsonData) {
     // Dessiner les régions
     svg.selectAll(".region")
@@ -424,23 +431,29 @@ d3.json("static/carte/populations_ok.json").then(function(geojsonData) {
         .attr("class", "region")
         .attr("d", path)
         .attr("fill", d => colorScale(d.properties.Population))
-        .style("cursor", "pointer") // Indique que l'élément est cliquable
+        .style("cursor", "pointer")
         .on("mouseover", function(event, d) {
-            // Afficher la population en survolant
-            d3.select("#tooltip")
+            const tooltip = d3.select("#tooltip");
+            const mapContainer = document.getElementById("map");
+            const mapRect = mapContainer.getBoundingClientRect(); // Position de #map dans la page
+
+            tooltip
                 .style("display", "block")
-                .style("left", (event.pageX + 10) + "px")
-                .style("top", (event.pageY - 10) + "px")
                 .html(`<strong>${d.properties.REGION}</strong><br>Population: ${d.properties.Population}`);
+
+            // Position relative au conteneur de la carte
+            const offsetX = 20;
+            const offsetY = -10;
+            tooltip
+                .style("left", (event.clientX - mapRect.left + offsetX) + "px")
+                .style("top", (event.clientY - mapRect.top + offsetY) + "px");
         })
         .on("mouseout", function() {
-            // Masquer le tooltip
             d3.select("#tooltip").style("display", "none");
         })
         .on("click", function(event, d) {
-            // Rediriger vers la page du tableau de bord correspondant à la région
-            const region = d.properties.REGION; // Assure-toi que cette propriété correspond bien au nom de la région
-            window.location.href = `/region_vitrine/${region}`; // Modifie cette URL selon ton routage Flask
+            const region = d.properties.REGION;
+            window.location.href = `/region_vitrine/${region}`;
         });
 });
 
@@ -451,11 +464,14 @@ d3.json("static/carte/populations_ok.json").then(function(geojsonData) {
     document.addEventListener("DOMContentLoaded", function () {
         const searchInput = document.getElementById("search-input");
         const suggestionsContainer = document.getElementById("suggestions");
+        const regionList = document.querySelector(".region-list");
+        let isSuggestionsActive = false; // Drapeau pour suivre l'état des suggestions
     
         searchInput.addEventListener("input", function () {
             const query = searchInput.value.trim();
             if (query.length < 2) {
                 suggestionsContainer.innerHTML = "";
+                isSuggestionsActive = false;
                 return;
             }
     
@@ -470,21 +486,95 @@ d3.json("static/carte/populations_ok.json").then(function(geojsonData) {
                             div.onclick = function () {
                                 searchInput.value = item;
                                 suggestionsContainer.innerHTML = "";
+                                isSuggestionsActive = false;
                                 window.location.href = `/search_indicators2/${encodeURIComponent(item)}`;
                             };
                             suggestionsContainer.appendChild(div);
                         });
+                        isSuggestionsActive = true; // Suggestions actives
+                    } else {
+                        isSuggestionsActive = false;
                     }
                 });
         });
     
-        // Cacher les suggestions si on clique ailleurs
+        // Garder les suggestions visibles si le curseur est dessus
+        suggestionsContainer.addEventListener("mouseover", function () {
+            isSuggestionsActive = true;
+        });
+    
+        suggestionsContainer.addEventListener("mouseout", function (event) {
+            if (!searchInput.contains(event.relatedTarget)) {
+                isSuggestionsActive = false;
+            }
+        });
+    
+        // Masquer les suggestions uniquement si le clic est hors de tout élément pertinent
         document.addEventListener("click", function (event) {
-            if (!searchInput.contains(event.target) && !suggestionsContainer.contains(event.target)) {
+            if (
+                !searchInput.contains(event.target) &&
+                !suggestionsContainer.contains(event.target) &&
+                !regionList.contains(event.target)
+            ) {
                 suggestionsContainer.innerHTML = "";
+                isSuggestionsActive = false;
             }
         });
     });
+</script>
+
+<script>
+      
+        function formatDate(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
+    
+        // Get today's date
+        const today = new Date();
+        const formattedToday = formatDate(today);
+    
+        // Update the birth date range
+        document.getElementById('birthDateRange').textContent = `01-01-2025 au ${formattedToday}`;
+    
+        // Update the death date range
+        document.getElementById('deathDateRange').textContent = `01-01-2025 au ${formattedToday}`;
+
+
+        // Fonction pour mettre en surbrillance une région
+// Fonction pour mettre en surbrillance une région
+
+    </script>
+    <script>
+        // Fonction pour mettre en surbrillance une région
+function highlightRegion(regionName) {
+    svg.selectAll(".region")
+        .attr("fill", d => colorScale(d.properties.Population))
+        .attr("stroke", "none");
+
+    svg.selectAll(".region")
+        .filter(d => d.properties.REGION === regionName)
+        .attr("fill", "#F39323")
+        .attr("stroke", "#000000")
+        .attr("stroke-width", 2);
+}
+
+// Fonction pour réinitialiser la surbrillance
+function resetRegionHighlight(event) {
+    const suggestionsContainer = document.getElementById("suggestions");
+    // Ne réinitialise pas si les suggestions sont actives ou si le curseur va vers elles
+    if (
+        window.isSuggestionsActive || 
+        (event && suggestionsContainer.contains(event.relatedTarget))
+    ) {
+        return;
+    }
+    svg.selectAll(".region")
+        .attr("fill", d => colorScale(d.properties.Population))
+        .attr("stroke", "none");
+}
     </script>
     
 </body>

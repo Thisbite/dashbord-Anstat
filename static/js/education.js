@@ -192,7 +192,7 @@ new Chart(ctxIDH, {
     labels: dataIDH.map(d => d.region),
     datasets: [
       {
-        label: "IDF",
+        label: "ISF",
         data: dataIDH.map(d => d.idh),
         borderColor: "green",
         fill: false,
@@ -223,7 +223,7 @@ new Chart(ctxTauxChomage, {
     labels: dataTauxChomage.map(d => d.region),
     datasets: [
       {
-        label: "Taux de Chômage (%)",
+        label: "Taux(%)",
         data: dataTauxChomage.map(d => d.taux),
         borderColor: "#e09705", // Couleur de la ligne
         fill: false, // Pas de remplissage sous la courbe
@@ -375,7 +375,7 @@ function showPublicationFunction(event) {
 var tauxBruteData = {
   labels: ['2018', '2019', '2020', '2021', '2022'],
   datasets: [{
-      label: 'Taux brut de scolarité (%)',
+      label: 'Taux (%)',
       data: [85, 87, 89, 90, 92],
       backgroundColor: '#e09705',
       borderColor: '#e09705',
@@ -407,7 +407,7 @@ var tauxBruteChart = new Chart(
 var tauxElectData = {
   labels: ['2018', '2019', '2020', '2021', '2022'],
   datasets: [{
-      label: 'Taux d\'électrification (%)',
+      label: 'Nombre',
       data: [60, 65, 70, 75, 80],
       backgroundColor: '#006B45',
       borderColor: '#006B45',

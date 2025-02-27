@@ -7,6 +7,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/search_indicateur.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMoAm5Wc8pN4dZQoGNSx+Lr5mICwL7F45B5cOa" crossorigin="anonymous">
+  
+  
   <style>
   </style>
 </head>
@@ -36,20 +38,25 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="descriptionModalLabel">Description de la base de données</h5>
+        <h5 class="modal-title" id="descriptionModalLabel">
+          <i class="fas fa-info-circle" style="color: #e76f51; margin-right: 10px;"></i> Description de la base de données
+        </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p> Cette base de données a été développée par des statisticiens pour fournir des indicateurs pertinents sur divers domaines et sous-domaines. </p>
+        <p>Cette base de données a été développée par des statisticiens pour fournir des indicateurs pertinents sur divers domaines et sous-domaines.</p>
         <p>Les domaines sont composés de plusieurs sous-domaines, regroupant les indicateurs par thématique.</p>
-        <p> Cette base de données contient des données de 2000 à ce jour avec une mise à jour régulière.</p>
-        <p>Lorsque vous cliquez sur un domaine, tous les sous-domaines associés s'affichent. Vous pouvez ensuite sélectionner les sous-domaines qui vous intéressent. </p>
+        <p>Cette base de données contient des données de 2000 à ce jour avec une mise à jour régulière.</p>
+        <p>Lorsque vous cliquez sur un domaine, tous les sous-domaines associés s'affichent. Vous pouvez ensuite sélectionner les sous-domaines qui vous intéressent.</p>
       </div>
-    
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- Nouvelle section -->
 <div class="container mt-5">
   <div class="row">
     <div class="col-md-4 sidebar">
@@ -68,7 +75,7 @@
       <h5>Indicateurs</h5>
       <!-- Ajout du champ de recherche -->
       <div class="input-group mb-3">
-        <input type="text" id="indicatorSearch" class="form-control" placeholder="Rechercher un indicateur...">
+        <input type="text" id="indicatorSearch" class="form-control" placeholder="Saisir mot clé...">
         <button class="btn btn-outline-secondary" type="button" id="clearSearch">Effacer</button>
       </div>
       <ul id="indicateurs" class="list-group">
@@ -97,9 +104,20 @@
   // Affiche la modale de description uniquement lors de la première visite
   document.addEventListener('DOMContentLoaded', function () {
     const descriptionModal = new bootstrap.Modal(document.getElementById('descriptionModal'));
-    descriptionModal.show(); // Affiche la fenêtre de description au chargement de la page
-
-    fetchData();  // Appel de la fonction de récupération des données
+  
+    // Affiche la modale au chargement de la page
+    descriptionModal.show();
+  
+    // Gère la fermeture manuelle pour s'assurer que le backdrop est bien supprimé
+    descriptionModal._element.addEventListener('hidden.bs.modal', function () {
+      // Force la suppression du backdrop si nécessaire
+      const backdrop = document.querySelector('.modal-backdrop');
+      if (backdrop) {
+        backdrop.remove(); // Supprime l'élément backdrop du DOM
+      }
+    });
+  
+    fetchData(); // Appel de la fonction de récupération des données
   });
   
   let domaines = {};
