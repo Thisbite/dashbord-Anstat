@@ -120,6 +120,31 @@ def get_data_from_mysql_V1():
 
     return df
 
+def get_data_from_mysql_VR(region_name):
+    try:
+        # Configurer les informations de connexion à la base de données MySQL
+        conn = cf.create_connection()  # Je suppose que cf est votre module de configuration
+        
+        # Requête SQL avec paramètre sécurisé
+        query = """
+            SELECT Dimension, Modalites, Indicateurs, Annee, Valeur 
+            FROM V1_indicateur 
+            WHERE Region = %s
+        """
+        
+        # Charger les données dans un DataFrame pandas avec le paramètre region_name
+        df = pd.read_sql(query, conn, params=(region_name,))
+        
+        return df
+    
+    except mysql.connector.Error as e:
+        print(f"Erreur lors de la connexion à MySQL: {e}")
+        return None
+    
+    finally:
+        # Fermer la connexion même en cas d'erreur
+        if conn.is_connected():
+            conn.close()
 
 
 # Pour la nouvelle base de données 

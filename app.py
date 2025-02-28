@@ -360,8 +360,6 @@ def publications_region():
 def publication_detail(title):
     # Nettoie et normalise le titre pour correspondre (minuscules avec underscores, puis espaces pour la comparaison)
     normalized_title = title.lower().replace('_', ' ')  # Transforme "comptes_regionaux" en "comptes regionaux"
- 
-    
     # Recherche la publication dans les données
     publication = None
     for pub_title, data in publications_data.items():
@@ -388,12 +386,179 @@ def publication_detail(title):
 
 
 
-# Route pour afficher la page avec les indicateurs et les régions
+
+
+
+""" 
+Cette fonction permet d'acceder a la page de requête
+search_indicators2=Page d'acces global
+search_indicatorsR=Page d'acces spécifique à une region
+"""
+# Routes d'accès par requete cocher et le plus simple
 @app.route('/search_indicators')
 def search_indicators():
     indicateurs = qr.options_indicateur()  # Fonction qui récupère les indicateurs
-    regions = qr.options_regions()  # Fonction qui récupère les régions
-    return render_template('search_indicateur.html',indicateurs=indicateurs,regions=regions)
+    return render_template('search_indicateur.html',indicateurs=indicateurs)
+
+# Route pour afficher en fonction de la région
+@app.route('/search_indicatorsR')
+def search_indicatorsR():
+    indicateurs = qr.options_indicateur()  # Fonction qui récupère les indicateurs
+    return render_template('search_indicateurR.html',indicateurs=indicateurs)
+
+
+
+
+@app.route('/search_indicators2/<path:indicateur>') 
+def request_indicateur2(indicateur):
+    # Charger les données depuis MySQL
+    df= qr.get_data_from_mysql_V1()
+    indicateur_SELECT = urllib.parse.unquote(indicateur)
+    definitions=None
+    # Obtenir les options pour chaque filtre (indicateur, région, etc.
+    df_filtered = pd.DataFrame()
+    df_filtered =df
+    # Appliquer le filtre si 'indicateur' existe et que la sélection d'indicateur est présente
+    if indicateur_SELECT and 'Indicateurs' in df_filtered.columns:
+        # Convertir la colonne 'indicateur' en chaînes de caractères
+        df_filtered['Indicateurs'] = df_filtered['Indicateurs'].astype(str).str.strip().str.lower()
+        definitions=qr.definition_indicateur(indicateur_SELECT)
+        mode_calcul=qr.mode_calcul_indicateur(indicateur_SELECT)
+        
+        # Appliquer le filtre sur la colonne 'indicateur'
+        df_filtered = df_filtered[df_filtered['Indicateurs'] == indicateur_SELECT.strip().lower()]
+    else:
+        print("Aucun filtre appliqué sur l'indicateur")
+    # Supprimer les colonnes contenant uniquement des NaN
+    df_filtered = df_filtered.dropna(axis=1, how='all')
+    df_filtered = df_filtered.fillna('-')
+    df_final = pd.DataFrame()
+    for _, row in df_filtered.iterrows():
+            dimension_cols = row['Dimension'].split(',')
+            category_values = row['Modalites'].split('/')
+            dimension_cols = [col.strip() for col in dimension_cols]
+            category_values = [value.strip() for value in category_values]
+            dimension_dict = dict(zip(dimension_cols, category_values))
+            temp_row = pd.Series(dimension_dict)
+            temp_row['Indicateurs'] = row['Indicateurs']
+            temp_row["Valeur"] = row["Valeur"]
+            temp_row["Annee"] = row["Annee"]
+            cle_pivot_table = ",".join(dimension_cols) + ",Annee"
+            temp_row["cle_pivot_table"] = cle_pivot_table
+            # Ajouter cette ligne nettoyée au DataFrame final
+            df_final = pd.concat([df_final, temp_row.to_frame().T], ignore_index=True)
+            
+    df_filtered = df_final.dropna(axis=1, how='all')
+    if df_filtered.empty:
+            return render_template('no_data.html')  # Rediriger vers la page 'Aucune donnée disponible'
+    # Stocker le DataFrame filtré dans la session pour une utilisation ultérieure
+    df_filtered_json = df_filtered.to_json(orient='split')  # Convertir en JSON pour le stockage
+    session['df_filtered'] = df_filtered_json
+    # Obtenir les colonnes valables pour les désagrégations
+    existing_columns = df_filtered.columns.tolist()
+    columns_to_exclude = ['Valeur', 'Indicateurs','cle_pivot_table']
+    desaggregation_columns = [col for col in existing_columns if col not in columns_to_exclude]
+    return render_template(
+        'result.html',
+        definitions=definitions,
+        mode_calcul=mode_calcul,
+        colonne_valable=desaggregation_columns,  # Colonnes à utiliser pour désagréger les données
+        indicateur2=indicateur_SELECT,  # Indicateur sélectionné
+        df_filtered=df_filtered_json  # Data JSON pour le filtrage
+    )
+
+
+# Accès spécefique à une région
+@app.route('/search_indicatorsR/<path:indicateur>') 
+def request_indicateurR(indicateur):
+    # Charger les données depuis MySQL
+    
+    df= qr.get_data_from_mysql_VR(region_publication)
+    indicateur_SELECT = urllib.parse.unquote(indicateur)
+    definitions=None
+    # Obtenir les options pour chaque filtre (indicateur, région, etc.
+    df_filtered = pd.DataFrame()
+    df_filtered =df
+    # Appliquer le filtre si 'indicateur' existe et que la sélection d'indicateur est présente
+    if indicateur_SELECT and 'Indicateurs' in df_filtered.columns:
+        # Convertir la colonne 'indicateur' en chaînes de caractères
+        df_filtered['Indicateurs'] = df_filtered['Indicateurs'].astype(str).str.strip().str.lower()
+        definitions=qr.definition_indicateur(indicateur_SELECT)
+        mode_calcul=qr.mode_calcul_indicateur(indicateur_SELECT)
+        
+        # Appliquer le filtre sur la colonne 'indicateur'
+        df_filtered = df_filtered[df_filtered['Indicateurs'] == indicateur_SELECT.strip().lower()]
+    else:
+        print("Aucun filtre appliqué sur l'indicateur")
+    # Supprimer les colonnes contenant uniquement des NaN
+    df_filtered = df_filtered.dropna(axis=1, how='all')
+    df_filtered = df_filtered.fillna('-')
+    df_final = pd.DataFrame()
+    for _, row in df_filtered.iterrows():
+            dimension_cols = row['Dimension'].split(',')
+            category_values = row['Modalites'].split('/')
+            dimension_cols = [col.strip() for col in dimension_cols]
+            category_values = [value.strip() for value in category_values]
+            dimension_dict = dict(zip(dimension_cols, category_values))
+            temp_row = pd.Series(dimension_dict)
+            temp_row['Indicateurs'] = row['Indicateurs']
+            temp_row["Valeur"] = row["Valeur"]
+            temp_row["Annee"] = row["Annee"]
+            cle_pivot_table = ",".join(dimension_cols) + ",Annee"
+            temp_row["cle_pivot_table"] = cle_pivot_table
+            # Ajouter cette ligne nettoyée au DataFrame final
+            df_final = pd.concat([df_final, temp_row.to_frame().T], ignore_index=True)
+            
+    df_filtered = df_final.dropna(axis=1, how='all')
+    if df_filtered.empty:
+            return render_template('no_data.html')  # Rediriger vers la page 'Aucune donnée disponible'
+    # Stocker le DataFrame filtré dans la session pour une utilisation ultérieure
+    df_filtered_json = df_filtered.to_json(orient='split')  # Convertir en JSON pour le stockage
+    session['df_filtered'] = df_filtered_json
+    # Obtenir les colonnes valables pour les désagrégations
+    existing_columns = df_filtered.columns.tolist()
+    columns_to_exclude = ['Valeur', 'Indicateurs','cle_pivot_table']
+    desaggregation_columns = [col for col in existing_columns if col not in columns_to_exclude]
+    return render_template(
+        'result.html',
+        definitions=definitions,
+        mode_calcul=mode_calcul,
+        colonne_valable=desaggregation_columns,  # Colonnes à utiliser pour désagréger les données
+        indicateur2=indicateur_SELECT,  # Indicateur sélectionné
+        df_filtered=df_filtered_json  # Data JSON pour le filtrage
+    )
+
+#----------------Autocomplétion
+from flask import jsonify, request
+
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    query = request.args.get('query', '').strip().lower()
+    if not query:
+        return jsonify([])
+    # Charger les données depuis MySQL
+    df = qr.get_data_from_mysql_V1()
+    # Vérifier que la colonne 'Indicateurs' existe
+    if 'Indicateurs' not in df.columns:
+        return jsonify([])
+    # Convertir en minuscule pour une recherche insensible à la casse
+    df['Indicateurs'] = df['Indicateurs'].astype(str).str.strip().str.lower()
+    # Filtrer les indicateurs qui contiennent le texte saisi
+    suggestions = df[df['Indicateurs'].str.contains(query, na=False)]['Indicateurs'].unique().tolist()
+    return jsonify(suggestions)
+
+
+
+
+
+
+
+
+"""
+Cette fonction a pour rôle de permet le charger des données des requêtes
+Aussi cette partie est dedié dans les requêtes utilisatrices.
+Toutes les fonctions pour la requêtes sont écrites ici.
+"""
 
 
 
@@ -464,88 +629,8 @@ def request_indicateur():
         df_filtered=df_filtered_json
     )
 
-
-
-# Page de requête au niveau de l'accueil---- Pour la page requete
-@app.route('/search_indicators2/<path:indicateur>') 
-def request_indicateur2(indicateur):
-    # Charger les données depuis MySQL
-    df= qr.get_data_from_mysql_V1()
-    indicateur_SELECT = urllib.parse.unquote(indicateur)
-    definitions=None
-    # Obtenir les options pour chaque filtre (indicateur, région, etc.
-    df_filtered = pd.DataFrame()
-    df_filtered =df
-    # Appliquer le filtre si 'indicateur' existe et que la sélection d'indicateur est présente
-    if indicateur_SELECT and 'Indicateurs' in df_filtered.columns:
-        # Convertir la colonne 'indicateur' en chaînes de caractères
-        df_filtered['Indicateurs'] = df_filtered['Indicateurs'].astype(str).str.strip().str.lower()
-        definitions=qr.definition_indicateur(indicateur_SELECT)
-        mode_calcul=qr.mode_calcul_indicateur(indicateur_SELECT)
-        
-        # Appliquer le filtre sur la colonne 'indicateur'
-        df_filtered = df_filtered[df_filtered['Indicateurs'] == indicateur_SELECT.strip().lower()]
-    else:
-        print("Aucun filtre appliqué sur l'indicateur")
-    # Supprimer les colonnes contenant uniquement des NaN
-    df_filtered = df_filtered.dropna(axis=1, how='all')
-    df_filtered = df_filtered.fillna('-')
-    df_final = pd.DataFrame()
-    for _, row in df_filtered.iterrows():
-            dimension_cols = row['Dimension'].split(',')
-            category_values = row['Modalites'].split('/')
-            dimension_cols = [col.strip() for col in dimension_cols]
-            category_values = [value.strip() for value in category_values]
-            dimension_dict = dict(zip(dimension_cols, category_values))
-            temp_row = pd.Series(dimension_dict)
-            temp_row['Indicateurs'] = row['Indicateurs']
-            temp_row["Valeur"] = row["Valeur"]
-            temp_row["Annee"] = row["Annee"]
-            cle_pivot_table = ",".join(dimension_cols) + ",Annee"
-            temp_row["cle_pivot_table"] = cle_pivot_table
-            # Ajouter cette ligne nettoyée au DataFrame final
-            df_final = pd.concat([df_final, temp_row.to_frame().T], ignore_index=True)
-            
-    df_filtered = df_final.dropna(axis=1, how='all')
-    if df_filtered.empty:
-            return render_template('no_data.html')  # Rediriger vers la page 'Aucune donnée disponible'
-    # Stocker le DataFrame filtré dans la session pour une utilisation ultérieure
-    df_filtered_json = df_filtered.to_json(orient='split')  # Convertir en JSON pour le stockage
-    session['df_filtered'] = df_filtered_json
-    # Obtenir les colonnes valables pour les désagrégations
-    existing_columns = df_filtered.columns.tolist()
-    columns_to_exclude = ['Valeur', 'Indicateurs','cle_pivot_table']
-    desaggregation_columns = [col for col in existing_columns if col not in columns_to_exclude]
-    return render_template(
-        'result.html',
-        definitions=definitions,
-        mode_calcul=mode_calcul,
-        colonne_valable=desaggregation_columns,  # Colonnes à utiliser pour désagréger les données
-        indicateur2=indicateur_SELECT,  # Indicateur sélectionné
-        df_filtered=df_filtered_json  # Data JSON pour le filtrage
-    )
-
-
-#----------------Autocomplétion
-from flask import jsonify, request
-
-@app.route('/autocomplete', methods=['GET'])
-def autocomplete():
-    query = request.args.get('query', '').strip().lower()
-    if not query:
-        return jsonify([])
-    # Charger les données depuis MySQL
-    df = qr.get_data_from_mysql_V1()
-    # Vérifier que la colonne 'Indicateurs' existe
-    if 'Indicateurs' not in df.columns:
-        return jsonify([])
-    # Convertir en minuscule pour une recherche insensible à la casse
-    df['Indicateurs'] = df['Indicateurs'].astype(str).str.strip().str.lower()
-    # Filtrer les indicateurs qui contiennent le texte saisi
-    suggestions = df[df['Indicateurs'].str.contains(query, na=False)]['Indicateurs'].unique().tolist()
-    return jsonify(suggestions)
-
-
+#
+    
 @app.route('/process_columns', methods=['POST'])
 def process_columns():
     # Récupérer les colonnes envoyées par la requête AJAX
@@ -604,44 +689,34 @@ def process_columns():
     return jsonify(result_data)
 
 
-
-
-
-# Données de test
 @app.route('/get_data', methods=['GET'])
 def get_data():
     try:
         # Charger les données filtrées depuis la session
         df_filtered_json = session.get('df_filtered', None)
-        
         if df_filtered_json is None:
             return jsonify({"error": "Aucune donnée filtrée disponible."}), 404
-
         # Convertir le JSON en DataFrame et ensuite en dictionnaire
         df_filtered = pd.read_json(df_filtered_json, orient='split')
         data = df_filtered.to_dict(orient='records')
-        
         # Affichage pour vérifier le contenu
-        
         return jsonify(data)
     except Exception as e:
         print(f"Une erreur est survenue : {e}")
         return jsonify({"error": "Une erreur est survenue lors du chargement des données."}), 500
 
 
-#Page  de recherche
-@app.route('/search_boostrap', methods=['GET', 'POST'])
-def search_boostrap():
-    return render_template('boostrap_search.html')
 
 
 
-#Pour la liste des indicateur dans template domaine-sous-domaine-indicateur
+
+
+
+#Pour la liste des indicateur dans template domaine-sous-domaine-indicateur, pour la domaine indicateur
 @app.route('/get_data2')
 def get_data2():
     # Charger le fichier Excel
     df = pd.read_excel('search_indicateur.xlsx')
-
     # Grouper les données par Domaine et Thématique
     data = df.groupby(['Domaine', 'Thematique'])['Indicateurs'].apply(list).to_dict()
     data_str_keys = {f"{key[0]}, {key[1]}": value for key, value in data.items()}
