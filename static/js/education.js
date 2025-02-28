@@ -1,69 +1,153 @@
-// Pyramide des âges
-var dataPyramide1 = [
-  { age: "25-29 ans", male: -50, female: 60 },
-  { age: "20-24 ans", male: -100, female: 90 },
-  { age: "15-19 ans", male: -120, female: 140 },
-  { age: "10-14 ans", male: -180, female: 170 },
-  { age: "5-9 ans", male: -150, female: 160 },
-  { age: "0-4 ans", male: -200, female: 180 },
+// Données fictives pour le ratio élèves/enseignant (élèves par enseignant) de 2019 à 2024
+var dataRatioEleveEnseignant = {
+  Sinematiali: [
+    { year: 2019, ratio: 45 }, { year: 2020, ratio: 43 }, { year: 2021, ratio: 42 },
+    { year: 2022, ratio: 41 }, { year: 2023, ratio: 40 }, { year: 2024, ratio: 39 }
+  ],
+  Korhogo: [
+    { year: 2019, ratio: 50 }, { year: 2020, ratio: 49 }, { year: 2021, ratio: 48 },
+    { year: 2022, ratio: 47 }, { year: 2023, ratio: 46 }, { year: 2024, ratio: 45 }
+  ],
+  Mbengue: [
+    { year: 2019, ratio: 38 }, { year: 2020, ratio: 37 }, { year: 2021, ratio: 36 },
+    { year: 2022, ratio: 35 }, { year: 2023, ratio: 34 }, { year: 2024, ratio: 33 }
+  ],
+  Dikodougou: [
+    { year: 2019, ratio: 42 }, { year: 2020, ratio: 41 }, { year: 2021, ratio: 40 },
+    { year: 2022, ratio: 39 }, { year: 2023, ratio: 38 }, { year: 2024, ratio: 37 }
+  ]
+};
 
-];
-
+// Configuration du graphique
 var ctx1 = document.getElementById("pyramideAgesChart").getContext("2d");
 new Chart(ctx1, {
-  type: "bar",
+  type: "line", // Changement de "bar" à "line" pour un graphique linéaire
   data: {
-      labels: dataPyramide1.map(d => d.age),
-      datasets: [
-          { label: "Hommes", data: dataPyramide1.map(d => d.male), backgroundColor: "#e09705" },
-          { label: "Femmes", data: dataPyramide1.map(d => d.female), backgroundColor: "#006B45" },
-      ],
+    labels: dataRatioEleveEnseignant.Sinematiali.map(d => d.year), // Années sur l'axe X
+    datasets: [
+      {
+        label: "Sinematiali",
+        data: dataRatioEleveEnseignant.Sinematiali.map(d => d.ratio),
+        borderColor: "orange",
+        backgroundColor: "rgba(255,165,0,0.2)",
+        fill: false
+      },
+      {
+        label: "Korhogo",
+        data: dataRatioEleveEnseignant.Korhogo.map(d => d.ratio),
+        borderColor: "blue",
+        backgroundColor:  "white",
+        fill: false
+      },
+      {
+        label: "M'bengué",
+        data: dataRatioEleveEnseignant.Mbengue.map(d => d.ratio),
+        borderColor: "green",
+        backgroundColor:  "white",
+        fill: false
+      },
+      {
+        label: "Dikodougou",
+        data: dataRatioEleveEnseignant.Dikodougou.map(d => d.ratio),
+        borderColor: "red",
+        backgroundColor: "white",
+        fill: false
+      }
+    ]
   },
   options: {
-      indexAxis: "y",
-      scales: {
-          x: { stacked: true, min: -250, max: 250 },
-          y: { stacked: true },
-      },
-  },
+    scales: {
+      x: { title: { display: true, text: "Année" } },
+      y: { 
+        beginAtZero: false, // Pas besoin de commencer à 0, les ratios sont généralement > 0
+        min: 30, // Ajuste selon tes données
+        max: 55, // Ajuste selon tes données
+        title: { display: true, text: "Ratio élèves/enseignant" }
+      }
+    },
+    plugins: {
+      legend: { display: true } // Affiche la légende pour identifier les départements
+    }
+  }
 });
 
-// Taux de natalité
-var dataNatalite = [
-  { year: 2013, natalite: 20 },
-  { year: 2014, natalite: 22 },
-  { year: 2015, natalite: 18 },
-  { year: 2016, natalite: 21 },
-  { year: 2017, natalite: 19 },
-  { year: 2018, natalite: 24 },
-  { year: 2019, natalite: 23 },
-  { year: 2020, natalite: 22 },
-  { year: 2021, natalite: 25 },
-  { year: 2022, natalite: 26 },
-  { year: 2023, natalite: 27 },
-];
+// Données générées pour les quatre départements (taux de natalité en ‰)
+var dataNatalite = {
+  Sinematiali: [
+    { year: 2013, natalite: 20 }, { year: 2014, natalite: 22 }, { year: 2015, natalite: 18 },
+    { year: 2016, natalite: 21 }, { year: 2017, natalite: 19 }, { year: 2018, natalite: 24 },
+    { year: 2019, natalite: 23 }, { year: 2020, natalite: 22 }, { year: 2021, natalite: 25 },
+    { year: 2022, natalite: 26 }, { year: 2023, natalite: 27 }
+  ],
+  Korhogo: [
+    { year: 2013, natalite: 25 }, { year: 2014, natalite: 26 }, { year: 2015, natalite: 24 },
+    { year: 2016, natalite: 23 }, { year: 2017, natalite: 25 }, { year: 2018, natalite: 27 },
+    { year: 2019, natalite: 28 }, { year: 2020, natalite: 26 }, { year: 2021, natalite: 29 },
+    { year: 2022, natalite: 30 }, { year: 2023, natalite: 31 }
+  ],
+  Mbengue: [
+    { year: 2013, natalite: 18 }, { year: 2014, natalite: 19 }, { year: 2015, natalite: 17 },
+    { year: 2016, natalite: 20 }, { year: 2017, natalite: 21 }, { year: 2018, natalite: 22 },
+    { year: 2019, natalite: 23 }, { year: 2020, natalite: 21 }, { year: 2021, natalite: 24 },
+    { year: 2022, natalite: 25 }, { year: 2023, natalite: 26 }
+  ],
+  Dikodougou: [
+    { year: 2013, natalite: 22 }, { year: 2014, natalite: 23 }, { year: 2015, natalite: 20 },
+    { year: 2016, natalite: 24 }, { year: 2017, natalite: 23 }, { year: 2018, natalite: 25 },
+    { year: 2019, natalite: 26 }, { year: 2020, natalite: 24 }, { year: 2021, natalite: 27 },
+    { year: 2022, natalite: 28 }, { year: 2023, natalite: 29 }
+  ]
+};
 
+// Configuration du graphique, taux de natalité
 var ctx2 = document.getElementById("tauxNataliteChart").getContext("2d");
 new Chart(ctx2, {
   type: "line",
   data: {
-      labels: dataNatalite.map(d => d.year),
-      datasets: [
-          {
-              label: "Taux de natalité",
-              data: dataNatalite.map(d => d.natalite),
-              borderColor: "orange",
-              backgroundColor: "rgba(255,165,0,0.2)",
-              fill: true,
-          },
-      ],
+    labels: dataNatalite.Sinematiali.map(d => d.year), // Les années sont les mêmes pour tous
+    datasets: [
+      {
+        label: "Sinematiali",
+        data: dataNatalite.Sinematiali.map(d => d.natalite),
+        borderColor: "orange",
+        backgroundColor: "rgba(255,165,0,0.2)",
+        fill: false // Désactive le remplissage sous la courbe
+      },
+      {
+        label: "Korhogo",
+        data: dataNatalite.Korhogo.map(d => d.natalite),
+        borderColor: "blue",
+        backgroundColor: "rgba(0,0,255,0.2)",
+        fill: false
+      },
+      {
+        label: "M'bengué",
+        data: dataNatalite.Mbengue.map(d => d.natalite),
+        borderColor: "green",
+        backgroundColor: "rgba(0,255,0,0.2)",
+        fill: false
+      },
+      {
+        label: "Dikodougou",
+        data: dataNatalite.Dikodougou.map(d => d.natalite),
+        borderColor: "red",
+        backgroundColor: "rgba(255,0,0,0.2)",
+        fill: false
+      }
+    ]
   },
   options: {
-      scales: {
-          x: { type: "category", labels: dataNatalite.map(d => d.year) },
-          y: { beginAtZero: true },
-      },
-  },
+    scales: {
+      x: { title: { display: true, text: "Année" } },
+      y: { 
+        beginAtZero: true,
+        title: { display: true, text: "Taux de natalité (‰)" }
+      }
+    },
+    plugins: {
+      legend: { display: true } // Affiche la légende pour identifier les courbes
+    }
+  }
 });
 
 // Taux brut de scolarité
@@ -192,7 +276,7 @@ new Chart(ctxIDH, {
     labels: dataIDH.map(d => d.region),
     datasets: [
       {
-        label: "ISF",
+        label: "ISF(%)",
         data: dataIDH.map(d => d.idh),
         borderColor: "green",
         fill: false,
@@ -223,7 +307,7 @@ new Chart(ctxTauxChomage, {
     labels: dataTauxChomage.map(d => d.region),
     datasets: [
       {
-        label: "Taux(%)",
+        label: "Taux",
         data: dataTauxChomage.map(d => d.taux),
         borderColor: "#e09705", // Couleur de la ligne
         fill: false, // Pas de remplissage sous la courbe
@@ -261,7 +345,7 @@ new Chart(ctxTauxChomage, {
 });
 
 var dataPopulationPoro = {
-  labels: ["Population Urbaine", "Population Rurale"],
+  labels: ["Urbaine", "Rurale"],
   datasets: [
     {
       label: "Répartition Population 2022 (Poro)",
@@ -280,16 +364,39 @@ new Chart(ctxPopRuralUrbain, {
   options: {
     responsive: true,
     plugins: {
-      legend: {
+     legend: {
         display: true,
         position: "top",
+        labels: {
+          generateLabels: function (chart) {
+            const data = chart.data;
+            const total = data.datasets[0].data.reduce((acc, val) => acc + val, 0);
+            return data.labels.map((label, i) => {
+              const value = data.datasets[0].data[i];
+              const percentage = ((value / total) * 100).toFixed(1);
+              return {
+                text: `${label} (${percentage}%)`,
+                fillStyle: data.datasets[0].backgroundColor[i],
+                hidden: chart.isDatasetVisible(0) && !chart.getDataVisibility(i),
+                lineWidth: 0,
+                index: i,
+              };
+            });
+          },
+        },
       },
       tooltip: {
         callbacks: {
           label: function (tooltipItem) {
             let label = tooltipItem.label || "";
             let value = tooltipItem.raw;
-            return `${label}: ${value.toLocaleString()} habitants`;
+            
+            // Calculer le pourcentage total
+            const dataset = tooltipItem.dataset;
+            const total = dataset.data.reduce((acc, val) => acc + val, 0);
+            const percentage = ((value / total) * 100).toFixed(1); // Pourcentage avec 1 décimale
+            
+            return `${label}: ${value.toLocaleString()} habitants (${percentage}%)`;
           },
         },
       },

@@ -310,7 +310,6 @@ def region_vitrine(region):
     region_publication=region
     print("Nouvelle région détectée",region_publication )
     return render_template('region_vitrine.html',  
-                            
                            indicateurs=region_data['indicateurs'],  
                            region_name=region_publication,  
                            all_regions=regions) 
@@ -340,8 +339,6 @@ def load_publications():
                 'description': row['Description de la publication'],
                 'year': row['Annee de publication']
             }
-        print("Dictionnaire publications créé :")
-        print(publications)  # Affiche le dictionnaire final
         return publications
     except FileNotFoundError:
         print("Erreur : Le fichier publications2.xlsx n'a pas été trouvé dans /static/data/")
@@ -352,8 +349,6 @@ def load_publications():
 
 # Cache les données des publications
 publications_data = load_publications()
-print("Données mises en cache dans publications_data :")
-print(publications_data)
 
 @app.route('/publications')
 def publications_region():
@@ -365,17 +360,14 @@ def publications_region():
 def publication_detail(title):
     # Nettoie et normalise le titre pour correspondre (minuscules avec underscores, puis espaces pour la comparaison)
     normalized_title = title.lower().replace('_', ' ')  # Transforme "comptes_regionaux" en "comptes regionaux"
-    print('Le titre de la publication', normalized_title)
+ 
     
     # Recherche la publication dans les données
     publication = None
     for pub_title, data in publications_data.items():
-        print('v1', pub_title)  # Pour débogage : affiche la clé brute
         # Normalise pub_title en minuscules avec espaces pour correspondre à normalized_title
         normalized_pub_title = pub_title.replace('_', ' ').lower()
-        print('publication, ok', normalized_pub_title)  # Pour débogage : affiche la clé normalisée
         if normalized_pub_title == normalized_title:
-            print('v2', pub_title)  # Pour débogage : affiche la clé brute correspondante
             publication = data
             break
 
@@ -481,7 +473,6 @@ def request_indicateur2(indicateur):
     df= qr.get_data_from_mysql_V1()
     indicateur_SELECT = urllib.parse.unquote(indicateur)
     definitions=None
-    print('Indicateur de js:',indicateur_SELECT)
     # Obtenir les options pour chaque filtre (indicateur, région, etc.
     df_filtered = pd.DataFrame()
     df_filtered =df
@@ -591,7 +582,6 @@ def process_columns():
         data['Annee'] = df_filtered['Annee'].astype(str)
 
         # Afficher le DataFrame filtré pour vérification
-        print('Data pour clé:',data )
         pivot_table = pd.pivot_table(
             data,
             index=row_columns,
@@ -632,7 +622,6 @@ def get_data():
         data = df_filtered.to_dict(orient='records')
         
         # Affichage pour vérifier le contenu
-        print(data)  # Ceci va afficher les données récupérées dans le terminal
         
         return jsonify(data)
     except Exception as e:

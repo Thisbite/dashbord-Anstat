@@ -379,28 +379,81 @@ tr:hover {
 }
 
 /* Boutons */
+.download-buttons {
+    display: flex;
+    gap: 15px; /* Espacement entre les boutons */
+    margin: 20px 0; /* Espacement global */
+}
+
 .download-buttons button {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
+    background: none; /* Supprime le fond par défaut */
+    border: 2px solid #006B45; /* Bordure verte par défaut */
+    border-radius: 10px; /* Coins arrondis */
+    padding: 12px 16px; /* Taille du bouton */
     cursor: pointer;
-    color: #fff;
-    background-color: var(--secondary-color);
-    font-size: 15px;
-    font-weight: var(--font-weight-bold); /* Utilise la variable pour Open Sans */
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    font-family: var(--font-family); /* Open Sans pour cohérence */
+    font-size: 1.5rem; /* Taille des icônes */
+    transition: all 0.3s ease; /* Animation fluide */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px; /* Largeur fixe pour uniformité */
+    height: 50px; /* Hauteur fixe pour uniformité */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Ombre légère */
 }
 
 .download-buttons button:hover {
-    background-color: var(--accent-color);
-    transform: translateY(-3px);
+    background: linear-gradient(45deg, #006B45, #004D32); /* Fond vert au survol */
+    border-color: #004D32; /* Bordure plus foncée au survol */
+    transform: scale(1.1); /* Zoom léger au survol */
+    box-shadow: 0 5px 15px rgba(0, 107, 69, 0.3); /* Ombre plus marquée */
 }
 
-.download-buttons button:active {
-    background-color: var(--accent-color);
-    transform: translateY(0);
+/* Icônes spécifiques pour chaque format */
+#download-xlsx i.fas.fa-file-excel {
+    color: #006B45; /* Vert pour Excel */
+}
+
+#download-xlsx:hover i.fas.fa-file-excel {
+    color: #ffffff; /* Blanc au survol */
+}
+
+#download-csv i.fas.fa-file-csv {
+    color: #006B45; /* Vert pour CSV */
+}
+
+#download-csv:hover i.fas.fa-file-csv {
+    color: #ffffff; /* Blanc au survol */
+}
+
+#download-pdf i.fas.fa-file-pdf {
+    color: #F39323; /* Orange pour PDF */
+}
+
+#download-pdf:hover i.fas.fa-file-pdf {
+    color: #ffffff; /* Blanc au survol */
+}
+
+/* Accessibilité : affichage du texte au survol ou au focus */
+.download-buttons button:focus,
+.download-buttons button:hover {
+    outline: none; /* Supprime le contour par défaut */
+    position: relative; /* Pour positionner le tooltip */
+}
+
+.download-buttons button:focus::after,
+.download-buttons button:hover::after {
+    content: attr(title); /* Affiche le titre comme tooltip */
+    position: absolute;
+    bottom: -30px; /* Position sous le bouton */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #006B45; /* Fond vert */
+    color: #ffffff; /* Texte blanc */
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap; /* Empêche le texte de casser */
+    z-index: 1001; /* Au-dessus de tout */
 }
 
 #metadonnees {

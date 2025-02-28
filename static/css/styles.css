@@ -6,7 +6,7 @@
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Montserrat'; /* Changé de Poppins à Montserrat */
     background: linear-gradient(135deg, #f4f4f4, #e9ecef);
     color: #333;
 }
@@ -33,7 +33,7 @@ body {
 
 .frame-container:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 50px 40px rgba(0, 0, 0, 0.15);
 }
 
 /* === Header === */
@@ -189,7 +189,7 @@ body {
     width: 320px;
     outline: none;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Montserrat';
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -252,7 +252,7 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 30px 20px;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Montserrat';
     gap: 20px;
     position: relative;
     z-index: 100; /* Plus bas que suggestions */
@@ -524,4 +524,11 @@ body {
     margin-bottom: 10px;
     font-weight: 500;
     text-transform: uppercase;
+}
+
+.italic-text {
+    font-style: italic;
+    color: #0b0c0b; /* Vert foncé pour correspondre à votre palette, si désiré */
+    font-size: 12px; /* Ajustez la taille si nécessaire */
+    font-family: 'Montserrat', sans-serif; /* Assure la cohérence avec votre police actuelle */
 }
