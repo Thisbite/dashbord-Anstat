@@ -113,7 +113,7 @@
         
             <div class="conteneur-graphiques">
                 <div class="colonne">
-                    <h2>Pyramide des âges 2023 (Dikodougou)</h2>
+                    <h2>Ratio élèves enseignant</h2>
                     <canvas id="pyramideAgesChart" width="600" height="250"></canvas>      
                 </div>
                 <div class="colonne">
@@ -223,7 +223,7 @@
                                 div.onclick = function () {
                                     searchInput.value = item;
                                     suggestionsContainer.innerHTML = "";
-                                    window.location.href = `/search_indicators2/${encodeURIComponent(item)}`;
+                                    window.location.href = `/search_indicatorsR/${encodeURIComponent(item)}`;
                                 };
                                 suggestionsContainer.appendChild(div);
                             });

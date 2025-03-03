@@ -74,5 +74,71 @@
             </div>
         </div>
     </div>
+
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchInput = document.getElementById("search-input");
+            const suggestionsContainer = document.getElementById("suggestions");
+            const regionList = document.querySelector(".region-list");
+            let isSuggestionsActive = false; // Drapeau pour suivre l'état des suggestions
+        
+            searchInput.addEventListener("input", function () {
+                const query = searchInput.value.trim();
+                if (query.length < 2) {
+                    suggestionsContainer.innerHTML = "";
+                    isSuggestionsActive = false;
+                    return;
+                }
+        
+                fetch(`/autocomplete?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestionsContainer.innerHTML = "";
+                        if (data.length > 0) {
+                            data.forEach(item => {
+                                const div = document.createElement("div");
+                                div.textContent = item;
+                                div.onclick = function () {
+                                    searchInput.value = item;
+                                    suggestionsContainer.innerHTML = "";
+                                    isSuggestionsActive = false;
+                                    window.location.href = `/search_indicatorsR/${encodeURIComponent(item)}`;
+                                };
+                                suggestionsContainer.appendChild(div);
+                            });
+                            isSuggestionsActive = true; // Suggestions actives
+                        } else {
+                            isSuggestionsActive = false;
+                        }
+                    });
+            });
+        
+            // Garder les suggestions visibles si le curseur est dessus
+            suggestionsContainer.addEventListener("mouseover", function () {
+                isSuggestionsActive = true;
+            });
+        
+            suggestionsContainer.addEventListener("mouseout", function (event) {
+                if (!searchInput.contains(event.relatedTarget)) {
+                    isSuggestionsActive = false;
+                }
+            });
+        
+            // Masquer les suggestions uniquement si le clic est hors de tout élément pertinent
+            document.addEventListener("click", function (event) {
+                if (
+                    !searchInput.contains(event.target) &&
+                    !suggestionsContainer.contains(event.target) &&
+                    !regionList.contains(event.target)
+                ) {
+                    suggestionsContainer.innerHTML = "";
+                    isSuggestionsActive = false;
+                }
+            });
+        });
+    </script>
 </body>
+
 </html>
