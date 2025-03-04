@@ -1,9 +1,9 @@
 /* === Variables globales === */
 :root {
-    --primary-color: #0C6B23;
-    --secondary-color: #0C6B23;
+    --primary-color: #49655A;
+    --secondary-color: #49655A;
     --secondary-color2: #bbcbbf;
-    --accent-color: #0C6B23;
+    --accent-color: #49655A;
     --light-color: #f8f9fa;
     --text-color: black;
     --font-family: 'Open Sans', sans-serif; /* Police standardisée ici */
@@ -387,7 +387,7 @@ tr:hover {
 
 .download-buttons button {
     background: none; /* Supprime le fond par défaut */
-    border: 2px solid #006B45; /* Bordure verte par défaut */
+    border: 2px solid #49655A; /* Bordure verte par défaut */
     border-radius: 10px; /* Coins arrondis */
     padding: 12px 16px; /* Taille du bouton */
     cursor: pointer;
@@ -402,7 +402,7 @@ tr:hover {
 }
 
 .download-buttons button:hover {
-    background: linear-gradient(45deg, #006B45, #004D32); /* Fond vert au survol */
+    background: linear-gradient(45deg, #49655A, #004D32); /* Fond vert au survol */
     border-color: #004D32; /* Bordure plus foncée au survol */
     transform: scale(1.1); /* Zoom léger au survol */
     box-shadow: 0 5px 15px rgba(0, 107, 69, 0.3); /* Ombre plus marquée */
@@ -410,7 +410,7 @@ tr:hover {
 
 /* Icônes spécifiques pour chaque format */
 #download-xlsx i.fas.fa-file-excel {
-    color: #006B45; /* Vert pour Excel */
+    color:#49655A; /* Vert pour Excel */
 }
 
 #download-xlsx:hover i.fas.fa-file-excel {
@@ -418,7 +418,7 @@ tr:hover {
 }
 
 #download-csv i.fas.fa-file-csv {
-    color: #006B45; /* Vert pour CSV */
+    color: #49655A; /* Vert pour CSV */
 }
 
 #download-csv:hover i.fas.fa-file-csv {
@@ -447,7 +447,7 @@ tr:hover {
     bottom: -30px; /* Position sous le bouton */
     left: 50%;
     transform: translateX(-50%);
-    background-color: #006B45; /* Fond vert */
+    background-color: #49655A; /* Fond vert */
     color: #ffffff; /* Texte blanc */
     padding: 5px 10px;
     border-radius: 4px;

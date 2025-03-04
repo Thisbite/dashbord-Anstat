@@ -1,7 +1,7 @@
 /* === Variables Globales === */
 :root {
-    --primary-color: #006B45; /* Dark green */
-    --primary-hover-color: #004D32; /* Darker green for hover */
+    --primary-color: #49655A; /* Dark green */
+    --primary-hover-color: #49655A; /* Darker green for hover */
     --secondary-color: #d9e6db; /* Light green background */
     --accent-color: #F39323; /* Bright orange */
     --accent-hover-color: #e08500; /* Darker orange for hover */
@@ -177,7 +177,7 @@ body {
     background: #fff;
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 4px 15px #0C6B23;
+    box-shadow: 0 4px 15px #49655A;
     transition: box-shadow 0.3s ease;
 }
 
@@ -188,7 +188,7 @@ body {
 h1 {
     text-align: center;
     font-size: 2.5em;
-    color:#0C6B23;
+    color:#49655A;
     margin-bottom: 20px;
 }
 
@@ -211,14 +211,14 @@ input[type="text"] {
 }
 
 input[type="text"]:focus {
-    border-color: #0C6B23;
+    border-color: #49655A;
     outline: none;
 }
 
 button {
     padding: 12px 20px;
     border: none;
-    background-color: #0C6B23;
+    background-color: #49655A;
     color: white;
     border-radius: 5px;
     cursor: pointer;
@@ -227,7 +227,7 @@ button {
 }
 
 button:hover {
-    background-color: #0C6B23;
+    background-color: #49655A;
 }
 
 /* Remplaçons la section table existante par ceci */
@@ -311,7 +311,7 @@ table td a:hover {
 .pagination {
     display: flex;
     justify-content: center;
-    color: #0C6B23;
+    color: #49655A;
     gap: 10px;
     margin-top: 20px;
 }

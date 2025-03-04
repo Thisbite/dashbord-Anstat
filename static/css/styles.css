@@ -41,7 +41,7 @@ body {
     text-align: center;
     background: linear-gradient(45deg, #ffffff, #d9e6db);
     padding: 30px 10px;
-    border-bottom: 3px solid #006B45;
+    border-bottom: 3px solid #49655A;
     border-radius: 15px 15px 0 0;
 }
 
@@ -51,7 +51,7 @@ body {
     justify-content: center;
     gap: 30px;
     font-size: 2.8rem;
-    color: #006B45;
+    color:#49655A;
     margin: 0;
     font-weight: 600;
     text-shadow: 1px 1px 3px rgba(0, 107, 69, 0.3);
@@ -100,8 +100,8 @@ body {
     background: linear-gradient(135deg, #ffffff, #f8f9fa);
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border: 2px solid #006B45;
-    position: relative;
+    border: 2px solid #49655A; 
+    position: relative; 
     overflow: visible; /* Assure que les éléments enfants dépassant peuvent être visibles */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     z-index: 100; /* Niveau de base, plus bas que suggestions */
@@ -137,10 +137,10 @@ body {
 
 .nav-links a {
     text-decoration: none;
-    color: #006B45;
+    color: #49655A;
     padding: 12px 22px;
     font-size: 1.1rem;
-    border: 2px solid #006B45;
+    border: 2px solid #49655A;
     border-radius: 8px;
     transition: all 0.3s ease;
     font-weight: 400;
@@ -149,7 +149,7 @@ body {
 }
 
 .nav-links a:hover {
-    background: linear-gradient(45deg, #006B45, #004D32);
+    background: linear-gradient(45deg, #49655A, #49655A);
     color: #ffffff;
     transform: scale(1.05);
     box-shadow: 0 5px 15px rgba(0, 107, 69, 0.3);
@@ -184,7 +184,7 @@ body {
 .search-bar input[type="text"] {
     padding: 12px 18px;
     font-size: 1rem;
-    border: 2px solid #006B45;
+    border: 2px solid #49655A;
     border-radius: 10px;
     width: 320px;
     outline: none;
@@ -194,13 +194,13 @@ body {
 }
 
 .search-bar input[type="text"]:focus {
-    border-color: #004D32;
+    border-color: #49655A;
     box-shadow: 0 0 10px rgba(0, 107, 69, 0.5);
 }
 
 .search-bar button {
     padding: 12px 20px;
-    background: linear-gradient(45deg, #006B45, #004D32);
+    background: linear-gradient(45deg, #49655A, #49655A);
     color: #ffffff;
     border: none;
     border-radius: 10px;
@@ -211,7 +211,7 @@ body {
 }
 
 .search-bar button:hover {
-    background: linear-gradient(45deg, #004D32, #003820);
+    background: linear-gradient(45deg, #49655A, #003820);
     transform: scale(1.05);
     box-shadow: 0 5px 15px rgba(0, 107, 69, 0.3);
 }
@@ -228,7 +228,7 @@ body {
     left: 0;
     width: 320px; /* Même largeur que l'input */
     background: #ffffff;
-    border: 1px solid #006B45;
+    border: 1px solid #49655A;
     border-radius: 0 0 10px 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     max-height: 150px; /* Limite la hauteur pour éviter un chevauchement excessif */
@@ -244,7 +244,7 @@ body {
 
 .suggestions-list div:hover {
     background-color: #d9e6db;
-    color: #006B45;
+    color: #49655A;
 }
 
 /* === Conteneur Principal === */
@@ -294,7 +294,7 @@ body {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    color: #0C6B23;
+    color: #49655A;
     font-size: 18px;
     line-height: 1.6;
     height: auto;
@@ -313,7 +313,7 @@ body {
 
 .left-column .left-section p {
     margin: 10px 0;
-    color: #0C6B23;
+    color: #49655A;
     font-size: 16px;
     text-align: center;
 }
@@ -473,7 +473,7 @@ body {
 .card-title {
     font-size: 16px;
     font-weight: bold;
-    color: #0C6B23;
+    color: #49655A;
     margin-bottom: 10px;
 }
 
@@ -495,7 +495,7 @@ body {
 
 /* === Carte de la Côte d'Ivoire === */
 .region {
-    stroke: #006B45;
+    stroke: #49655A;
     stroke-width: 1.5;
     transition: stroke 0.3s ease;
 }
@@ -509,7 +509,7 @@ body {
     position: absolute;
     background: linear-gradient(135deg, #ffffff, #f8f9fa);
     padding: 8px;
-    border: 1px solid #006B45;
+    border: 1px solid #49655A;
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     pointer-events: none;
@@ -520,7 +520,7 @@ body {
 
 .subtitle {
     font-size: 1rem;
-    color: #006B45;
+    color: #49655A;
     margin-bottom: 10px;
     font-weight: 500;
     text-transform: uppercase;
@@ -531,4 +531,73 @@ body {
     color: #0b0c0b; /* Vert foncé pour correspondre à votre palette, si désiré */
     font-size: 12px; /* Ajustez la taille si nécessaire */
     font-family: 'Montserrat', sans-serif; /* Assure la cohérence avec votre police actuelle */
+}
+
+/* Pour les indicateurs de la carte (cartographie) */
+
+#indicators-list {
+    margin: 20px;
+}
+#indicators {
+    list-style: none;
+    padding: 0;
+}
+#indicators li {
+    cursor: pointer;
+    padding: 5px;
+    color: #49655A;
+}
+#indicators li:hover {
+    background-color: #f0f0f0;
+}
+#indicators li.active {
+    font-weight: bold;
+    background-color: #e0e0e0;
+}
+
+#indicators-list {
+    margin: 20px;
+    width: 700px; /* Largeur fixe pour la liste */
+}
+
+#indicators-list h3 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+}
+
+#indicators {
+    list-style: none;
+    padding: 0;
+    max-height: 150px; /* Hauteur maximale avant défilement */
+    overflow-y: auto; /* Activer le défilement vertical */
+    border: 1px solid #ccc; /* Bordure optionnelle pour délimiter */
+    background-color: #f9f9f9; /* Fond clair pour lisibilité */
+}
+
+#indicators li {
+    cursor: pointer;
+    padding: 5px 10px;
+    color: #49655A;
+    font-size: 14px; /* Taille de texte réduite */
+}
+
+#indicators li:hover {
+    background-color: #f0f0f0;
+}
+
+#indicators li.active {
+    font-weight: bold;
+    background-color: #e0e0e0;
+}
+
+/* Optionnel : personnaliser la barre de défilement */
+#indicators::-webkit-scrollbar {
+    width: 8px;
+}
+#indicators::-webkit-scrollbar-thumb {
+    background-color: #49655A;
+    border-radius: 4px;
+}
+#indicators::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
 }

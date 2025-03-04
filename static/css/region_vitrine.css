@@ -1,7 +1,7 @@
 /* === Variables Globales === */
 :root {
-    --primary-color: #006B45; /* Dark green */
-    --primary-hover-color: #004D32; /* Darker green for hover */
+    --primary-color: #49655A; /* Dark green */
+    --primary-hover-color:#49655A; /* Darker green for hover */
     --secondary-color: #d9e6db; /* Light green background */
     --accent-color: #F39323; /* Bright orange */
     --accent-hover-color: #e08500; /* Darker orange for hover */
@@ -68,7 +68,7 @@ body {
     text-align: center;
     background: linear-gradient(45deg, #ffffff, #d9e6db);
     padding: 30px 10px;
-    border-bottom: 3px solid #006B45;
+    border-bottom: 3px solid #49655A;
     border-radius: 15px 15px 0 0;
 }
 
@@ -78,7 +78,7 @@ body {
     justify-content: center;
     gap: 30px;
     font-size: 2.8rem;
-    color: #006B45;
+    color: #49655A;
     margin: 0;
     font-weight: 600;
     text-shadow: 1px 1px 3px rgba(0, 107, 69, 0.3);
@@ -127,7 +127,7 @@ body {
     background: linear-gradient(135deg, #ffffff, #f8f9fa);
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border: 2px solid #006B45;
+    border: 2px solid #49655A;
     position: relative;
     overflow: visible; /* Assure que les éléments enfants dépassant peuvent être visibles */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -164,10 +164,10 @@ body {
 
 .nav-links a {
     text-decoration: none;
-    color: #006B45;
+    color: #49655A;
     padding: 12px 22px;
     font-size: 1.1rem;
-    border: 2px solid #006B45;
+    border: 2px solid #49655A;
     border-radius: 8px;
     transition: all 0.3s ease;
     font-weight: 400;
@@ -176,7 +176,7 @@ body {
 }
 
 .nav-links a:hover {
-    background: linear-gradient(45deg, #006B45, #004D32);
+    background: linear-gradient(45deg, #49655A, #004D32);
     color: #ffffff;
     transform: scale(1.05);
     box-shadow: 0 5px 15px rgba(0, 107, 69, 0.3);
@@ -211,7 +211,7 @@ body {
 .search-bar input[type="text"] {
     padding: 12px 18px;
     font-size: 1rem;
-    border: 2px solid #006B45;
+    border: 2px solid #49655A;
     border-radius: 10px;
     width: 320px;
     outline: none;
@@ -227,7 +227,7 @@ body {
 
 .search-bar button {
     padding: 12px 20px;
-    background: linear-gradient(45deg, #006B45, #004D32);
+    background: linear-gradient(45deg, #49655A, #004D32);
     color: #ffffff;
     border: none;
     border-radius: 10px;
@@ -255,7 +255,7 @@ body {
     left: 0;
     width: 320px; /* Même largeur que l'input */
     background: #ffffff;
-    border: 1px solid #006B45;
+    border: 1px solid #49655A;
     border-radius: 0 0 10px 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     max-height: 150px; /* Limite la hauteur pour éviter un chevauchement excessif */
@@ -271,7 +271,7 @@ body {
 
 .suggestions-list div:hover {
     background-color: #d9e6db;
-    color: #006B45;
+    color: #49655A;
 }
 
 /* === Sections Régionales et Départementales === */

@@ -50,6 +50,11 @@
     <div class="container">
         <div class="left-column">
             <div class="left-section">
+                <!--Nouvel ajout-->
+                <div id="indicators-list">
+                    <h3>Cartographie des indicateurs en 2021</h3>
+                    <ul id="indicators"></ul>
+                </div>
                 <!-- Pour la carte de la cote d'ivoire-->
                 <div id="map">
                 </div>
@@ -92,14 +97,14 @@
             <ul class="region-list">
                 {% for region in regions %}
                 <li onmouseover="highlightRegion('{{ region }}')" onmouseout="resetRegionHighlight(event)">
-                    <i class="fas fa-map-marker-alt" style="font-size: 30px; color: #006B45;"></i>
+                    <i class="fas fa-map-marker-alt" style="font-size: 30px; color: #49655A;"></i>
                     <a href="{{ url_for('region_vitrine', region=region) }}">
                         {{ region }}
                     </a>
                 </li>
                 {% endfor %}
             </ul>
-            <div class="scroll-indicator" style="text-align: center; margin-top: 10px; color: #006B45;">
+            <div class="scroll-indicator" style="text-align: center; margin-top: 10px; color: #49655A;">
                 ▼
             </div>
         </div>
@@ -302,7 +307,7 @@ function updateBirthsBox() {
 
             // Appliquer des styles directement à l'élément dateBox
             dateBox.style.fontStyle = 'italic';
-            dateBox.style.color = '#0b0c0b';
+            dateBox.style.color = '#49655A';
             dateBox.style.fontSize = '12px';
             dateBox.style.fontWeight = 'bold';
             dateBox.style.fontFamily = "'Montserrat', sans-serif";
@@ -324,17 +329,12 @@ function updateBirthsBox() {
 
     // Créer une projection géographique pour la Côte d'Ivoire
     const projection = d3.geoMercator()
-        .center([-5.547080, 7.539989])  // Centre sur la Côte d'Ivoire
+        .center([-5.547080, 7.539989]) // Centre sur la Côte d'Ivoire
         .scale(4000)
         .translate([width / 2, height / 2]);
 
     // Générateur de chemins pour les polygones
     const path = d3.geoPath().projection(projection);
-
-    // Couleurs pour l'échelle de population
-    const colorScale = d3.scaleLinear()  
-    .domain([100000, 5000000])  // Mettre ici les min et max populations  
-    .range(["hsla(91, 35%, 22%, 0.1)", "#0C6B23"]);
 
     // Ajouter un SVG pour la carte
     const svg = d3.select("#map")
@@ -342,127 +342,150 @@ function updateBirthsBox() {
         .attr("width", width)
         .attr("height", height);
 
-    // Ajouter un groupe pour le titre et la légende à gauche de la carte
+    // Ajouter un groupe pour le titre et la légende à droite
     const legendGroup = svg.append("g")
         .attr("class", "legend-group")
-        //.attr("transform", `translate(20, 20)`);  // Positionné à gauche 
-        .attr("transform", `translate(${650 - 20}, 350)`); // Pour a droite 
+        .attr("transform", `translate(${650 - 20}, 350)`);
 
-   // Ajouter le titre dans le groupe SVG
-   svg.append("text")
-   .attr("class", "title")
-   .attr("x", svg.attr("width") / 2)  // Centre horizontalement dans le SVG
-   .attr("y",15)  // Ajuster la position verticale (en fonction de l'espacement désiré)
-   .attr("text-anchor", "middle")  // Centrer le texte par rapport à l'axe X
-   .style("font-size", "18px")  // Taille du texte
-   .style("font-weight", "bold")  // Mettre le texte en gras
-   .style("fill", "black")   // Couleur du texte
-   .html(`<tspan><i class="fas fa-users"></i></tspan> Population de la Côte d'Ivoire selon le RGPH 2021`);
-   
-
-    // Ajouter un conteneur pour la légende de l'échelle des couleurs
-    const legend = legendGroup.append("g")
-        .attr("class", "legend")
-        .attr("transform", "translate(0, 40)");
-
-    // Ajouter l'échelle des couleurs
-    const legendScale = d3.scaleLinear()
-        .domain([100000, 5000000])
-        .range([0, 150]);
-
-    const legendAxis = d3.axisBottom(legendScale)
-        .ticks(5)
-        .tickFormat(d3.format(".0s"));
-
-    // Créer un dégradé pour la légende
-    const gradient = svg.append("defs")
-        .append("linearGradient")
-        .attr("id", "gradient")
-        .attr("x1", "0%").attr("y1", "0%")
-        .attr("x2", "100%").attr("y2", "0%");
-
-        gradient.append("stop").attr("offset", "0%").attr("stop-color", "white");  
-        gradient.append("stop").attr("offset", "100%").attr("stop-color", "#0C6B23");
-
-   
-    // Ajouter un rectangle avec le dégradé dans la légende
-    legend.append("rect")
-        .attr("width", 150)
-        .attr("height", 10)
-        .style("fill", "url(#gradient)");
-    
-    // Ajouter l'axe de la légende
-    legend.append("g")
-        .attr("transform", "translate(0, 10)")
-        .call(legendAxis);
-    
-    // Ajouter le texte Homme
-    legend.append("text")
-        .attr("x",0)  // Position horizontale du texte
-        .attr("y", 60)  // Position verticale du texte (ajustez selon vos besoins)
-        .style("font-size", "12px")  // Taille du texte
-        .style("font-weight", "bold") 
-        .style("fill", "black")  // Couleur du texte
-        .text("Hommes: 15 344 990");
-    
-    // Ajouter le texte Femme
-    legend.append("text")
-        .attr("x", 0)  // Position horizontale du texte
-        .attr("y", 45)  // Position verticale du texte (ajustez selon vos besoins)
-        .style("font-weight", "bold") 
-        .style("font-size", "12px")  // Taille du texte
-        .style("fill", "black")  // Couleur du texte
-        .text("Femmes: 14 044 160");
-    // Ajouter le texte pour le total
-    legend.append("text")
-        .attr("x", 0)  // Position horizontale du texte
-        .attr("y", 75)  // Position verticale du texte (ajustez selon vos besoins)
-        .style("font-weight", "bold") 
-        .style("font-size", "12px")  // Taille du texte
-        .style("fill", "black")  // Couleur du texte
-        .text("Total: 29 389 150 ");
+    // Ajouter le titre
 
 
+    // Variable pour suivre l'indicateur sélectionné
+    let selectedIndicator = "Population"; // Par défaut
+    let colorScale;
 
-    // Charger les données GeoJSON ###############################################Carte de la Côte d'Ivoire
-// Charger les données GeoJSON
-// Charger les données GeoJSON
-d3.json("static/carte/populations_ok.json").then(function(geojsonData) {
-    // Dessiner les régions
-    svg.selectAll(".region")
-        .data(geojsonData.features)
-        .enter().append("path")
-        .attr("class", "region")
-        .attr("d", path)
-        .attr("fill", d => colorScale(d.properties.Population))
-        .style("cursor", "pointer")
-        .on("mouseover", function(event, d) {
-            const tooltip = d3.select("#tooltip");
-            const mapContainer = document.getElementById("map");
-            const mapRect = mapContainer.getBoundingClientRect(); // Position de #map dans la page
+    // Fonction pour mettre à jour la carte
+    function updateMap(data, indicator) {
+        // Récupérer toutes les valeurs de l'indicateur pour définir le domaine
+        const values = data.features
+            .map(d => d.properties[indicator])
+            .filter(v => v !== undefined && v !== null);
+        const minValue = d3.min(values);
+        const maxValue = d3.max(values);
 
-            tooltip
-                .style("display", "block")
-                .html(`<strong>${d.properties.REGION}</strong><br>Population: ${d.properties.Population.toLocaleString('fr-FR')}`);
+        // Mettre à jour l'échelle de couleur
+        colorScale = d3.scaleLinear()
+            .domain([minValue, maxValue])
+            .range(["hsla(91, 35%, 22%, 0.1)", "#49655A"]);
 
-            // Position relative au conteneur de la carte
-            const offsetX = 20;
-            const offsetY = -10;
-            tooltip
-                .style("left", (event.clientX - mapRect.left + offsetX) + "px")
-                .style("top", (event.clientY - mapRect.top + offsetY) + "px");
-        })
-        .on("mouseout", function() {
-            d3.select("#tooltip").style("display", "none");
-        })
-        .on("click", function(event, d) {
-            const region = d.properties.REGION;
-            window.location.href = `/region_vitrine/${region}`;
-        });
-});
+        // Mettre à jour les couleurs des régions
+        svg.selectAll(".region")
+            .attr("fill", d => {
+                const value = d.properties[indicator];
+                return value !== undefined ? colorScale(value) : "#ccc"; // Gris si pas de valeur
+            });
 
+        // Mettre à jour la légende
+        updateLegend(minValue, maxValue, indicator);
+    }
+
+    // Fonction pour mettre à jour la légende
+    function updateLegend(minValue, maxValue, indicator) {
+        const legendScale = d3.scaleLinear()
+            .domain([minValue, maxValue])
+            .range([0, 150]);
+
+        const legendAxis = d3.axisBottom(legendScale)
+            .ticks(5)
+            .tickFormat(d3.format(".0s"));
+
+        // Supprimer l'ancienne légende
+        legendGroup.select(".legend").remove();
+
+        // Ajouter une nouvelle légende
+        const legend = legendGroup.append("g")
+            .attr("class", "legend")
+            .attr("transform", "translate(0, 40)");
+
+        // Créer un dégradé
+        const gradient = svg.select("defs").select("#gradient");
+        gradient.selectAll("stop").remove();
+        gradient.append("stop").attr("offset", "0%").attr("stop-color", "hsla(91, 35%, 22%, 0.1)");
+        gradient.append("stop").attr("offset", "100%").attr("stop-color", "#49655A");
+
+        // Rectangle de légende
+        legend.append("rect")
+            .attr("width", 150)
+            .attr("height", 10)
+            .style("fill", "url(#gradient)");
+
+        // Axe de la légende
+        legend.append("g")
+            .attr("transform", "translate(0, 10)")
+            .call(legendAxis);
+
+        // Ajouter le nom de l'indicateur comme titre de la légende
+        legend.append("text")
+            .attr("x", 0)
+            .attr("y", -5)
+            .style("font-size", "12px")
+            .style("font-weight", "bold")
+            .text(indicator);
+    }
+
+    // Charger les données GeoJSON
+    d3.json("static/carte/populations_updated.json").then(function(geojsonData) {
+        // Dessiner les régions
+        svg.selectAll(".region")
+            .data(geojsonData.features)
+            .enter().append("path")
+            .attr("class", "region")
+            .attr("d", path)
+            .style("cursor", "pointer")
+            .on("mouseover", function(event, d) {
+                const tooltip = d3.select("#tooltip");
+                const mapContainer = document.getElementById("map");
+                const mapRect = mapContainer.getBoundingClientRect();
+
+                const value = d.properties[selectedIndicator];
+                tooltip
+                    .style("display", "block")
+                    .html(`<strong>${d.properties.REGION}</strong><br>${selectedIndicator}: ${value !== undefined ? value.toLocaleString('fr-FR') : 'N/A'}`);
+
+                const offsetX = 20;
+                const offsetY = -10;
+                tooltip
+                    .style("left", (event.clientX - mapRect.left + offsetX) + "px")
+                    .style("top", (event.clientY - mapRect.top + offsetY) + "px");
+            })
+            .on("mouseout", function() {
+                d3.select("#tooltip").style("display", "none");
+            })
+            .on("click", function(event, d) {
+                const region = d.properties.REGION;
+                window.location.href = `/region_vitrine/${region}`;
+            });
+
+        // Extraire les indicateurs disponibles (toutes les clés numériques possibles)
+        const sampleProperties = geojsonData.features[0].properties;
+        const indicators = Object.keys(sampleProperties).filter(key => 
+            typeof sampleProperties[key] === 'number' && key !== 'Année'
+        );
+
+        // Générer la liste des indicateurs
+        const indicatorList = d3.select("#indicators")
+            .selectAll("li")
+            .data(indicators)
+            .enter()
+            .append("li")
+            .text(d => d)
+            .on("click", function(event, indicator) {
+                // Mettre à jour l'indicateur sélectionné
+                selectedIndicator = indicator;
+
+                // Mettre en évidence l'indicateur actif
+                indicatorList.classed("active", false);
+                d3.select(this).classed("active", true);
+
+                // Mettre à jour la carte
+                updateMap(geojsonData, indicator);
+            });
+
+        // Initialiser avec "Population" comme actif
+        indicatorList.filter(d => d === "Population").classed("active", true);
+        updateMap(geojsonData, "Population");
+    });
 </script>
-
 <!-- Autocompletion pour les indicateurs non trouvés-->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
