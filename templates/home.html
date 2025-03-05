@@ -22,7 +22,7 @@
     <div class="header-title">
         <h1>
             <div class="logo-container">
-                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="logo">
+                <img src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="Logo" class="logo">
                 <a href="https://www.anstat.ci/" target="_blank" class="under-logo-link">Visitez notre site officiel</a>
             </div>
             Plateforme de données régionales
@@ -52,12 +52,12 @@
             <div class="left-section">
                 <!--Nouvel ajout-->
                 <div id="indicators-list">
-                    <h3>Cartographie des indicateurs en 2021</h3>
+                    <h4>Indicateurs clés</h4>
                     <ul id="indicators"></ul>
                 </div>
+                <p>----------------</p>
                 <!-- Pour la carte de la cote d'ivoire-->
-                <div id="map">
-                </div>
+                <div id="map">  </div>
                 <div id="tooltip" class="tooltip" style="display: none;">
             </div>
             </div>
@@ -68,7 +68,7 @@
                 <!-- Ajout de deux indicateurs (1 sur l'éducation et 1 sur la santé) et naissance  -->
                 <div class="indicator-card">
                     <div class="card-title">
-                        <i class="fas fa-clock clock-icon"></i> Population ivoirienne actuelle*
+                        <i class="fas fa-clock clock-icon"></i> Population actuelle*
                     </div>
                     <div id="birthsBox" class="card-value">-</div>
                     <div id="dateBox" class="card-date"></div> 
@@ -324,6 +324,18 @@ function updateBirthsBox() {
 </script>
 <!-- Pour la représentation de la carte de la Côte d'Ivoire -->
 <script>
+    const indicatorTitles = {
+        "Rapport de Masculinité (RM) en %": "Cartographie du rapport de masculinité en 2021",
+        "Taux de divortialité (%)": "Répartition du taux de divortialité en 2021",
+        "Nombre de Classes au primaire": "Répartition spatiale des classes du primaire en 2021",
+        "Nombre de cas de grossesses": "Répartition des grossesses en 2021",
+        "Nombre de Centre antituberculeux": "Couverture de centres antituberculeux en 2021",
+        "Nombre de Chirurgiens": "Répartition des chirurgiens par région en 2021",
+        "Nombre de lits des d'infirmeries privés": "Répartition des lits en infirmeries privées en 2021",
+        "Nombre d'évacuations après Accouchement": "Carte des évacuations post-accouchement en 2021",
+        "Population": "Cartographie de la population en 2021"
+    };
+    
     // Dimensions de la carte
     const width = 800, height = 500;
 
@@ -353,75 +365,130 @@ function updateBirthsBox() {
     // Variable pour suivre l'indicateur sélectionné
     let selectedIndicator = "Population"; // Par défaut
     let colorScale;
+// Fonction pour mettre à jour la carte
+function updateMap(data, indicator) {
+    // Récupérer toutes les valeurs de l'indicateur pour définir le domaine
+    const values = data.features
+        .map(d => d.properties[indicator])
+        .filter(v => v !== undefined && v !== null);
+    
+    const minValue = d3.min(values) || 0; // Valeur par défaut si pas de données
+    const maxValue = d3.max(values) || 100; // Valeur par défaut si pas de données
 
-    // Fonction pour mettre à jour la carte
-    function updateMap(data, indicator) {
-        // Récupérer toutes les valeurs de l'indicateur pour définir le domaine
-        const values = data.features
-            .map(d => d.properties[indicator])
-            .filter(v => v !== undefined && v !== null);
-        const minValue = d3.min(values);
-        const maxValue = d3.max(values);
+    // Mettre à jour l'échelle de couleur
+    colorScale = d3.scaleLinear()
+        .domain([minValue, maxValue])
+        .range(["hsla(91, 35%, 22%, 0.1)", "#49655A"]);
 
-        // Mettre à jour l'échelle de couleur
-        colorScale = d3.scaleLinear()
-            .domain([minValue, maxValue])
-            .range(["hsla(91, 35%, 22%, 0.1)", "#49655A"]);
+    // Mettre à jour les couleurs des régions
+    svg.selectAll(".region")
+        .attr("fill", d => {
+            const value = d.properties[indicator];
+            return value !== undefined && value !== null ? colorScale(value) : "#ccc"; // Gris si pas de valeur
+        });
 
-        // Mettre à jour les couleurs des régions
-        svg.selectAll(".region")
-            .attr("fill", d => {
-                const value = d.properties[indicator];
-                return value !== undefined ? colorScale(value) : "#ccc"; // Gris si pas de valeur
-            });
+    // Mettre à jour la légende
+    updateLegend(minValue, maxValue, indicator);
+}
 
-        // Mettre à jour la légende
-        updateLegend(minValue, maxValue, indicator);
+// Fonction pour mettre à jour la légende
+function updateLegend(minValue, maxValue, indicator) {
+    const legendWidth = 150; // Largeur de la barre de légende
+    const legendScale = d3.scaleLinear()
+        .domain([minValue, maxValue])
+        .range([0, legendWidth]);
+
+    const legendAxis = d3.axisBottom(legendScale)
+        .ticks(5)
+        .tickFormat(d3.format(".2s")); // Format plus compact (par ex. 1M au lieu de 1000000)
+
+    // Supprimer l'ancienne légende
+    legendGroup.select(".legend").remove();
+     // Ajouter le titre dans le groupe SVG----------------------------------------------------------------------------
+// Supprimer l'ancien titre s'il existe
+// Supprimer l'ancien titre s'il existe
+svg.select(".title").remove();
+
+// Déterminer le titre correspondant à l'indicateur
+const titleText = indicatorTitles[indicator] || `Cartographie ${indicator} en 2021`;
+
+// Ajouter ou mettre à jour le titre dans le groupe SVG
+svg.append("text")
+   .attr("class", "title")
+   .attr("x", svg.attr("width")/1.75)  // Centre horizontalement
+   .attr("y", 15)  // Ajuster la position verticale
+   .attr("text-anchor", "middle")  // Centrer le texte
+   .style("font-size", "18px")  // Taille du texte
+   .style("font-weight", "bold")  // Texte en gras
+   .style("fill", "black")  // Couleur du texte
+   .text(titleText);
+
+
+
+    // Ajouter une nouvelle légende
+    const legend = legendGroup.append("g")
+        .attr("class", "legend")
+        .attr("transform", "translate(0, 40)");
+
+    // Vérifier si le dégradé existe, sinon le créer
+    let gradient = svg.select("defs").select("#gradient");
+    if (gradient.empty()) {
+        gradient = svg.append("defs")
+            .append("linearGradient")
+            .attr("id", "gradient")
+            .attr("x1", "0%").attr("y1", "0%")
+            .attr("x2", "100%").attr("y2", "0%");
     }
+    gradient.selectAll("stop").remove();
+    gradient.append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", "hsla(91, 35%, 22%, 0.1)");
+    gradient.append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color", "#49655A");
 
-    // Fonction pour mettre à jour la légende
-    function updateLegend(minValue, maxValue, indicator) {
-        const legendScale = d3.scaleLinear()
-            .domain([minValue, maxValue])
-            .range([0, 150]);
+    // Rectangle de légende
+    legend.append("rect")
+        .attr("width", legendWidth)
+        .attr("height", 10)
+        .style("fill", "url(#gradient)")
+        .style("stroke", "#999") // Bordure légère pour mieux délimiter
+        .style("stroke-width", "0.5");
 
-        const legendAxis = d3.axisBottom(legendScale)
-            .ticks(5)
-            .tickFormat(d3.format(".0s"));
+    // Axe de la légende
+    legend.append("g")
+        .attr("transform", "translate(0, 10)")
+        .call(legendAxis)
+        .selectAll("text")
+        .style("font-size", "10px"); // Taille de texte ajustée
 
-        // Supprimer l'ancienne légende
-        legendGroup.select(".legend").remove();
+     // Ajouter le texte Homme
+     legend.append("text")
+     .attr("x",0)  // Position horizontale du texte
+     .attr("y", 60)  // Position verticale du texte (ajustez selon vos besoins)
+     .style("font-size", "12px")  // Taille du texte
+     .style("font-weight", "bold") 
+     .style("fill", "black")  // Couleur du texte
+     .text("Hommes: 15 344 990");
+       // Ajouter le texte Femme
+    legend.append("text")
+    .attr("x", 0)  // Position horizontale du texte
+    .attr("y", 45)  // Position verticale du texte (ajustez selon vos besoins)
+    .style("font-weight", "bold") 
+    .style("font-size", "12px")  // Taille du texte
+    .style("fill", "black")  // Couleur du texte
+    .text("Femmes: 14 044 160");
+// Ajouter le texte pour le total
+legend.append("text")
+    .attr("x", 0)  // Position horizontale du texte
+    .attr("y", 75)  // Position verticale du texte (ajustez selon vos besoins)
+    .style("font-weight", "bold") 
+    .style("font-size", "12px")  // Taille du texte
+    .style("fill", "black")  // Couleur du texte
+    .text("Total: 29 389 150 ");
 
-        // Ajouter une nouvelle légende
-        const legend = legendGroup.append("g")
-            .attr("class", "legend")
-            .attr("transform", "translate(0, 40)");
 
-        // Créer un dégradé
-        const gradient = svg.select("defs").select("#gradient");
-        gradient.selectAll("stop").remove();
-        gradient.append("stop").attr("offset", "0%").attr("stop-color", "hsla(91, 35%, 22%, 0.1)");
-        gradient.append("stop").attr("offset", "100%").attr("stop-color", "#49655A");
-
-        // Rectangle de légende
-        legend.append("rect")
-            .attr("width", 150)
-            .attr("height", 10)
-            .style("fill", "url(#gradient)");
-
-        // Axe de la légende
-        legend.append("g")
-            .attr("transform", "translate(0, 10)")
-            .call(legendAxis);
-
-        // Ajouter le nom de l'indicateur comme titre de la légende
-        legend.append("text")
-            .attr("x", 0)
-            .attr("y", -5)
-            .style("font-size", "12px")
-            .style("font-weight", "bold")
-            .text(indicator);
-    }
+}
 
     // Charger les données GeoJSON
     d3.json("static/carte/populations_updated.json").then(function(geojsonData) {
@@ -442,7 +509,7 @@ function updateBirthsBox() {
                     .style("display", "block")
                     .html(`<strong>${d.properties.REGION}</strong><br>${selectedIndicator}: ${value !== undefined ? value.toLocaleString('fr-FR') : 'N/A'}`);
 
-                const offsetX = 20;
+                const offsetX = 10;
                 const offsetY = -10;
                 tooltip
                     .style("left", (event.clientX - mapRect.left + offsetX) + "px")

@@ -14,7 +14,7 @@
 </head>
 <body>
   <div class="header-title">
-    <h1> <img src="{{ url_for('static', filename='img/logo.png') }}"alt="Logo" class="logo">Plateforme de données régionales</h1>
+    <h1> <img src="{{ url_for('static', filename='img/logo.jpeg') }}"alt="Logo" class="logo">Plateforme de données régionales</h1>
 </div>
 <div class="header-secondary">
     <div class="nav-links">
@@ -95,7 +95,6 @@
         Informations sur le domaine
       </button>
       <div id="domaine-info" class="mt-3" style="display: none;">
-        <h5>Informations sur le domaine</h5>
         <p id="domaine-description"></p>
       </div>
     </div>
@@ -324,9 +323,13 @@ document.addEventListener('DOMContentLoaded', function () {
   /*Informations sur domaine---------------------*/
 // Données factices pour les descriptions des domaines (à remplacer par vos données réelles)
 const descriptionsDomaines = {
-  "Agriculture": "Description du domaine agriculture. Ce domaine couvre les indicateurs liés à l'économie et à la finance.",
-  "Condition de vie des ménages": "Description du domaine condition de vie des ménages. Ce domaine traite des indicateurs sociaux et démographiques.",
-  "Entreprises non Agricoles": "Description du domaine 3. Ce domaine se concentre sur les indicateurs environnementaux."
+  "Population":"Le domaine de la population couvre les statistiques relatives à l'état et structure de la population; la dynamique de la population (mariages, divorces, taille des ménages) ; les perspectives démographiques.",
+"Agriculture":"Le domaine de l'agriculture couvre les statistiques relatives à la production végétale; la production forestière et chasse; la production animale et halieutique; l'aménagement rural.",
+"Condition de vie des ménages":"Le domaine de la condition de vie des ménages couvre les statisitques permettant d'évaluer le bien-être économique et social des populations : éducation; santé; emploi par grands domaines; logement; revenu, consommation, budget; protection sociale; culture et loisirs.",
+"Entreprises non Agricoles":"Le domaine des entreprises non agricoles couvre les statistiques relatives aux bâtiments et travaux Publics; mines et industries; commerce et services; eau et électricité; transports; poste et télécoms; tourisme et artisanat.",
+"Environnement":"Le domaine de l'environnement couvres les statistiques relatives aux ressources naturelles et biodiversité; établissements humains; catastrophes naturelles et risque.",
+"Gouvernance":"Le domaine de la gouvernance couvres les statistiques relatives au statistique politique; Economique; Sociale; Judiciaire; Institutionnelle; Participative.",
+"Grands Equilibres Economiques":" Le domaine des grands équilibres économiques couvre les statistiques relatives au secteur réel (PIB,Exportations et importations de biens et services physiques); Monnaie et crédit; aux échanges extérieurs; Finances publiques."
 };
 function selectDomaine(domaine) {
   // Retirer la classe 'active' de tous les éléments de la liste des domaines

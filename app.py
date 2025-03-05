@@ -350,11 +350,22 @@ def load_publications():
 # Cache les données des publications
 publications_data = load_publications()
 
+EXCEL_FILE='static/data/publications2.xlsx'
 @app.route('/publications')
 def publications_region():
-    region_name=region_publication
-    print('publication ',region_name)
-    return render_template('publications.html',region_name=region_name)
+    # Lire le fichier Excel (feuille 'publication')
+    try:
+        df = pd.read_excel(EXCEL_FILE, sheet_name='publications')
+        # Limiter la description à 100 caractères
+        df['Description'] = df['Description'].str[:100] + '...' if df['Description'].str.len().gt(100).any() else df['Description']
+        # Préparer les données pour le template (convertir en liste de dictionnaires)
+        publications = df.to_dict(orient='records')
+        region_name = region_publication
+        print('publications ', region_name)
+        return render_template('publications.html', publications=publications, region_name=region_name)
+    except Exception as e:
+        print(f"Erreur lors de la lecture du fichier Excel : {e}")
+        return "Erreur lors du chargement des publications", 500
 
 @app.route('/publications/<title>')  # Changé de '/publications' à '/publication' pour correspondre à vos logs
 def publication_detail(title):
@@ -368,10 +379,8 @@ def publication_detail(title):
         if normalized_pub_title == normalized_title:
             publication = data
             break
-
     if not publication:
         abort(404, description=f"Publication '{normalized_title}' non trouvée")
-
     # Génère le numéro de publication en utilisant normalized_title pour être cohérent
     publication_number = f"P{list(publications_data.keys()).index(pub_title) + 1:03d}"
     print('vue de region dans publication',region_publication)
