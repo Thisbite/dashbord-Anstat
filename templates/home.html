@@ -55,7 +55,7 @@
                     <h4>Indicateurs clés</h4>
                     <ul id="indicators"></ul>
                 </div>
-                <p>----------------</p>
+              
                 <!-- Pour la carte de la cote d'ivoire-->
                 <div id="map">  </div>
                 <div id="tooltip" class="tooltip" style="display: none;">
@@ -70,7 +70,7 @@
                     <div class="card-title">
                         <i class="fas fa-clock clock-icon"></i> Population actuelle*
                     </div>
-                    <div id="birthsBox" class="card-value">-</div>
+                    <div id="birthsBox" class="card-value">{{pop_minute}}</div>
                     <div id="dateBox" class="card-date"></div> 
                 </div>
 
@@ -78,13 +78,13 @@
                     <div class="card-title">
                         <i class="fas fa-baby"></i> Naissance*
                     </div>
-                    <div class="card-value">502 150</div>
+                    <div class="card-value" id="naissance">{{naissance}}</div>
                     <p id="birthDateRange"> <i>Du 01-01-2025 au - </i> </p>
                     <div class="card-description"></div>
                     <div class="card-title">
                         <i class="fas fa-skull"></i> Décès*
                     </div>
-                    <div class="card-value">401 234</div>
+                    <div class="card-value" id="deces">{{deces}}</div>
                     <p id="deathDateRange">Du 01-01-2025 au - </p> <!-- Placeholder for dynamic date -->
                    
                 </div>
@@ -290,7 +290,7 @@ function updateBirthsBox() {
             
             // Formate la valeur avec un séparateur de milliers (par exemple, "1 234 567" en français)
             let formattedBirths = totalBirths.toLocaleString('fr-FR');
-            document.getElementById('birthsBox').textContent = formattedBirths; // Affiche la valeur formatée dans la box
+        
         
             // Formatage de la date
             const date = new Date(data.time * 1000); // Convertir le timestamp en objet Date
@@ -392,6 +392,7 @@ function updateMap(data, indicator) {
 }
 
 // Fonction pour mettre à jour la légende
+// Fonction pour mettre à jour la légende
 function updateLegend(minValue, maxValue, indicator) {
     const legendWidth = 150; // Largeur de la barre de légende
     const legendScale = d3.scaleLinear()
@@ -404,26 +405,23 @@ function updateLegend(minValue, maxValue, indicator) {
 
     // Supprimer l'ancienne légende
     legendGroup.select(".legend").remove();
-     // Ajouter le titre dans le groupe SVG----------------------------------------------------------------------------
-// Supprimer l'ancien titre s'il existe
-// Supprimer l'ancien titre s'il existe
-svg.select(".title").remove();
 
-// Déterminer le titre correspondant à l'indicateur
-const titleText = indicatorTitles[indicator] || `Cartographie ${indicator} en 2021`;
+    // Supprimer l'ancien titre s'il existe
+    svg.select(".title").remove();
 
-// Ajouter ou mettre à jour le titre dans le groupe SVG
-svg.append("text")
-   .attr("class", "title")
-   .attr("x", svg.attr("width")/1.75)  // Centre horizontalement
-   .attr("y", 15)  // Ajuster la position verticale
-   .attr("text-anchor", "middle")  // Centrer le texte
-   .style("font-size", "18px")  // Taille du texte
-   .style("font-weight", "bold")  // Texte en gras
-   .style("fill", "black")  // Couleur du texte
-   .text(titleText);
+    // Déterminer le titre correspondant à l'indicateur
+    const titleText = indicatorTitles[indicator] || `Cartographie ${indicator} en 2021`;
 
-
+    // Ajouter ou mettre à jour le titre dans le groupe SVG
+    svg.append("text")
+        .attr("class", "title")
+        .attr("x", svg.attr("width") / 1.75)  // Centre horizontalement
+        .attr("y", 15)  // Ajuster la position verticale
+        .attr("text-anchor", "middle")  // Centrer le texte
+        .style("font-size", "18px")  // Taille du texte
+        .style("font-weight", "bold")  // Texte en gras
+        .style("fill", "black")  // Couleur du texte
+        .text(titleText);
 
     // Ajouter une nouvelle légende
     const legend = legendGroup.append("g")
@@ -462,32 +460,35 @@ svg.append("text")
         .selectAll("text")
         .style("font-size", "10px"); // Taille de texte ajustée
 
-     // Ajouter le texte Homme
-     legend.append("text")
-     .attr("x",0)  // Position horizontale du texte
-     .attr("y", 60)  // Position verticale du texte (ajustez selon vos besoins)
-     .style("font-size", "12px")  // Taille du texte
-     .style("font-weight", "bold") 
-     .style("fill", "black")  // Couleur du texte
-     .text("Hommes: 15 344 990");
-       // Ajouter le texte Femme
-    legend.append("text")
-    .attr("x", 0)  // Position horizontale du texte
-    .attr("y", 45)  // Position verticale du texte (ajustez selon vos besoins)
-    .style("font-weight", "bold") 
-    .style("font-size", "12px")  // Taille du texte
-    .style("fill", "black")  // Couleur du texte
-    .text("Femmes: 14 044 160");
-// Ajouter le texte pour le total
-legend.append("text")
-    .attr("x", 0)  // Position horizontale du texte
-    .attr("y", 75)  // Position verticale du texte (ajustez selon vos besoins)
-    .style("font-weight", "bold") 
-    .style("font-size", "12px")  // Taille du texte
-    .style("fill", "black")  // Couleur du texte
-    .text("Total: 29 389 150 ");
+    // Afficher les informations sur la population uniquement si l'indicateur est 'Population'
+    if (indicator === 'Population') {
+        // Ajouter le texte Hommes
+        legend.append("text")
+            .attr("x", 0)  // Position horizontale du texte
+            .attr("y", 45)  // Position verticale du texte (ajustez selon vos besoins)
+            .style("font-size", "12px")  // Taille du texte
+            .style("font-weight", "bold")
+            .style("fill", "black")  // Couleur du texte
+            .text("Hommes: 15 344 990");
 
+        // Ajouter le texte Femmes
+        legend.append("text")
+            .attr("x", 0)  // Position horizontale du texte
+            .attr("y", 60)  // Position verticale du texte (ajustez selon vos besoins)
+            .style("font-size", "12px")  // Taille du texte
+            .style("font-weight", "bold")
+            .style("fill", "black")  // Couleur du texte
+            .text("Femmes: 14 044 160");
 
+        // Ajouter le texte Total
+        legend.append("text")
+            .attr("x", 0)  // Position horizontale du texte
+            .attr("y", 75)  // Position verticale du texte (ajustez selon vos besoins)
+            .style("font-size", "12px")  // Taille du texte
+            .style("font-weight", "bold")
+            .style("fill", "black")  // Couleur du texte
+            .text("Total: 29 389 150");
+    }
 }
 
     // Charger les données GeoJSON

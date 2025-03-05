@@ -550,11 +550,7 @@ body {
     list-style: none;
     padding: 0;
 }
-#indicators li {
-    cursor: pointer;
-    padding: 5px;
-    color: #49655A;
-}
+
 #indicators li:hover {
     background-color: #f0f0f0
 }
@@ -589,9 +585,11 @@ body {
 #indicators li {
     cursor: pointer;
     padding: 5px 10px;
-    color: #49655A;
+    color: #0a0a0a;
     font-size: 14px; /* Taille de texte réduite */
+    font-weight: bold;
 }
+
 
 #indicators li:hover {
     background-color: #f0f0f0;

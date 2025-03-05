@@ -170,13 +170,16 @@ es.indices.put_settings(index='requete_elastic', body={
     "index.blocks.read_only_allow_delete": None
 })
 #index_data_from_excel()
-# Date de départ pour le calcul des naissances (exemple : 1er janvier 2022)
 
+ 
+"""
+ Présentation de la population par minute 
+"""
 START_DATE = datetime(2022, 1, 1)
 STORAGE_FILE = 'births_data.json'
 
 def get_births_per_minute():
-    moyenne_naissance = 1.3  # naissances par seconde
+    moyenne_naissance =777556/525600  # naissances par seconde, c'est la pop 2024 avec 2025 et on fait un ratio par minute sur toute l'année
     variation = random.uniform(-0.034, 0.034)
     return int(moyenne_naissance + variation )  # Convertir en naissances par minute
 
@@ -187,7 +190,7 @@ def load_birth_data():
         with open(STORAGE_FILE, 'r') as f:
             data = json.load(f)
             return data
-    return {'total_births': 29090897, 'last_time': START_DATE.timestamp()}
+    return {'total_births':30153004, 'last_time': START_DATE.timestamp()}
 
 # Fonction pour sauvegarder l'état actuel du compteur
 def save_birth_data(total_births, last_time):
@@ -216,10 +219,8 @@ def calculate_accumulated_births():
 def births_data():
     # Calculer les naissances accumulées
     total_births = calculate_accumulated_births()
-
     # Obtenir la date et l'heure actuelles
     now = datetime.now()
-    
     # Extraire le jour, le mois et l'année
     day = now.day
     month = now.month
@@ -239,9 +240,67 @@ def births_data():
 
 
 #---------------------------------------------------Home page pour accueil
+from datetime import datetime
+
+def days_in_year(year):
+    # Vérifier si l'année est bissextile
+    is_leap_year = lambda year: year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+    return 366 if is_leap_year(year) else 365
+
+def minutes_in_year(year):
+    # Vérifier si l'année est bissextile
+    is_leap_year = lambda year: year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+    days_in_year = 366 if is_leap_year(year) else 365
+    minutes_in_year = days_in_year * 24 * 60  # 24 heures × 60 minutes = 1 440 minutes par jour
+    return minutes_in_year
+
+def naissance_deces_pop():
+    data_nais_deces_pop = {
+        "population":[777556,797114,793064,787604,804768,796472],
+        "population_add":[31719274,32496830,33293944 ,34087008, 34874612 ,35679380],
+        "naissance": [1025716, 1047630, 1045355, 1041416, 1061168, 1054794],
+        "deces": [248159, 250517, 252290, 253814, 256397, 258324],
+        "year": [2025 + i for i in range(6)]  # Correction range(6)
+    }
+
+    # Récupérer l'année actuelle
+    current_year = datetime.now().year
+    
+
+    # Vérifier si l'année est dans les données
+    if current_year in data_nais_deces_pop["year"]:
+        index = data_nais_deces_pop["year"].index(current_year)
+        date_ref=datetime(current_year,1,1)
+        date_ref_M= datetime(current_year, 1, 1, 0, 0, 0) 
+        date_actu=datetime.now()
+        nbre_jour=date_actu-date_ref
+        nbre_jour=nbre_jour.days
+        naissance_annuelle = data_nais_deces_pop["naissance"][index]
+        deces_annuel = data_nais_deces_pop["deces"][index]
+        population_annuelle=data_nais_deces_pop["population"][index]
+        day_now=datetime
+        # Minute de l'année
+        minute=minutes_in_year(current_year)
+        difference=date_actu-date_ref_M
+        dif_total_minute=difference.total_seconds() / 60
+        # Calcul du taux journalier
+        days = days_in_year(current_year)
+        naissance_journalier = int(naissance_annuelle / days)*nbre_jour
+        deces_journalier =int( deces_annuel / days)*nbre_jour
+        pop_minute=int(population_annuelle/ minute)*int(dif_total_minute)+data_nais_deces_pop["population_add"][index]
+
+        return naissance_journalier, deces_journalier,pop_minute
+    else:
+        return "Données non disponibles pour l'année", current_year
+
+# Exemple d'utilisation
+print('Extrapolation naissance',naissance_deces_pop())
+
+    
 @app.route('/')
 def list_regions():
     regions = qr.options_regions()
+    naissance,deces,pop_minute=naissance_deces_pop()
     # Données
     years = [2019, 2020, 2021, 2022, 2023]
     population = [24.0, 27.0, 27.4, 29.8, 30.38]
@@ -251,6 +310,9 @@ def list_regions():
     liste_region=regions
     print(liste_region)
     return render_template('home.html',
+                           naissance=naissance,
+                           deces=deces,
+                           pop_minute=pop_minute,
                            years=years,
                            population=population,
                            school_enrollment_rate=school_enrollment_rate,
