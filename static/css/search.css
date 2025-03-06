@@ -1,64 +1,333 @@
-body {
-    font-family: Arial, sans-serif;
+/* === Variables Globales === */
+:root {
+    --primary-color: #49655A;
+    --primary-hover-color: #49655A;
+    --secondary-color: #d9e6db;
+    --accent-color: #F39323;
+    --accent-hover-color: #e08500;
+    --text-color: #333;
+    --light-text-color: #666;
+    --font-family: 'Poppins', sans-serif;
+    --font-weight-bold: 600;
+    --font-weight-regular: 400;
+    --border-radius: 8px;
+    --shadow-light: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.2);
+    --transition-speed: 0.3s ease;
+}
+
+/* === Styles Globaux === */
+* {
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    box-sizing: border-box;
 }
 
+body {
+    font-family: var(--font-family);
+    line-height: 1.6;
+    background-color: #f8f9fa;
+    color: var(--text-color);
+}
+
+/* === Header Principal === */
+header {
+    background-color: var(--primary-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    padding: 0 5%;
+}
+
+header .logo a {
+    font-size: 25px;
+    color: #fff;
+    text-decoration: none;
+}
+
+header .logo a span {
+    color: var(--accent-color);
+}
+
+/* === Conteneur Principal === */
 .container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
+    margin: 80px auto 20px;
+    background-color: rgba(255, 255, 255, 0.95);
     padding: 20px;
-    background: #fff;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+    max-width: 95%;
 }
 
-h1 {
+/* === Titre === */
+.header {
     text-align: center;
+    padding: 15px;
+    font-size: 1.5rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
 }
 
-form {
+/* === Conteneur Flex === */
+.container-flex {
+    display: flex;
+    gap: 20px;
+}
+
+/* === Section Dimensions === */
+.dimensions {
+    width: 20%;
+    background-color: var(--secondary-color);
+    padding: 15px;
+    border-radius: var(--border-radius);
+}
+
+.dimensions h2 {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--primary-color);
+}
+
+.dimensions ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.dimensions li.draggable-item {
+    padding: 10px;
+    margin-bottom: 5px;
+    background-color: #fff;
+    border: 1px solid var(--light-text-color);
+    border-radius: var(--border-radius);
+    cursor: move;
+    transition: background-color var(--transition-speed);
+}
+
+.dimensions li.draggable-item:hover {
+    background-color: var(--primary-hover-color);
+    color: #fff;
+}
+
+/* === Section Tableaux === */
+.tableaux {
+    width: 80%;
+    padding: 20px;
+}
+
+/* === Boutons === */
+.buttons {
     display: flex;
     justify-content: center;
+    gap: 15px;
     margin-bottom: 20px;
 }
 
-input[type="text"] {
-    padding: 10px;
-    width: 70%;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.buttons button {
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: var(--font-weight-bold);
+    transition: all var(--transition-speed);
 }
 
-button {
+.buttons button:hover {
+    background-color: var(--primary-hover-color);
+    transform: scale(1.05);
+}
+
+/* === Zones de dépôt === */
+.dropzone {
+    border: 2px dashed var(--primary-color);
+    background-color: #fff;
+    border-radius: var(--border-radius);
     padding: 10px;
-    border: none;
-    background: #28a745;
-    color: white;
-    border-radius: 4px;
+    margin-bottom: 20px;
+    min-height: 60px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: border-color var(--transition-speed);
+}
+
+.dropzone p {
+    color: var(--light-text-color);
+    font-size: 0.9rem;
+    margin: 0;
+    position: absolute;
+}
+
+#droppable-area-rows {
+    width: 100%;
+}
+
+#droppable-area-cols {
+    width: 200px;
+    height: 300px;
+    flex-direction: column;
+}
+
+#droppable-area-cols p.vertical {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+}
+
+.draggable-item {
+    padding: 8px 12px;
+    margin: 4px;
+    background-color: var(--secondary-color);
+    border: 1px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    cursor: move;
+    transition: all var(--transition-speed);
+}
+
+.draggable-item:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+/* === Conteneur des filtres === */
+/* === Conteneur des filtres === */
+#filter-container {
+    margin-bottom: 20px;
+}
+
+.filter-group {
+    margin: 10px 0;
+}
+
+.filter-title {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 8px;
+    border-radius: var(--border-radius);
     cursor: pointer;
+    font-weight: var(--font-weight-bold);
+}
+
+.filter-title .icon-orange {
+    color: var(--accent-color);
+    margin-right: 5px;
+}
+
+.checkbox-container {
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid var(--primary-color);
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 colonnes égales par ligne */
+    gap: 10px; /* Espacement entre les cellules */
+    justify-content: flex-start;
+    align-items: center; /* Aligne les items au centre verticalement */
+}
+
+.checkbox-container div {
+    display: flex;
+    align-items: center;
+    min-width: 0; /* Permet aux éléments de s’adapter */
+    max-width: 100%; /* Limite la largeur pour éviter le débordement */
+}
+
+.checkbox-container input[type="checkbox"] {
+    margin-right: 5px;
+    flex-shrink: 0; /* Empêche la réduction de la checkbox */
+}
+
+.checkbox-container label {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    white-space: nowrap; /* Empêche le retour à la ligne dans les labels */
+    overflow: hidden; /* Gère le débordement */
+    text-overflow: ellipsis; /* Ajoute "..." si le texte dépasse */
+    max-width: 100%; /* Limite la largeur du label */
+}
+
+/* Réduction sur mobile */
+@media (max-width: 768px) {
+    .checkbox-container {
+        grid-template-columns: repeat(3, 1fr); /* Moins de colonnes sur mobile */
+    }
+    .checkbox-container label {
+        font-size: 0.8rem; /* Police plus petite sur mobile */
+    }
+}
+/* === Conteneur du tableau === */
+#table-container {
+    width: 100%;
+    max-height: 400px;
+    overflow: auto;
+    border: 1px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
 }
 
 table {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+    border-collapse: separate;
+    border-spacing: 0;
 }
 
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
+table th, table td {
+    padding: 10px;
     text-align: left;
+    border-bottom: 1px solid rgba(0, 107, 69, 0.1);
 }
 
-th {
-    background-color: #f2f2f2;
+table th {
+    background-color: var(--primary-color);
+    color: #fff;
+    font-weight: var(--font-weight-bold);
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
-a {
-    display: block;
-    text-align: center;
-    margin-top: 20px;
+table td {
+    background-color: #fff;
+}
+
+table tr:nth-child(even) td {
+    background-color: var(--secondary-color);
+}
+
+table tr:hover td {
+    background-color: rgba(0, 107, 69, 0.1);
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    .container-flex {
+        flex-direction: column;
+    }
+    .dimensions, .tableaux {
+        width: 100%;
+    }
+    #droppable-area-cols {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+    }
+    #droppable-area-cols p.vertical {
+        writing-mode: horizontal-tb;
+        transform: none;
+    }
+    #table-container {
+        max-height: 300px;
+    }
 }

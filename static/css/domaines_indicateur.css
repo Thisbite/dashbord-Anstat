@@ -9,13 +9,12 @@
 }
 
 .header-secondary {
-    background-color: #f8f9fa;
+    background-color: #49655A;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
 }
-
 .nav-links {
     display: flex;
     justify-content: center;

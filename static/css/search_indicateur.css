@@ -1,0 +1,456 @@
+/* ==================== */
+/* Reset et styles de base */
+/* ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f8f8;
+    color: #333;
+}
+
+/* ==================== */
+/* Barre latérale (Sidebar) */
+/* ==================== */
+.sidebar {
+    width: 220px;
+    background-color: #fff;
+    padding: 10px;
+    box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    min-width: 40vh;
+}
+
+.sidebar h5 {
+    background-color: #49655A;
+    padding: 10px;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    padding: 8px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+    color: #49655A;
+    font-weight: bold;
+}
+
+.sidebar ul li:hover {
+    background-color: #f4f4f4;
+}
+
+.sidebar ul li img {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+/* Style pour l'élément actif (domaine sélectionné) */
+.sidebar ul li.active {
+    background-color: white; /* Couleur de fond */
+    color: #49655A; /* Couleur du texte */
+    font-weight: bold; /* Texte en gras */
+}
+/* ==================== */
+/* Contenu principal */
+/* ==================== */
+.main-content {
+    flex: 2;
+    background-color: #fff;
+    margin-left: 10px;
+    padding: 20px;
+    border-radius: 10px;
+    min-width: 40vh;
+}
+
+.main-content h5 {
+    background-color: #49655A;
+    padding: 10px;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.main-content ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.main-content ul li {
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    color: #49655A;
+}
+
+.main-content ul li input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.main-content ul li.active {
+    color: #ff3366;
+}
+
+.indicators-list {
+    flex: 3;
+    background-color: #fff;
+    margin-left: 10px;
+    padding: 20px;
+    border-radius: 10px;
+    min-width: 50vh;
+}
+
+.indicators-list ul li {
+    color: #ff3366;
+}
+
+.indicators-list ul#indicateurs {
+    max-height: 400px; /* Hauteur maximale avant défilement (ajustez selon vos besoins) */
+    overflow-y: auto; /* Active le défilement vertical si le contenu dépasse */
+    border: 1px solid #ddd; /* Bordure optionnelle pour délimiter la liste */
+    padding: 10px; /* Espacement interne */
+  }
+  
+  /* Optionnel : Personnaliser la barre de défilement */
+  .indicators-list ul#indicateurs::-webkit-scrollbar {
+    width: 8px; /* Largeur de la barre de défilement */
+  }
+  
+  .indicators-list ul#indicateurs::-webkit-scrollbar-thumb {
+    background-color: #49655A; /* Couleur de la barre (vert foncé, par exemple) */
+    border-radius: 4px;
+  }
+  
+  .indicators-list ul#indicateurs::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Couleur de l'arrière-plan de la piste */
+  }
+
+/* ==================== */
+/* Header et navigation */
+/* ==================== */
+.header {
+    background-color: #ffe6e6;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* === Header === */
+.header-title {
+    text-align: center;
+    background-color: #f4f4f4;
+    padding: 20px 10px;
+    border-bottom: 2px solid #ddd;
+}
+
+.header-title h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 100px; /* Espace entre le texte et l'image */
+    font-size: 2.5rem;
+    color: #49655A;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+.logo {
+    height: 30px;
+    width: auto;
+}
+
+.header-secondary {
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
+
+/* === Navigation === */
+.nav-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #49655A;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: 2px solid #49655A;
+    margin: 0 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+}
+
+.nav-links a:hover {
+    background-color: #d9e6db;
+    color: white;
+}
+
+.nav-links .logo-link {
+    border: none;
+    padding: 0;
+    margin: 0 10px;
+}
+
+.nav-links .logo-link img {
+    display: block;
+}
+
+
+/* ==================== */
+/* Barre de recherche */
+/* ==================== */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-bar input[type="text"] {
+    padding: 10px 14px;
+    font-size: 16px;
+    border: 2px solid #49655A;
+    border-radius: 6px;
+    width: 300px;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-bar input[type="text"]:focus {
+    border-color: #49655A;
+    box-shadow: 0 0 5px rgba(0, 158, 96, 0.5);
+}
+
+.search-bar button {
+    padding: 10px 16px;
+    background-color: #49655A;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.search-bar button:hover {
+    background-color: #F39323;
+    transform: scale(1.05);
+}
+
+.search-bar button:active {
+    transform: scale(0.95);
+    background-color: #49655A;
+}
+
+/* ==================== */
+/* Autocomplétion */
+/* ==================== */
+.suggestions-list {
+    position: absolute;
+    background: white;
+    border: 1px solid #ddd;
+    max-height: 200px;
+    overflow-y: auto;
+    width: calc(100% - 2px);
+    z-index: 1000;
+}
+
+.suggestions-list div {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.suggestions-list div:hover {
+    background: #f0f0f0;
+}
+
+/* ==================== */
+/* Modale */
+/* ==================== */
+
+/* Style pour le fond sombre (backdrop) */
+/* Supprimez cette règle ou remplacez-la par une version correcte */
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.7); /* Fond semi-transparent noir */
+    backdrop-filter: blur(5px); /* Effet de flou (optionnel, moderne) */
+}
+
+/* Style pour la boîte de dialogue du modal */
+.modal-dialog {
+    max-width: 600px; /* Largeur maximale raisonnable pour une modale */
+    margin: 50px auto; /* Centre la modale verticalement et horizontalement */
+    border-radius: 15px; /* Coins arrondis pour un look moderne */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); /* Ombre douce pour un effet 3D */
+    overflow: hidden; /* Assure que le contenu ne déborde pas */
+    animation: slideIn 0.5s ease-out; /* Animation d’entrée */
+}
+
+/* Animation pour l'apparition du modal */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Style du contenu du modal */
+.modal-content {
+    border: none; /* Supprime la bordure par défaut */
+    border-radius: 15px; /* Coins arrondis cohérents */
+    background-color: #ffffff; /* Fond blanc pour contraste */
+    padding: 20px; /* Espacement interne pour un look aéré */
+}
+
+/* Style du titre du modal */
+.modal-title {
+    font-weight: bold;
+    font-size: 1.5em;
+    color: #333; /* Gris foncé pour lisibilité */
+    text-align: center;
+    padding-bottom: 10px; /* Espacement sous le titre */
+    border-bottom: 2px solid #F39323; /* Ligne orange pour un accent visuel */
+}
+
+/* Style du corps du modal */
+.modal-body {
+    font-size: 1.1em; /* Taille de police légèrement plus grande pour lisibilité */
+    color: #555; /* Gris moyen pour le texte */
+    line-height: 1.6; /* Espacement entre les lignes pour une lecture confortable */
+    padding: 15px 0; /* Espacement vertical */
+}
+
+/* Style des boutons dans le footer */
+.modal-footer .btn-secondary {
+    background-color: #F39323; /* Rouge comme dans votre design */
+    color: #fff;
+    border: none;
+    padding: 10px 20px; /* Plus grand pour un look moderne */
+    border-radius: 8px; /* Coins arrondis */
+    transition: background-color 0.3s ease; /* Animation de transition pour le hover */
+}
+
+.modal-footer .btn-secondary:hover {
+    background-color: #F39323; /* Orange au hover pour un effet attractif */
+}
+
+/* Style du bouton de fermeture (btn-close) */
+.btn-close {
+    background-color: #fff; /* Fond blanc pour contraste */
+    border: 1px solid #F39323; /* Bordure rouge */
+    border-radius: 50%; /* Cercle pour un look moderne */
+    opacity: 0.8; /* Légèrement transparent */
+}
+
+.btn-close:hover {
+    opacity: 1; /* Plus opaque au hover */
+    background-color: #F39323; /* Orange au hover */
+}
+
+/* Ajustement pour les écrans plus petits (responsivité) */
+@media (max-width: 768px) {
+    .modal-dialog {
+        max-width: 90%; /* Moins large sur mobile */
+        margin: 20px auto; /* Moins de marge */
+    }
+
+    .modal-title {
+        font-size: 1.2em; /* Titre plus petit sur mobile */
+    }
+
+    .modal-body {
+        font-size: 1em; /* Texte plus petit sur mobile */
+    }
+}
+
+
+/* ==================== */
+/* Conteneur principal */
+/* ==================== */
+#content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+/* Info sur indicateur*/
+#btn-en-savoir-plus {
+    background-color: #49655A;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  #btn-en-savoir-plus:hover {
+    background-color: #F39323;
+  }
+
+  #domaine-info {
+    background-color: #f8f8f8;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
+
+
+  #indicatorSearch {
+    border-radius: 0.25rem 0 0 0.25rem;
+  }
+  
+  #clearSearch {
+    border-radius: 0 0.25rem 0.25rem 0;
+  }
+  
+  #indicateurs .list-group-item {
+    transition: opacity 0.3s ease;
+  }
+  
+  #indicateurs .list-group-item.hidden {
+    display: none; /* ou opacity: 0; si vous voulez un effet de fondu */
+  }
+
+  #indicateurs .list-group-item.hidden {
+    display: none; /* Cache complètement l'élément */
+    /* Ou, pour un effet de fondu :
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    */
+  }
+  
+  #indicatorSearch:focus {
+    border-color: #e76f51; /* Couleur orange pour le focus, comme votre branding */
+    box-shadow: 0 0 5px rgba(231, 111, 81, 0.3);
+  }

@@ -3,81 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moteur de Recherche</title>
-  
+    <title>Base de données des statistiques régionales</title>
+    
+    <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/resultats.css') }}">
-       <!-- Style -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='asset/css/fresh-bootstrap-table.css') }}">
-        
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Fonts and icons -->
-  <link href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" rel="stylesheet">
-  <link href="http://fonts.googleapis.com/css?family=Roboto:400,700,300" rel="stylesheet" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
 </head>
 <body>
+    <!-- Header -->
+    <div class="header-title">
+        <h1> <img src="{{ url_for('static', filename='img/logo.jpeg') }}"alt="Logo" class="logo">Plateforme de données régionales {{region_name}}</h1>
+    </div>
     <div class="header-secondary">
-        <div class="nav-links">
-            <a href="{{ url_for('list_regions') }}">Statistiques</a>
-            <a href="{{ url_for('search_boostrap') }}">Requête</a>
-            <a href="{{ url_for('domaines') }}">Domaines</a>
-            <a href="#connexion">Aide</a>
-        </div>
 
+        <div class="nav-links">
+            <a href="{{ url_for('list_regions') }}" class="logo-link">
+                <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" style="width: 50px; height: auto;">
+            </a>
+            <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
+            <a href="#">Aide</a>
+        </div>
+    
+     
     </div>
 
-      <!-- Barre de flash infos -->
-  
-    
-    
-    <div class="fresh-table toolbar-color-blue ">
-        
         <div id="loading" style="display:none;">Chargement...</div> 
+        
         {% if results %}
-           
-            <table id="fresh-table" class="table">
-                <thead>
-                    <tr>
-                       
-                        <th>Indicateur</th>
-                        <th>Sous domaine</th>
-                        <th>Définition de l'indicateur</th>
-                        <th>Mode calcul</th>
-                        <th>Mode de collecte</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for hit in results %}
-                        <tr>
-                           
-                            <td><a href="{{ url_for('request_indicateur', region=hit['_source']['region'] ,indicateur_elastic=hit['_source']['indicateur'] ) }}">{{ hit['_source']['indicateur'] }}</a></td>
-                            <td>{{ hit['_source']['Sous_domaine'] }}</td>
-                            <td>{{ hit['_source']['Definition'] }}</td>
-                            <td>{{ hit['_source']['Mode_de_calcul'] }}</td>
-                            <td>{{ hit['_source']['Mode_de_collecte'] }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            
-            <!-- Pagination -->
-           <!-- Pagination -->
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Indicateur</th>
+                    <th scope="col">Sous domaine</th>
+                    <th scope="col">Définition</th>
+                    <th scope="col">Mode calcul</th>
+                    <th scope="col">Mode de collecte</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for hit in results %}
+                <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td><a href="{{ url_for('request_indicateur', region=hit['_source']['region'], indicateur_elastic=hit['_source']['indicateur'] ) }}">{{ hit['_source']['indicateur']|capitalize }}</a></td>
+
+                    <td>{{ hit['_source']['Sous_domaine']| capitalize }}</td>
+                    <td>{{ hit['_source']['Definition']| capitalize }}</td>
+                    <td>{{ hit['_source']['Mode_de_calcul']| capitalize }}</td>
+                    <td>{{ hit['_source']['Mode_de_collecte']| capitalize }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- Pagination -->
         <div class="pagination">
             {% if page > 1 %}
-                <a href="{{ url_for('crosstable', query=query, page=page-1) }}">Précédent</a>
+                <a href="{{ url_for('search', query=query, page=page-1) }}">Précédent</a>
             {% endif %}
-            
-            <span>Page {{ page }} sur {{ total_pages }}</span>
-
+        
+            {% for p in range(1, total_pages + 1) %}
+                {% if p == page %}
+                    <strong>{{ p }}</strong>
+                {% else %}
+                    <a href="{{ url_for('search', query=query, page=p) }}">{{ p }}</a>
+                {% endif %}
+            {% endfor %}
+        
             {% if page < total_pages %}
-                <a href="{{ url_for('crosstable', query=query, page=page+1) }}">Suivant</a>
+                <a href="{{ url_for('search', query=query, page=page+1) }}">Suivant</a>
             {% endif %}
         </div>
+        
 
         {% else %}
             <p>Aucun résultat trouvé. Essayez d'affiner votre recherche.</p>
         {% endif %}
-    </div>
+   
 
     <script>
         document.querySelector('form').addEventListener('submit', function() {

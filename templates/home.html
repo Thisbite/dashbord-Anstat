@@ -1,7 +1,4 @@
 
-
-
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -14,99 +11,125 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-
+    <div class="header-title">
+        <h1>
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="Logo" class="logo">
+                <a href="https://www.anstat.ci/" target="_blank" class="under-logo-link">Visitez notre site officiel</a>
+            </div>
+            Plateforme de données régionales
+        </h1>
+    </div>
     <div class="header-secondary">
         <div class="nav-links">
-            <a href="{{ url_for('list_regions') }}">Statistiques</a>
-            <a href="{{ url_for('search_boostrap') }}">Requête</a>
-            <a href="{{ url_for('domaines') }}">Domaines</a>
+            <a href="{{ url_for('list_regions') }}" class="logo-link">
+                <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" style="width: 50px; height: auto;">
+            </a>
+            <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
             <a href="#connexion">Aide</a>
         </div>
-
-        <!-- Formulaire de recherche -->
+    
         <div class="search-bar">
-            <!--Utilisation de recherche
-     
-            <form action="{{ url_for('request_indicateur' ) }}" method="GET">
-                <input type="text" id="indicateur-search2" name="indicateur2" placeholder="Recherche indicateur..." required>
-                <button type="submit">Chercher</button>
-            </form>
-            -->
-            <form method="POST" action="{{ url_for('search') }}">
-                <input type="text" name="query" placeholder="Entrez votre recherche..." required>
-                <button type="submit">Rechercher</button>
+            <form method="POST" action="{{ url_for('search') }}" onsubmit="return submitSearch();">
+                <input type="text" id="search-input" name="query" placeholder="Entrez votre recherche..." required autocomplete="off">
+                <div id="suggestions" class="suggestions-list"></div>
+                <button type="submit" id="search-button">Rechercher</button>
             </form>
         </div>
-    </div>
-
-      <!-- Barre de flash infos -->
-      <div class="flash-info-bar">
-        <marquee behavior="scroll" direction="left" scrollamount="5">
-           <a href="https://example.com/natalite">Le taux de natalité a augmenté de 2%</a> en 2024. &nbsp; | &nbsp; 
-          <a href="https://example.com/scolarisation">85% des enfants sont maintenant scolarisés</a>. &nbsp; | &nbsp; 
-         <a href="https://example.com/chomage">Le taux de chômage a chuté à 5%</a>. &nbsp; | &nbsp; 
-        <a href="https://example.com/sante">70% de la population a accès à des soins de santé de base</a>.
-        </marquee>
+        
     </div>
     
-    
-
     <div class="container">
         <div class="left-column">
             <div class="left-section">
-               <!-- La carte de la CI avec population-->
-                {{ map_html|safe }}
+                <!--Nouvel ajout-->
+                <div id="indicators-list">
+                    <h4>Indicateurs clés</h4>
+                    <ul id="indicators"></ul>
+                </div>
+              
+                <!-- Pour la carte de la cote d'ivoire-->
+                <div id="map">  </div>
+                <div id="tooltip" class="tooltip" style="display: none;">
+            </div>
             </div>
 
             <div class="right-section">
-                <!-- Ajout de deux indicateurs (1 sur l'éducation et 1 sur la santé) -->
+                <h4><i>Horloge démographique</i></h4>
+             
+                <!-- Ajout de deux indicateurs (1 sur l'éducation et 1 sur la santé) et naissance  -->
                 <div class="indicator-card">
-                    <div class="card-title">Taux d'Éducation</div>
-                    <div class="card-value">85%</div>
-                    <div class="card-description">Proportion des enfants scolarisés en 2021</div>
+                    <div class="card-title">
+                        <i class="fas fa-clock clock-icon"></i> Population actuelle*
+                    </div>
+                    <div id="birthsBox" class="card-value">{{pop_minute}}</div>
+                    <div id="dateBox" class="card-date"></div> 
                 </div>
-        
+
                 <div class="indicator-card">
-                    <div class="card-title">Accès aux soins</div>
-                    <div class="card-value">70%</div>
-                    <div class="card-description">Proportion de la population ayant accès aux soins de santé de base</div>
+                    <div class="card-title">
+                        <i class="fas fa-baby"></i> Naissance*
+                    </div>
+                    <div class="card-value" id="naissance">{{naissance}}</div>
+                    <p id="birthDateRange"> <i>Du 01-01-2025 au - </i> </p>
+                    <div class="card-description"></div>
+                    <div class="card-title">
+                        <i class="fas fa-skull"></i> Décès*
+                    </div>
+                    <div class="card-value" id="deces">{{deces}}</div>
+                    <p id="deathDateRange">Du 01-01-2025 au - </p> <!-- Placeholder for dynamic date -->
+                   
                 </div>
+                <h5><i>*Projection RGPH 2021</i></h5>
             </div>
         </div>
 
         <div class="right-column">
-            <h2>Tableau de bord par région</h2>
+            <h2><i class="fas fa-tachometer-alt"></i> Tableau de bord par région</h2>
             <ul class="region-list">
                 {% for region in regions %}
-                <li>
-                    <a href="{{ url_for('dashboard', region=region) }}">{{ region }}</a>
+                <li onmouseover="highlightRegion('{{ region }}')" onmouseout="resetRegionHighlight(event)">
+                    <i class="fas fa-map-marker-alt" style="font-size: 30px; color: #49655A;"></i>
+                    <a href="{{ url_for('region_vitrine', region=region) }}">
+                        {{ region }}
+                    </a>
                 </li>
                 {% endfor %}
             </ul>
+            <div class="scroll-indicator" style="text-align: center; margin-top: 10px; color: #49655A;">
+                ▼
+            </div>
         </div>
+        
+        
     </div> 
-<!-- Conteneur principal avec un cadre autour des cartes -->
+
 <!-- Nouveau cadre pour aligner les graphes sur une ligne -->
 <div class="charts-row-container">
     <div class="chart-card">
-        <h5>Évolution de la population</h5>
+        <h5>Évolution de la population de 2019-2023</h5>
         <div class="chart-container">
             <canvas id="chart-line-population"></canvas>
         </div>
     </div>
 
     <div class="chart-card">
-        <h5>Taux de scolarisation</h5>
+        <h5>Taux de scolarisation de 2019-2023</h5>
         <div class="chart-container">
             <canvas id="chart-line-enrollment"></canvas>
         </div>
     </div>
 
     <div class="chart-card">
-        <h5>Distribution par tranche d'âge</h5>
+        <h5>Répartition de la population par tranche d'âge en 2023</h5>
         <div class="chart-container">
             <canvas id="chart-bar-age-distribution"></canvas>
         </div>
@@ -128,18 +151,19 @@
         data: {
             labels: years,
             datasets: [{
-                label: 'Population (en millions)',
+                label: 'Population',
                 data: population,
-                borderColor: 'blue',
-                backgroundColor: 'rgba(0, 0, 255, 0.1)',
-                fill: true
+                borderColor: "hsla(91, 35%, 22%, 0.773)",
+                backgroundColor: 'white',
+              
+              
             }]
         },
         options: {
             responsive: true,
             plugins: {
                 title: {
-                    display: true,
+                    display: false,
                     text: 'Évolution de la population (en millions) de 2019-2023'
                 },
                 tooltip: {
@@ -172,16 +196,17 @@
             datasets: [{
                 label: 'Taux de scolarisation (%)',
                 data: schoolEnrollmentRate,
-                borderColor: 'green',
-                backgroundColor: 'rgba(0, 255, 0, 0.1)',
-                fill: true
+                borderColor: '#F39323',
+                backgroundColor: 'white',
+             
+               
             }]
         },
         options: {
             responsive: true,
             plugins: {
                 title: {
-                    display: true,
+                    display: false,
                     text: 'Taux de scolarisation (%) de 2019-2023'
                 },
                 tooltip: {
@@ -199,7 +224,7 @@
                 y: {
                     title: {
                         display: true,
-                        text: 'Taux de scolarisation (%)'
+                        text: 'Taux de scolarisation'
                     }
                 }
             }
@@ -212,10 +237,10 @@
         data: {
             labels: ageGroups,
             datasets: [{
-                label: "Distribution d'âge",
+                label: "Population",
                 data: ageDistribution,
-                backgroundColor: 'rgba(0, 0, 255, 0.6)',
-                borderColor: 'blue',
+                borderColor: '#0C6B23',
+                backgroundColor: 'white',
                 borderWidth: 1
             }]
         },
@@ -223,7 +248,7 @@
             responsive: true,
             plugins: {
                 title: {
-                    display: true,
+                    display: false,
                     text: 'Population par tranche d\'âge en 2023'
                 }
             },
@@ -237,7 +262,7 @@
                 y: {
                     title: {
                         display: true,
-                        text: 'Pourcentage (%)'
+                        text: 'Population (millier)'
                     },
                     beginAtZero: true
                 }
@@ -251,169 +276,399 @@
     new Chart(document.getElementById('chart-bar-age-distribution'), ageDistributionConfig);
 </script>
    
-    <!-- Script pour l'autocomplétion -->
-    <script>
-        $(function() {
-            // Initialisation de l'autocomplétion pour la recherche d'indicateur
-            $("#indicateur-search2").autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: "/autocomplete_indicateur",  // Route Flask qui renvoie une liste d'indicateurs
-                        dataType: "json",
-                        data: {
-                            term: request.term
-                        },
-                        success: function(data) {
-                            response(data);  // Les résultats sont renvoyés sous forme de liste
-                        }
-                    });
-                },
-                select: function(event, ui) {
-                    // Lorsque l'utilisateur sélectionne un indicateur
-                    $("#indicateur-search2").val(ui.item.label);  // Afficher l'indicateur sélectionné
-                     // Appeler loadRegions() après la sélection de l'indicateur
-                     loadRegions();
-                    return false;
-                }
-            });
-        });
-
-
-        // Fonction pour charger les régions en fonction de l'indicateur sélectionné
-        function loadRegions() {
-            const indicateur = document.getElementById('indicateur2').value;
-            const regionSelect = document.getElementById('region');
+<script>
+    let totalBirths = 0;  // Variable pour accumuler les naissances
+    let birthDataSeries = [];  // Tableau pour stocker la série de données
+    
+    // Fonction pour mettre à jour la box avec la nouvelle valeur formatée
+    // Fonction pour mettre à jour la box avec la nouvelle valeur formatée
+function updateBirthsBox() {
+    fetch('/births_data') // Appelle l'API Flask pour obtenir les données
+        .then(response => response.json())
+        .then(data => {
+            totalBirths = data.total_births; // Met à jour avec la valeur totale
             
-            // Réinitialiser les régions
-            regionSelect.innerHTML = '<option value="">Sélectionner une région</option>';
+            // Formate la valeur avec un séparateur de milliers (par exemple, "1 234 567" en français)
+            let formattedBirths = totalBirths.toLocaleString('fr-FR');
+        
+        
+            // Formatage de la date
+            const date = new Date(data.time * 1000); // Convertir le timestamp en objet Date
+            const day = String(date.getDate()).padStart(2, '0'); // Obtenir le jour
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Obtenir le mois (0-indexé)
+            const year = date.getFullYear(); // Obtenir l'année
+            const hours = String(date.getHours()).padStart(2, '0'); // Obtenir l'heure
+            const minutes = String(date.getMinutes()).padStart(2, '0'); // Obtenir les minutes
+            
+            // Créer la chaîne de date formatée
+            const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}`;
+            const dateBox = document.getElementById('dateBox');
+            dateBox.textContent = formattedDate; // Mettre à jour l'élément HTML avec la date formatée
 
-            if (indicateur) {
-                fetch(`/get_regions?indicateur=${indicateur}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        regionSelect.disabled = false;
-                        data.forEach(region => {
-                            const option = document.createElement('option');
-                            option.value = region;
-                            option.text = region;
-                            regionSelect.appendChild(option);
-                        });
-                    });
-            } else {
-                regionSelect.disabled = true;
-            }
-        }
-     // Fonction pour charger les départements en fonction de la région
-     function loadDepartements() {
-        const region = document.getElementById('region').value;
-        const departementSelect = document.getElementById('departement');
-        const sousPrefectureSelect = document.getElementById('sous_prefecture');
-
-        // Réinitialiser le département et la sous-préfecture
-        departementSelect.innerHTML = '<option value="">Sélectionner un département</option>';
-        sousPrefectureSelect.innerHTML = '<option value="">Sélectionner une sous-préfecture</option>';
-        sousPrefectureSelect.disabled = true;
-
-        if (region) {
-            fetch(`/get_departements?region=${region}`)
-                .then(response => response.json())
-                .then(data => {
-                    departementSelect.disabled = false;
-                    data.forEach(departement => {
-                        const option = document.createElement('option');
-                        option.value = departement;
-                        option.text = departement;
-                        departementSelect.appendChild(option);
-                    });
-                });
-        } else {
-            departementSelect.disabled = true;
-            sousPrefectureSelect.disabled = true;
-        }
-    }
-
-    // Fonction pour charger les sous-préfectures en fonction du département
-    function loadSousPrefectures() {
-        const departement = document.getElementById('departement').value;
-        const sousPrefectureSelect = document.getElementById('sous_prefecture');
-
-        // Réinitialiser la sous-préfecture
-        sousPrefectureSelect.innerHTML = '<option value="">Sélectionner une sous-préfecture</option>';
-
-        if (departement) {
-            fetch(`/get_sous_prefectures?departement=${departement}`)
-                .then(response => response.json())
-                .then(data => {
-                    sousPrefectureSelect.disabled = false;
-                    data.forEach(sousPrefecture => {
-                        const option = document.createElement('option');
-                        option.value = sousPrefecture;
-                        option.text = sousPrefecture;
-                        sousPrefectureSelect.appendChild(option);
-                    });
-                });
-        } else {
-            sousPrefectureSelect.disabled = true;
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-        // Récupérer les données des régions en toute sécurité depuis json_script
-        var regionsCoords = {{ coord_list|tojson }};
-
-        // Afficher les coordonnées dans la console pour vérifier
-        console.log('Coordonnées des régions:', regionsCoords);
-
-        // Initialiser le canvas
-        var canvas = document.getElementById("mapCanvas");
-        var ctx = canvas.getContext("2d");
-
-        // Définir les dimensions du canvas
-        canvas.width = window.innerWidth;
-        canvas.height = 500;
-
-        // Fonction pour ajuster les coordonnées aux dimensions du canvas
-        function adjustCoordinates(coords) {
-            var scale = 3000; // Échelle pour rendre la carte visible
-            var offsetX = canvas.width / 2; // Centre horizontal
-            var offsetY = canvas.height / 2; // Centre vertical
-
-            return coords.map(function(coord) {
-                return [coord[0] * scale + offsetX, -coord[1] * scale + offsetY]; // Inverser l'axe Y
-            });
-        }
-
-        // Fonction pour dessiner une région
-        function drawRegion(coords) {
-            ctx.beginPath();
-            var adjustedCoords = adjustCoordinates(coords);
-
-            // Début du tracé
-            ctx.moveTo(adjustedCoords[0][0], adjustedCoords[0][1]);
-
-            // Tracer les lignes entre les points
-            for (var i = 1; i < adjustedCoords.length; i++) {
-                ctx.lineTo(adjustedCoords[i][0], adjustedCoords[i][1]);
-            }
-
-            ctx.closePath();
-            ctx.stroke(); // Dessiner la bordure
-            ctx.fillStyle = 'rgba(0, 150, 0, 0.5)'; // Couleur de remplissage
-            ctx.fill(); // Remplir la région
-        }
-
-        // Dessiner toutes les régions
-        regionsCoords.forEach(function(coords) {
-            drawRegion(coords);
+            // Appliquer des styles directement à l'élément dateBox
+            dateBox.style.fontStyle = 'italic';
+            dateBox.style.color = '#49655A';
+            dateBox.style.fontSize = '12px';
+            dateBox.style.fontWeight = 'bold';
+            dateBox.style.fontFamily = "'Montserrat', sans-serif";
+        })
+        .catch(error => {
+            console.error('Erreur lors de la récupération des données :', error);
+            document.getElementById('birthsBox').textContent = '-'; // Valeur par défaut en cas d'erreur
+            document.getElementById('dateBox').textContent = '-'; // Valeur par défaut pour la date en cas d'erreur
         });
+}
+    
+    // Mettre à jour toutes les secondes
+    setInterval(updateBirthsBox, 1000);
+</script>
+<!-- Pour la représentation de la carte de la Côte d'Ivoire -->
+<script>
+    const indicatorTitles = {
+        "Rapport de Masculinité (RM) en %": "Cartographie du rapport de masculinité en 2021",
+        "Taux de divortialité (%)": "Répartition du taux de divortialité en 2021",
+        "Nombre de Classes au primaire": "Répartition spatiale des classes du primaire en 2021",
+        "Nombre de cas de grossesses": "Répartition des grossesses en 2021",
+        "Nombre de Centre antituberculeux": "Couverture de centres antituberculeux en 2021",
+        "Nombre de Chirurgiens": "Répartition des chirurgiens par région en 2021",
+        "Nombre de lits des d'infirmeries privés": "Répartition des lits en infirmeries privées en 2021",
+        "Nombre d'évacuations après Accouchement": "Carte des évacuations post-accouchement en 2021",
+        "Population": "Cartographie de la population en 2021"
+    };
+    
+    // Dimensions de la carte
+    const width = 800, height = 500;
+
+    // Créer une projection géographique pour la Côte d'Ivoire
+    const projection = d3.geoMercator()
+        .center([-5.547080, 7.539989]) // Centre sur la Côte d'Ivoire
+        .scale(4000)
+        .translate([width / 2, height / 2]);
+
+    // Générateur de chemins pour les polygones
+    const path = d3.geoPath().projection(projection);
+
+    // Ajouter un SVG pour la carte
+    const svg = d3.select("#map")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    // Ajouter un groupe pour le titre et la légende à droite
+    const legendGroup = svg.append("g")
+        .attr("class", "legend-group")
+        .attr("transform", `translate(${650 - 20}, 350)`);
+
+    // Ajouter le titre
+
+
+    // Variable pour suivre l'indicateur sélectionné
+    let selectedIndicator = "Population"; // Par défaut
+    let colorScale;
+// Fonction pour mettre à jour la carte
+function updateMap(data, indicator) {
+    // Récupérer toutes les valeurs de l'indicateur pour définir le domaine
+    const values = data.features
+        .map(d => d.properties[indicator])
+        .filter(v => v !== undefined && v !== null);
+    
+    const minValue = d3.min(values) || 0; // Valeur par défaut si pas de données
+    const maxValue = d3.max(values) || 100; // Valeur par défaut si pas de données
+
+    // Mettre à jour l'échelle de couleur
+    colorScale = d3.scaleLinear()
+        .domain([minValue, maxValue])
+        .range(["hsla(91, 35%, 22%, 0.1)", "#49655A"]);
+
+    // Mettre à jour les couleurs des régions
+    svg.selectAll(".region")
+        .attr("fill", d => {
+            const value = d.properties[indicator];
+            return value !== undefined && value !== null ? colorScale(value) : "#ccc"; // Gris si pas de valeur
+        });
+
+    // Mettre à jour la légende
+    updateLegend(minValue, maxValue, indicator);
+}
+
+// Fonction pour mettre à jour la légende
+// Fonction pour mettre à jour la légende
+function updateLegend(minValue, maxValue, indicator) {
+    const legendWidth = 150; // Largeur de la barre de légende
+    const legendScale = d3.scaleLinear()
+        .domain([minValue, maxValue])
+        .range([0, legendWidth]);
+
+    const legendAxis = d3.axisBottom(legendScale)
+        .ticks(5)
+        .tickFormat(d3.format(".2s")); // Format plus compact (par ex. 1M au lieu de 1000000)
+
+    // Supprimer l'ancienne légende
+    legendGroup.select(".legend").remove();
+
+    // Supprimer l'ancien titre s'il existe
+    svg.select(".title").remove();
+
+    // Déterminer le titre correspondant à l'indicateur
+    const titleText = indicatorTitles[indicator] || `Cartographie ${indicator} en 2021`;
+
+    // Ajouter ou mettre à jour le titre dans le groupe SVG
+    svg.append("text")
+        .attr("class", "title")
+        .attr("x", svg.attr("width") / 1.75)  // Centre horizontalement
+        .attr("y", 15)  // Ajuster la position verticale
+        .attr("text-anchor", "middle")  // Centrer le texte
+        .style("font-size", "18px")  // Taille du texte
+        .style("font-weight", "bold")  // Texte en gras
+        .style("fill", "black")  // Couleur du texte
+        .text(titleText);
+
+    // Ajouter une nouvelle légende
+    const legend = legendGroup.append("g")
+        .attr("class", "legend")
+        .attr("transform", "translate(0, 40)");
+
+    // Vérifier si le dégradé existe, sinon le créer
+    let gradient = svg.select("defs").select("#gradient");
+    if (gradient.empty()) {
+        gradient = svg.append("defs")
+            .append("linearGradient")
+            .attr("id", "gradient")
+            .attr("x1", "0%").attr("y1", "0%")
+            .attr("x2", "100%").attr("y2", "0%");
+    }
+    gradient.selectAll("stop").remove();
+    gradient.append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", "hsla(91, 35%, 22%, 0.1)");
+    gradient.append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color", "#49655A");
+
+    // Rectangle de légende
+    legend.append("rect")
+        .attr("width", legendWidth)
+        .attr("height", 10)
+        .style("fill", "url(#gradient)")
+        .style("stroke", "#999") // Bordure légère pour mieux délimiter
+        .style("stroke-width", "0.5");
+
+    // Axe de la légende
+    legend.append("g")
+        .attr("transform", "translate(0, 10)")
+        .call(legendAxis)
+        .selectAll("text")
+        .style("font-size", "10px"); // Taille de texte ajustée
+
+    // Afficher les informations sur la population uniquement si l'indicateur est 'Population'
+    if (indicator === 'Population') {
+        // Ajouter le texte Hommes
+        legend.append("text")
+            .attr("x", 0)  // Position horizontale du texte
+            .attr("y", 45)  // Position verticale du texte (ajustez selon vos besoins)
+            .style("font-size", "12px")  // Taille du texte
+            .style("font-weight", "bold")
+            .style("fill", "black")  // Couleur du texte
+            .text("Hommes: 15 344 990");
+
+        // Ajouter le texte Femmes
+        legend.append("text")
+            .attr("x", 0)  // Position horizontale du texte
+            .attr("y", 60)  // Position verticale du texte (ajustez selon vos besoins)
+            .style("font-size", "12px")  // Taille du texte
+            .style("font-weight", "bold")
+            .style("fill", "black")  // Couleur du texte
+            .text("Femmes: 14 044 160");
+
+        // Ajouter le texte Total
+        legend.append("text")
+            .attr("x", 0)  // Position horizontale du texte
+            .attr("y", 75)  // Position verticale du texte (ajustez selon vos besoins)
+            .style("font-size", "12px")  // Taille du texte
+            .style("font-weight", "bold")
+            .style("fill", "black")  // Couleur du texte
+            .text("Total: 29 389 150");
+    }
+}
+
+    // Charger les données GeoJSON
+    d3.json("static/carte/populations_updated.json").then(function(geojsonData) {
+        // Dessiner les régions
+        svg.selectAll(".region")
+            .data(geojsonData.features)
+            .enter().append("path")
+            .attr("class", "region")
+            .attr("d", path)
+            .style("cursor", "pointer")
+            .on("mouseover", function(event, d) {
+                const tooltip = d3.select("#tooltip");
+                const mapContainer = document.getElementById("map");
+                const mapRect = mapContainer.getBoundingClientRect();
+
+                const value = d.properties[selectedIndicator];
+                tooltip
+                    .style("display", "block")
+                    .html(`<strong>${d.properties.REGION}</strong><br>${selectedIndicator}: ${value !== undefined ? value.toLocaleString('fr-FR') : 'N/A'}`);
+
+                const offsetX = 10;
+                const offsetY = -10;
+                tooltip
+                    .style("left", (event.clientX - mapRect.left + offsetX) + "px")
+                    .style("top", (event.clientY - mapRect.top + offsetY) + "px");
+            })
+            .on("mouseout", function() {
+                d3.select("#tooltip").style("display", "none");
+            })
+            .on("click", function(event, d) {
+                const region = d.properties.REGION;
+                window.location.href = `/region_vitrine/${region}`;
+            });
+
+        // Extraire les indicateurs disponibles (toutes les clés numériques possibles)
+        const sampleProperties = geojsonData.features[0].properties;
+        const indicators = Object.keys(sampleProperties).filter(key => 
+            typeof sampleProperties[key] === 'number' && key !== 'Année'
+        );
+
+        // Générer la liste des indicateurs
+        const indicatorList = d3.select("#indicators")
+            .selectAll("li")
+            .data(indicators)
+            .enter()
+            .append("li")
+            .text(d => d)
+            .on("click", function(event, indicator) {
+                // Mettre à jour l'indicateur sélectionné
+                selectedIndicator = indicator;
+
+                // Mettre en évidence l'indicateur actif
+                indicatorList.classed("active", false);
+                d3.select(this).classed("active", true);
+
+                // Mettre à jour la carte
+                updateMap(geojsonData, indicator);
+            });
+
+        // Initialiser avec "Population" comme actif
+        indicatorList.filter(d => d === "Population").classed("active", true);
+        updateMap(geojsonData, "Population");
+    });
+</script>
+<!-- Autocompletion pour les indicateurs non trouvés-->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("search-input");
+        const suggestionsContainer = document.getElementById("suggestions");
+        const regionList = document.querySelector(".region-list");
+        let isSuggestionsActive = false; // Drapeau pour suivre l'état des suggestions
+    
+        searchInput.addEventListener("input", function () {
+            const query = searchInput.value.trim();
+            if (query.length < 2) {
+                suggestionsContainer.innerHTML = "";
+                isSuggestionsActive = false;
+                return;
+            }
+    
+            fetch(`/autocomplete?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestionsContainer.innerHTML = "";
+                    if (data.length > 0) {
+                        data.forEach(item => {
+                            const div = document.createElement("div");
+                            div.textContent = item;
+                            div.onclick = function () {
+                                searchInput.value = item;
+                                suggestionsContainer.innerHTML = "";
+                                isSuggestionsActive = false;
+                                window.location.href = `/search_indicators2/${encodeURIComponent(item)}`;
+                            };
+                            suggestionsContainer.appendChild(div);
+                        });
+                        isSuggestionsActive = true; // Suggestions actives
+                    } else {
+                        isSuggestionsActive = false;
+                    }
+                });
+        });
+    
+        // Garder les suggestions visibles si le curseur est dessus
+        suggestionsContainer.addEventListener("mouseover", function () {
+            isSuggestionsActive = true;
+        });
+    
+        suggestionsContainer.addEventListener("mouseout", function (event) {
+            if (!searchInput.contains(event.relatedTarget)) {
+                isSuggestionsActive = false;
+            }
+        });
+    
+        // Masquer les suggestions uniquement si le clic est hors de tout élément pertinent
+        document.addEventListener("click", function (event) {
+            if (
+                !searchInput.contains(event.target) &&
+                !suggestionsContainer.contains(event.target) &&
+                !regionList.contains(event.target)
+            ) {
+                suggestionsContainer.innerHTML = "";
+                isSuggestionsActive = false;
+            }
+        });
+    });
+</script>
+
+<script>
+      
+        function formatDate(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
+    
+        // Get today's date
+        const today = new Date();
+        const formattedToday = formatDate(today);
+    
+     // Update the birth date range with a class for italic
+document.getElementById('birthDateRange').innerHTML = `<span class="italic-text">Du 01-01-2025 au ${formattedToday}</span>`;
+
+// Update the death date range with a class for italic
+document.getElementById('deathDateRange').innerHTML = `<span class="italic-text">Du 01-01-2025 au ${formattedToday}</span>`;
+
+        // Fonction pour mettre en surbrillance une région
+// Fonction pour mettre en surbrillance une région
+
+    </script>
+    <script>
+        // Fonction pour mettre en surbrillance une région
+function highlightRegion(regionName) {
+    svg.selectAll(".region")
+        .attr("fill", d => colorScale(d.properties.Population))
+        .attr("stroke", "none");
+
+    svg.selectAll(".region")
+        .filter(d => d.properties.REGION === regionName)
+        .attr("fill", "#F39323")
+        .attr("stroke", "#000000")
+        .attr("stroke-width", 2);
+}
+
+// Fonction pour réinitialiser la surbrillance
+function resetRegionHighlight(event) {
+    const suggestionsContainer = document.getElementById("suggestions");
+    // Ne réinitialise pas si les suggestions sont actives ou si le curseur va vers elles
+    if (
+        window.isSuggestionsActive || 
+        (event && suggestionsContainer.contains(event.relatedTarget))
+    ) {
+        return;
+    }
+    svg.selectAll(".region")
+        .attr("fill", d => colorScale(d.properties.Population))
+        .attr("stroke", "none");
+}
     </script>
     
 </body>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aucune donnée disponible</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/no_data.css') }}">
+</head>
+<body>
+    <div class="no-data-container">
+        <h1>Aucune donnée disponible</h1>
+        <p>Veuillez prendre attache avec le service accueil pour plus de détail.</p>
+        <a href="{{ url_for('list_regions') }}" class="back-button">Retour</a>
+    </div>
+</body>
+</html>
+

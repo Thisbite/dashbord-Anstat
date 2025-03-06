@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base de données des statistiques régionales</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/publications.css') }}">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <!-- Header (unchanged for brevity) -->
+    <div class="header-title">
+        <h1><img src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="Logo" class="logo">Plateforme de données régionales {{region_name}}</h1>
+    </div>
+    <div class="header-secondary">
+        <div class="nav-links">
+            <a href="{{ url_for('list_regions') }}" class="logo-link">
+                <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" style="width: 50px; height: auto;">
+            </a>
+            <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
+            <a href="{{ url_for('publications_region') }}">Publications</a>
+        </div>
+        <div class="search-bar">
+            <form method="POST" action="{{ url_for('search') }}" onsubmit="return submitSearch();">
+                <input type="text" id="search-input" name="query" placeholder="Entrez votre recherche..." required autocomplete="off">
+                <div id="suggestions" class="suggestions-list"></div>
+                <button type="submit" id="search-button">Rechercher</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Publication Section -->
+     <!-- Publication Section -->
+     <div id="publicationSection">
+        <h3>Collection de publications</h3>
+        <div class="publication-grid">
+            {% for publication in publications %}
+                <div class="publication-card">
+                    <img src="{{ url_for('static', filename='img/' + publication.Nom_fichier_image) }}" alt="{{ publication.Publications }}" style="width:100%; height:200px;">
+                    <h3>{{ publication.Publications }}</h3>
+                    <p>{{ publication.Description }}</p>
+                    <a href="{{ url_for('publication_detail', title=publication.Publications|lower|replace(' ', '_')) }}" class="read-more">Voir plus</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchInput = document.getElementById("search-input");
+            const suggestionsContainer = document.getElementById("suggestions");
+            const regionList = document.querySelector(".region-list");
+            let isSuggestionsActive = false; // Drapeau pour suivre l'état des suggestions
+        
+            searchInput.addEventListener("input", function () {
+                const query = searchInput.value.trim();
+                if (query.length < 2) {
+                    suggestionsContainer.innerHTML = "";
+                    isSuggestionsActive = false;
+                    return;
+                }
+        
+                fetch(`/autocomplete?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestionsContainer.innerHTML = "";
+                        if (data.length > 0) {
+                            data.forEach(item => {
+                                const div = document.createElement("div");
+                                div.textContent = item;
+                                div.onclick = function () {
+                                    searchInput.value = item;
+                                    suggestionsContainer.innerHTML = "";
+                                    isSuggestionsActive = false;
+                                    window.location.href = `/search_indicatorsR/${encodeURIComponent(item)}`;
+                                };
+                                suggestionsContainer.appendChild(div);
+                            });
+                            isSuggestionsActive = true; // Suggestions actives
+                        } else {
+                            isSuggestionsActive = false;
+                        }
+                    });
+            });
+        
+            // Garder les suggestions visibles si le curseur est dessus
+            suggestionsContainer.addEventListener("mouseover", function () {
+                isSuggestionsActive = true;
+            });
+        
+            suggestionsContainer.addEventListener("mouseout", function (event) {
+                if (!searchInput.contains(event.relatedTarget)) {
+                    isSuggestionsActive = false;
+                }
+            });
+        
+            // Masquer les suggestions uniquement si le clic est hors de tout élément pertinent
+            document.addEventListener("click", function (event) {
+                if (
+                    !searchInput.contains(event.target) &&
+                    !suggestionsContainer.contains(event.target) &&
+                    !regionList.contains(event.target)
+                ) {
+                    suggestionsContainer.innerHTML = "";
+                    isSuggestionsActive = false;
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

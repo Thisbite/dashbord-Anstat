@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ publication_title }} - Détails</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/publications_detail.css') }}">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+</head>
+<body>
+    <!-- Header (unchanged for consistency) -->
+    <div class="header-title">
+        <h1><img src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="Logo" class="logo">Plateforme de données régionales {{ region_name }}</h1>
+    </div>
+    <div class="header-secondary">
+        <div class="nav-links">
+            <a href="{{ url_for('list_regions') }}" class="logo-link">
+                <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" style="width: 50px; height: auto;">
+            </a>
+            <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
+            <a href="{{ url_for('publications_region') }}">Publications</a>
+        </div>
+        <div class="search-bar">
+            <form method="POST" action="{{ url_for('search') }}" onsubmit="return submitSearch();">
+                <input type="text" id="search-input" name="query" placeholder="Entrez votre recherche..." required autocomplete="off">
+                <div id="suggestions" class="suggestions-list"></div>
+                <button type="submit" id="search-button">Rechercher</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Publication Details Section -->
+    <div class="publication-details">
+        <h2>{{ publication_title }}</h2>
+       <!-- <p><strong>Date d'édition:</strong> {{ publication_date }}</p>
+        <p><strong>Numéro:</strong> {{ publication_number }}</p>
+-->
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab('description')">Description</button>
+            <button class="tab-button" onclick="openTab('downloads')">Liste</button>
+           <!-- <button class="tab-button" onclick="openTab('others')">Autres</button>-->
+        </div>
+
+        <div class="tab-content active" id="description">
+            <p>{{ publication_description }}</p>
+        </div>
+        <div class="tab-content" id="downloads">
+            <p>Liste des fichiers téléchargeables :</p>
+            <ul>
+                {% if publication_title == 'COMPTES REGIONAUX' %}
+                    <li>
+                        <div class="download-item">
+                            <span class="download-name">Comptes Régionaux Annuels 2024</span>
+                            <div class="download-icons">
+                                <a href="{{ url_for('static', filename='pdf/comptes_regionaux.pdf') }}" download>
+                                    <i class="fas fa-file-pdf" style="color: #ff0000; margin-right: 5px;"></i> PDF
+                                </a>
+                                <a href="{{ url_for('static', filename='excel/comptes_regionaux.xlsx') }}" download>
+                                    <i class="fas fa-file-excel" style="color: #00ff00; margin-left: 10px;"></i> Excel
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                {% elif publication_title == 'Annuaire' %}
+                    <li>
+                        <div class="download-item">
+                            <span class="download-name">Annuaires Statistiques Régionaux 2025</span>
+                            <div class="download-icons">
+                                <a href="{{ url_for('static', filename='pdf/annuaires_statistiques.pdf') }}" download>
+                                    <i class="fas fa-file-pdf" style="color: #ff0000; margin-right: 5px;"></i> PDF
+                                </a>
+                                <a href="{{ url_for('static', filename='excel/annuaires_statistiques.xlsx') }}" download>
+                                    <i class="fas fa-file-excel" style="color: #00ff00; margin-left: 10px;"></i> Excel
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                {% elif publication_title == 'Fiches Synoptiques Régionales' %}
+                    <li>
+                        <div class="download-item">
+                            <span class="download-name">Fiches Synoptiques Régionales 2025</span>
+                            <div class="download-icons">
+                                <a href="{{ url_for('static', filename='pdf/fiches_synoptiques.pdf') }}" download>
+                                    <i class="fas fa-file-pdf" style="color: #ff0000; margin-right: 5px;"></i> PDF
+                                </a>
+                                <a href="{{ url_for('static', filename='excel/fiches_synoptiques.xlsx') }}" download>
+                                    <i class="fas fa-file-excel" style="color: #00ff00; margin-left: 10px;"></i> Excel
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                {% elif publication_title == 'Indice Harmonisé des Prix à la Consommation des Ménages de Décembre 2024' %}
+                    <li>
+                        <div class="download-item">
+                            <span class="download-name">IHPC Décembre 2024</span>
+                            <div class="download-icons">
+                                <a href="{{ url_for('static', filename='pdf/ihpc_decembre2024.pdf') }}" download>
+                                    <i class="fas fa-file-pdf" style="color: #ff0000; margin-right: 5px;"></i> PDF
+                                </a>
+                                <a href="{{ url_for('static', filename='excel/ihpc_decembre2024.xlsx') }}" download>
+                                    <i class="fas fa-file-excel" style="color: #00ff00; margin-left: 10px;"></i> Excel
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                {% elif publication_title == 'Indice du Chiffre d’Affaires dans le Commerce Décembre 2024' %}
+                    <li>
+                        <div class="download-item">
+                            <span class="download-name">Commerce Décembre 2024</span>
+                            <div class="download-icons">
+                                <a href="{{ url_for('static', filename='pdf/commerce_decembre2024.pdf') }}" download>
+                                    <i class="fas fa-file-pdf" style="color: #ff0000; margin-right: 5px;"></i> PDF
+                                </a>
+                                <a href="{{ url_for('static', filename='excel/commerce_decembre2024.xlsx') }}" download>
+                                    <i class="fas fa-file-excel" style="color: #00ff00; margin-left: 10px;"></i> Excel
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="tab-content" id="others">
+            <p>Autres informations utiles sur cette publication, telles que des liens vers des études complémentaires ou des données connexes...</p>
+        </div>
+
+        <button class="back-button" onclick="window.location.href='{{ url_for('publications_region') }}'">Retour aux publications</button>
+    </div>
+
+    <script>
+        function openTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+
+            // Remove active class from all buttons
+            const tabButtons = document.getElementsByClassName('tab-button');
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('active');
+            }
+
+            // Show the selected tab content and mark button as active
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Set default tab on page load
+        window.onload = function() {
+            openTab('description');
+        };
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchInput = document.getElementById("search-input");
+            const suggestionsContainer = document.getElementById("suggestions");
+            const regionList = document.querySelector(".region-list");
+            let isSuggestionsActive = false; // Drapeau pour suivre l'état des suggestions
+        
+            searchInput.addEventListener("input", function () {
+                const query = searchInput.value.trim();
+                if (query.length < 2) {
+                    suggestionsContainer.innerHTML = "";
+                    isSuggestionsActive = false;
+                    return;
+                }
+        
+                fetch(`/autocomplete?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestionsContainer.innerHTML = "";
+                        if (data.length > 0) {
+                            data.forEach(item => {
+                                const div = document.createElement("div");
+                                div.textContent = item;
+                                div.onclick = function () {
+                                    searchInput.value = item;
+                                    suggestionsContainer.innerHTML = "";
+                                    isSuggestionsActive = false;
+                                    window.location.href = `/search_indicatorsR/${encodeURIComponent(item)}`;
+                                };
+                                suggestionsContainer.appendChild(div);
+                            });
+                            isSuggestionsActive = true; // Suggestions actives
+                        } else {
+                            isSuggestionsActive = false;
+                        }
+                    });
+            });
+        
+            // Garder les suggestions visibles si le curseur est dessus
+            suggestionsContainer.addEventListener("mouseover", function () {
+                isSuggestionsActive = true;
+            });
+        
+            suggestionsContainer.addEventListener("mouseout", function (event) {
+                if (!searchInput.contains(event.relatedTarget)) {
+                    isSuggestionsActive = false;
+                }
+            });
+        
+            // Masquer les suggestions uniquement si le clic est hors de tout élément pertinent
+            document.addEventListener("click", function (event) {
+                if (
+                    !searchInput.contains(event.target) &&
+                    !suggestionsContainer.contains(event.target) &&
+                    !regionList.contains(event.target)
+                ) {
+                    suggestionsContainer.innerHTML = "";
+                    isSuggestionsActive = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

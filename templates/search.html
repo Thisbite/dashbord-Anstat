@@ -3,48 +3,396 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau - Base de données régionale</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
-    <title>Moteur de Recherche</title>
+    <!-- Dépendances pour les téléchargements -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <!-- Police Poppins pour le CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-
-    <div class="header-secondary">
-        <div class="nav-links">
-            <a href="{{ url_for('list_regions') }}">Statistiques</a>
-            <a href="{{ url_for('search_boostrap') }}">Requête</a>
-            <a href="{{ url_for('domaines') }}">Domaines</a>
-            <a href="#connexion">Aide</a>
+    <header>
+        <div class="logo">
+            <a href="#"><span>Base de données</span> Régionale</a>
         </div>
+    </header>
 
-        <!-- Formulaire de recherche -->
-        <div class="search-bar">
-            <!--Utilisation de recherche
-     
-            <form action="{{ url_for('request_indicateur' ) }}" method="GET">
-                <input type="text" id="indicateur-search2" name="indicateur2" placeholder="Recherche indicateur..." required>
-                <button type="submit">Chercher</button>
-            </form>
-            -->
-            <form method="POST" action="{{ url_for('search_boostrap') }}">
-                <input type="text" name="query" placeholder="Entrez votre recherche..." required>
-                <button type="submit">Rechercher</button>
-            </form>
+    <div class="container">
+        <div class="header">
+            <h1 id="pdf-title">Tableau des Indicateurs</h1> <!-- Titre dynamique pour PDF -->
+        </div>
+        <div class="container-flex">
+            <div class="dimensions">
+                <h2>Niveau de désagrégation</h2>
+                <ul id="dimension-list">
+                    {% for colonne in colonne_valable %}
+                        <li class="draggable-item" draggable="true" data-column="{{ colonne }}">{{ colonne.capitalize() }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="tableaux">
+                <div class="drop-zones">
+                    <div id="droppable-area-rows" class="dropzone">
+                        <p>Glissez ici pour modalités en ligne</p>
+                    </div>
+                    <div id="droppable-area-cols" class="dropzone">
+                        <p class="vertical">Glissez ici pour modalités en colonne</p>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button id="download-xlsx">Télécharger en Excel</button>
+                    <button id="download-csv">Télécharger en CSV</button>
+                    <button id="download-pdf">Télécharger en PDF</button>
+                    <button>Voir Métadonnées</button>
+                </div>
+                <div id="filter-container"></div> <!-- Conteneur pour les filtres -->
+                <div id="table-container"></div> <!-- Conteneur pour le tableau -->
+            </div>
+        </div>
+    </div>
 
-      <!-- Barre de flash infos -->
-    
-    </div>
-  
-    </div>
+    <script>
+        const draggableItems = document.querySelectorAll('.draggable-item');
+        const droppableAreaRows = document.getElementById('droppable-area-rows');
+        const droppableAreaCols = document.getElementById('droppable-area-cols');
+        const tableContainer = document.getElementById('table-container');
+        const filterContainer = document.getElementById('filter-container');
 
-    
-    
-    
-<div class="container">
-        <h1>Recherche d'indicateur</h1>
-        <form method="POST" action="/search">
-            <input type="text" name="query" placeholder="Entrez votre recherche..." required>
-            <button type="submit">Rechercher</button>
-        </form>
-    </div>
+        const rowColumns = [];
+        const colColumns = [];
+        const rowColumnsSet = new Set();
+        const colColumnsSet = new Set();
+        let tableData = [];
+        let filteredTableData = [];
+        const uniqueValuesCache = new Map();
+
+        draggableItems.forEach(item => item.addEventListener('dragstart', handleDragStart));
+        droppableAreaRows.addEventListener('dragover', handleDragOver);
+        droppableAreaRows.addEventListener('drop', event => handleDrop(event, 'row'));
+        droppableAreaCols.addEventListener('dragover', handleDragOver);
+        droppableAreaCols.addEventListener('drop', event => handleDrop(event, 'col'));
+
+        const debounce = (func, wait) => {
+            let timeout;
+            return (...args) => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func(...args), wait);
+            };
+        };
+        const debouncedSendColumns = debounce(sendColumnsToServer, 300);
+
+        function handleDragStart(event) {
+            event.dataTransfer.setData('text/plain', event.target.dataset.column);
+            event.target.classList.add('dragging');
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+        }
+
+        function handleDrop(event, type) {
+            event.preventDefault();
+            const column = event.dataTransfer.getData('text/plain');
+            const area = type === 'row' ? droppableAreaRows : droppableAreaCols;
+            const set = type === 'row' ? rowColumnsSet : colColumnsSet;
+            const list = type === 'row' ? rowColumns : colColumns;
+
+            if (!set.has(column)) {
+                list.push(column);
+                set.add(column);
+                addColumnToArea(column, area, list, type);
+                debouncedSendColumns();
+
+                // Masquer le placeholder si des éléments sont présents
+                const placeholder = area.querySelector('p');
+                if (placeholder) placeholder.style.display = 'none';
+
+                // Supprimer de la liste des dimensions
+                const originalItem = document.querySelector(`#dimension-list li[data-column="${column}"]`);
+                if (originalItem) originalItem.remove();
+            } else if (type === 'col') {
+                alert("Cette variable existe déjà...");
+            }
+        }
+
+        function addColumnToArea(column, area, columnList, type) {
+            const newItem = document.createElement('div');
+            newItem.classList.add('draggable-item');
+            newItem.textContent = column;
+            newItem.draggable = true;
+            newItem.dataset.column = column;
+            newItem.addEventListener('dragstart', handleDragStart);
+            newItem.addEventListener('dragend', () => {
+                const list = document.getElementById('dimension-list');
+                if (!list.querySelector(`li[data-column="${column}"]`)) {
+                    const li = document.createElement('li');
+                    li.classList.add('draggable-item');
+                    li.draggable = true;
+                    li.dataset.column = column;
+                    li.textContent = column;
+                    li.addEventListener('dragstart', handleDragStart);
+                    list.appendChild(li);
+                }
+                columnList.splice(columnList.indexOf(column), 1);
+                (type === 'row' ? rowColumnsSet : colColumnsSet).delete(column);
+                area.removeChild(newItem);
+                if (!area.querySelector('.draggable-item')) {
+                    area.querySelector('p').style.display = 'block';
+                }
+                debouncedSendColumns();
+            });
+            area.appendChild(newItem);
+        }
+
+        function sendColumnsToServer() {
+            fetch('/process_columns', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    row_columns: rowColumns,
+                    col_columns: colColumns,
+                    value_column: 'Valeur'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                tableData = data.data.map(row => {
+                    const rowData = {};
+                    data.columns.forEach((col, index) => rowData[col.join(' ')] = row[index]);
+                    return rowData;
+                });
+                tableData.columns = data.columns;
+                filteredTableData = [...tableData];
+                generateTable(data);
+                generateFilters();
+            })
+            .catch(error => console.error('Erreur:', error));
+        }
+
+        function generateTable(data) {
+            const fragment = document.createDocumentFragment();
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+            const columns = data.columns;
+            const columnKeys = columns.map(col => col.join(' '));
+            const levels = columns.length > 0 ? columns[0].length : 0;
+
+            for (let level = 0; level < levels; level++) {
+                const headerRow = document.createElement('tr');
+                let previousValue = null;
+                let colspan = 0;
+                columns.forEach((col, index) => {
+                    const currentValue = col[level];
+                    if (currentValue === previousValue) {
+                        colspan += 1;
+                    } else {
+                        if (colspan > 0) headerRow.lastChild.setAttribute('colspan', colspan);
+                        const th = document.createElement('th');
+                        th.textContent = currentValue || '';
+                        headerRow.appendChild(th);
+                        previousValue = currentValue;
+                        colspan = 1;
+                    }
+                    if (index === columns.length - 1 && colspan > 1) {
+                        headerRow.lastChild.setAttribute('colspan', colspan);
+                    }
+                });
+                thead.appendChild(headerRow);
+            }
+
+            data.data.forEach(row => {
+                const tr = document.createElement('tr');
+                columnKeys.forEach((key, index) => {
+                    const td = document.createElement('td');
+                    td.textContent = row[index] || ' ';
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+
+            table.appendChild(thead);
+            table.appendChild(tbody);
+            fragment.appendChild(table);
+            tableContainer.innerHTML = '';
+            tableContainer.appendChild(fragment);
+        }
+
+        const lastValidValues = {};
+        function generateFilters() {
+            filterContainer.innerHTML = '';
+            const allColumns = tableData.columns.map(col => col.join(' '));
+            const filterableColumns = allColumns.filter(col => !colColumns.some(c => col.includes(c)));
+
+            filterableColumns.forEach(col => {
+                const colKey = col;
+                let uniqueValues = uniqueValuesCache.get(colKey) || [...new Set(tableData.map(row => row[colKey] || ''))].filter(val => val !== undefined && val !== '');
+                uniqueValuesCache.set(colKey, uniqueValues);
+
+                const filterGroup = document.createElement('div');
+                filterGroup.classList.add('filter-group');
+
+                const filterTitle = document.createElement('div');
+                filterTitle.classList.add('filter-title');
+                filterTitle.innerHTML = `<span class="icon-orange">+</span> Filtrer sur ${col}`;
+                filterTitle.style.cursor = 'pointer';
+
+                const checkboxContainer = document.createElement('div');
+                checkboxContainer.classList.add('checkbox-container');
+                checkboxContainer.style.display = 'none';
+
+                filterTitle.addEventListener('click', () => {
+                    checkboxContainer.style.display = checkboxContainer.style.display === 'none' ? 'block' : 'none';
+                });
+
+                uniqueValues.forEach(value => {
+                    const checkboxWrapper = document.createElement('div');
+                    checkboxWrapper.style.display = 'flex';
+                  
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = value;
+                    checkbox.dataset.column = colKey;
+                    checkbox.addEventListener('change', applyFilters);
+
+                    const checkboxLabel = document.createElement('label');
+                    // Tronquer les valeurs longues pour éviter le débordement
+                    const truncatedValue = value.length > 20 ? value.substring(0, 17) + '...' : value;
+                    checkboxLabel.textContent = truncatedValue;
+                    checkboxLabel.title = value; // Afficher la valeur complète au survol
+
+                    checkboxWrapper.appendChild(checkbox);
+                    checkboxWrapper.appendChild(checkboxLabel);
+                    checkboxContainer.appendChild(checkboxWrapper);
+                });
+
+                filterGroup.appendChild(filterTitle);
+                filterGroup.appendChild(checkboxContainer);
+                filterContainer.appendChild(filterGroup);
+            });
+        }
+
+        function applyFilters() {
+            const filters = new Map();
+            filterContainer.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                const column = checkbox.dataset.column;
+                if (!filters.has(column)) filters.set(column, new Set());
+                filters.get(column).add(checkbox.value);
+            });
+
+            filteredTableData = tableData.filter(row => {
+                return [...filters].every(([column, values]) => {
+                    // Vérifier si la valeur existe dans la ligne pour cette colonne
+                    const rowValue = row[column];
+                    return values.has(rowValue);
+                });
+            });
+
+            console.log('Filtered Data:', filteredTableData); // Pour débogage
+
+            generateTable({
+                columns: tableData.columns,
+                data: filteredTableData.map(row => tableData.columns.map(col => row[col.join(' ')]))
+            });
+        }
+
+        function prepareExportData() {
+            const columnKeys = tableData.columns.map(col => col.join(' '));
+            return filteredTableData.map(row => columnKeys.map(key => row[key] || ''));
+        }
+
+        document.getElementById('download-xlsx').addEventListener('click', () => {
+            if (!filteredTableData.length) return alert("Aucune donnée sélectionnée.");
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet([]);
+            const columns = tableData.columns;
+            const levels = columns[0]?.length || 0;
+            let rowOffset = 0;
+            ws['!merges'] = [];
+
+            for (let level = 0; level < levels; level++) {
+                const headerRow = [];
+                let previousValue = null;
+                let colspanStartIndex = 0;
+                columns.forEach((col, index) => {
+                    const currentValue = col[level];
+                    if (currentValue !== previousValue) {
+                        if (previousValue !== null && index - colspanStartIndex > 1) {
+                            ws['!merges'].push({ s: { r: rowOffset, c: colspanStartIndex }, e: { r: rowOffset, c: index - 1 } });
+                        }
+                        headerRow.push(currentValue || '');
+                        previousValue = currentValue;
+                        colspanStartIndex = index;
+                    }
+                    if (index === columns.length - 1 && index - colspanStartIndex > 0) {
+                        ws['!merges'].push({ s: { r: rowOffset, c: colspanStartIndex }, e: { r: rowOffset, c: index } });
+                    }
+                });
+                XLSX.utils.sheet_add_aoa(ws, [headerRow], { origin: rowOffset });
+                rowOffset++;
+            }
+
+            XLSX.utils.sheet_add_aoa(ws, prepareExportData(), { origin: rowOffset });
+            XLSX.utils.book_append_sheet(wb, ws, 'Data');
+            XLSX.writeFile(wb, 'donnees_filtrees.xlsx');
+        });
+
+        document.getElementById('download-csv').addEventListener('click', () => {
+            if (!filteredTableData.length) return alert("Aucune donnée sélectionnée.");
+            const columns = tableData.columns;
+            const levels = columns[0]?.length || 0;
+            const headerRows = Array.from({ length: levels }, () => Array(columns.length).fill(''));
+            columns.forEach((col, colIndex) => col.forEach((value, levelIndex) => headerRows[levelIndex][colIndex] = value || ''));
+
+            const csvContent = [
+                ...headerRows,
+                ...prepareExportData()
+            ].map(row => row.map(value => typeof value === 'string' && (value.includes(',') || value.includes('"') || value.includes('\n')) ? `"${value.replace(/"/g, '""')}"` : value).join(',')).join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'donnees_filtrees.csv';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        document.getElementById('download-pdf').addEventListener('click', () => {
+            if (!filteredTableData.length) return alert("Aucune donnée sélectionnée.");
+            const { jsPDF } = window.jspdf;
+            const pageWidth = 210;
+            const columnWidths = tableData.columns.map(() => 30);
+            const totalWidth = columnWidths.reduce((sum, width) => sum + width, 0);
+            const orientation = totalWidth > pageWidth ? 'landscape' : 'portrait';
+            const doc = new jsPDF({ orientation });
+
+            const availablePageWidth = orientation === 'landscape' ? 297 - 20 : 210 - 20;
+            const adjustedColumnWidths = columnWidths.map(width => (width / totalWidth) * availablePageWidth);
+
+            const pdfTitle = document.getElementById('pdf-title').textContent.trim();
+            doc.setFontSize(16);
+            doc.text(pdfTitle, 10, 15);
+
+            doc.autoTable({
+                startY: 25,
+                head: [tableData.columns],
+                body: prepareExportData(),
+                theme: 'grid',
+                headStyles: { fillColor: [0, 107, 69], textColor: [255, 153, 0], fontStyle: 'bold' },
+                bodyStyles: { fontSize: 10, cellPadding: 2, halign: 'center' },
+                alternateRowStyles: { fillColor: [245, 245, 245] },
+                margin: { left: 10, right: 10 },
+                columnStyles: tableData.columns.reduce((acc, _, index) => {
+                    acc[index] = { cellWidth: adjustedColumnWidths[index] || 'auto' };
+                    return acc;
+                }, {})
+            });
+            doc.save(`donnees_filtrees_${orientation}.pdf`);
+        });
+    </script>
 </body>
 </html>
