@@ -1,195 +1,130 @@
-from mysql.connector import Error
-import config as cf 
 import pandas as pd
+from dotenv import load_dotenv
+import os
+import pandas as pd
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from elasticsearch import Elasticsearch
+from models import db, Region, IndicateurV2, V1Indicateur, Indicateur, DirectionStatistique  # Importer les modèles
 
+from sqlalchemy import create_engine, func
+from sqlalchemy.orm import sessionmaker
+from models import Region, Indicateur, V1Indicateur  # Importez vos modèles SQLAlchemy ici
+import config as cf
+from dotenv import load_dotenv
+load_dotenv()
+
+# Utiliser les variables d'environnement pour MySQL
+host = os.getenv('MYSQL_HOST')
+database = os.getenv('MYSQL_DATABASE')
+user = os.getenv('MYSQL_USER')
+password = os.getenv('MYSQL_PASSWORD')
+# Création de la session SQLAlchemy
+engine = create_engine(
+    f"mysql+pymysql://{user}:{password}@{host}/{database}"
+)
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Récupérer les régions sous forme de liste
 def options_regions():
     try:
-        with cf.create_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT nom_region FROM Region ORDER BY nom_region ASC")
-            # Récupérer les résultats sous forme de liste de tuples
-            regions = cursor.fetchall()
-    except Error as e:
-        print(f"Database error: {e}")
-        return []
+        # Récupérer les noms des régions avec SQLAlchemy
+        regions = session.query(Region.nom_region).order_by(Region.nom_region.asc()).all()
+        return [region[0] for region in regions]  # Liste des régions
     except Exception as e:
-        print(f"Exception in options_regions: {e}")
+        print(f"Erreur lors de la récupération des régions : {e}")
         return []
-    
-    regions=[row[0] for row in regions]
-    return regions
 
-
-
-#  La liste des indicateurs
+# Récupérer les indicateurs sous forme de liste triée
 def options_indicateur():
     try:
-        with cf.create_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT indicateur FROM indicateur_v2 ")
-            # Récupérer les résultats sous forme de liste de tuples
-            indicateurs = cursor.fetchall()
-    except Error as e:
-        print(f"Database error: {e}")
-        return []
+        # Récupérer les indicateurs avec SQLAlchemy
+        indicateurs = session.query(Indicateur.indicateur).all()
+        return sorted([indicateur[0] for indicateur in indicateurs])  # Liste triée
     except Exception as e:
-        print(f"Exception in options_regions: {e}")
+        print(f"Erreur lors de la récupération des indicateurs : {e}")
         return []
-    
-    indicateurs =sorted([row[0] for row in indicateurs ])
-    return indicateurs 
 
-
-
-# Obtenir la définition associé à l'indicateur
-# La fonction pour obtenir la définition en fonction de l'indicateur
+# Obtenir la définition d'un indicateur choisi
 def definition_indicateur(indicateur_choisi):
     try:
-        with cf.create_connection() as conn:
-            cursor = conn.cursor()
-            indicateur_choisi = indicateur_choisi.strip().lower()
-            # Requête pour obtenir la définition de l'indicateur choisi
-            query = "SELECT definitions FROM indicateur_v2 WHERE indicateur = %s"
-            cursor.execute(query, (indicateur_choisi,))
-            # Récupérer le résultat
-            result = cursor.fetchone()
-            if result:
-                return result[0]  # Retourne la définition si elle existe
-            else:
-                return f"Définition pour l'indicateur '{indicateur_choisi}' non trouvée."
-    except Error as e:
-        print(f"Database error: {e}")
-        return None
+        # Requête pour récupérer la définition de l'indicateur
+        result = session.query(Indicateur.definitions).filter(func.lower(Indicateur.indicateur) == indicateur_choisi.lower()).first()
+        if result:
+            return result[0]  # Retourne la définition
+        else:
+            return f"Définition pour l'indicateur '{indicateur_choisi}' non trouvée."
     except Exception as e:
-        print(f"Exception in definition_indicateur: {e}")
+        print(f"Erreur lors de la récupération de la définition : {e}")
         return None
 
-
-#Mode de calcul:
+# Obtenir le mode de calcul d'un indicateur choisi
 def mode_calcul_indicateur(indicateur_choisi):
     try:
-        with cf.create_connection() as conn:
-            cursor = conn.cursor()
-            indicateur_choisi = indicateur_choisi.strip().lower()
-            # Requête pour obtenir la définition de l'indicateur choisi
-            query = "SELECT  mode_calcul FROM indicateur_v2 WHERE indicateur = %s"
-            cursor.execute(query, (indicateur_choisi,))
-            # Récupérer le résultat
-            result = cursor.fetchone()
-            if result:
-                return result[0]  # Retourne la définition si elle existe
-            else:
-                return f"Mode de calcul pour l'indicateur '{indicateur_choisi}' non trouvée."
-    except Error as e:
-        print(f"Database error: {e}")
-        return None
+        # Requête pour récupérer le mode de calcul de l'indicateur
+        result = session.query(Indicateur.mode_calcul).filter(func.lower(Indicateur.indicateur) == indicateur_choisi.lower()).first()
+        if result:
+            return result[0]  # Retourne le mode de calcul
+        else:
+            return f"Mode de calcul pour l'indicateur '{indicateur_choisi}' non trouvé."
     except Exception as e:
-        print(f"Exception in definition_indicateur: {e}")
+        print(f"Erreur lors de la récupération du mode de calcul : {e}")
         return None
 
-
-
+# Charger des données depuis un fichier CSV
 def get_data(filepath):
-    df = pd.read_csv(filepath, sep=',')
-    return df
+    try:
+        df = pd.read_csv(filepath, sep=',')
+        return df
+    except Exception as e:
+        print(f"Erreur lors du chargement du fichier CSV : {e}")
+        return pd.DataFrame()  # Retourner un DataFrame vide en cas d'erreur
 
-
-def get_data_from_mysql():
-    # Configurer les informations de connexion à la base de données MySQL
-    conn = cf.create_connection()
-    # Requête SQL pour sélectionner toutes les données
-    query = "SELECT * FROM valeur_indicateur_libelle_ok"
-    # Charger les données dans un DataFrame pandas
-    df = pd.read_sql(query, conn)
-
-    # Fermer la connexion
-    conn.close()
-
-    return df
-
+# Récupérer des données depuis MySQL pour V1_indicateur
 def get_data_from_mysql_V1():
-    # Configurer les informations de connexion à la base de données MySQL
-    conn = cf.create_connection()
-    # Requête SQL pour sélectionner toutes les données
-    query = "SELECT Dimension,Modalites,Indicateurs,Annee,Valeur FROM V1_indicateur"
-    # Charger les données dans un DataFrame pandas
-    df = pd.read_sql(query, conn)
+    try:
+        # Requête pour récupérer les données depuis V1_indicateur
+        query = session.query(V1Indicateur.Dimension, V1Indicateur.Modalites, V1Indicateur.Indicateurs, V1Indicateur.Annee, V1Indicateur.Valeur)
+        df = pd.read_sql(query.statement, engine)
+        return df
+    except Exception as e:
+        print(f"Erreur lors de la récupération des données MySQL : {e}")
+        return pd.DataFrame()  # Retourner un DataFrame vide en cas d'erreur
 
-    # Fermer la connexion
-    conn.close()
-
-    return df
-
+# Récupérer des données depuis MySQL pour une région spécifique
 def get_data_from_mysql_VR(region_name):
     try:
-        # Configurer les informations de connexion à la base de données MySQL
-        conn = cf.create_connection()  # Je suppose que cf est votre module de configuration
-        
-        # Requête SQL avec paramètre sécurisé
-        query = """
-            SELECT Dimension, Modalites, Indicateurs, Annee, Valeur 
-            FROM V1_indicateur 
-            WHERE Region = %s
-        """
-        
-        # Charger les données dans un DataFrame pandas avec le paramètre region_name
-        df = pd.read_sql(query, conn, params=(region_name,))
-        
+        # Requête pour récupérer les données filtrées par région
+        query = session.query(V1Indicateur.Dimension, V1Indicateur.Modalites, V1Indicateur.Indicateurs, V1Indicateur.Annee, V1Indicateur.Valeur).filter(V1Indicateur.Region == region_name)
+        df = pd.read_sql(query.statement, engine)
         return df
-    
-    except mysql.connector.Error as e:
-        print(f"Erreur lors de la connexion à MySQL: {e}")
-        return None
-    
-    finally:
-        # Fermer la connexion même en cas d'erreur
-        if conn.is_connected():
-            conn.close()
+    except Exception as e:
+        print(f"Erreur lors de la récupération des données pour la région {region_name}: {e}")
+        return pd.DataFrame()  # Retourner un DataFrame vide en cas d'erreur
 
-
-# Pour la nouvelle base de données 
+# Insérer des données depuis un fichier Excel dans la base de données
 def insert_data_from_excel(file_path):
-    # Charger le fichier Excel dans un DataFrame pandas
-    df = pd.read_excel(file_path)
-    # Renommer les colonnes si elles contiennent des accents ou espaces
-    df.columns = ['Dimension', 'Modalites', 'Indicateurs', 'Année', 'Valeur']
-    # Établir la connexion à la base de données
-    conn =cf.create_connection()
-    if conn is None:
-        print("Connexion échouée. Impossible d'insérer les données.")
-        return
     try:
-        cursor = conn.cursor()
-        # Requête d'insertion
-        insert_query = """
-        INSERT INTO V1_indicateur (Dimension, Modalites, Indicateurs, Annee, Valeur)
-        VALUES (%s, %s, %s, %s, %s)
-        """
-        # Insérer chaque ligne du DataFrame dans la table
-        for _, row in df.iterrows():
-            cursor.execute(insert_query, (
-                row['Dimension'],
-                row['Modalites'],
-                row['Indicateurs'],
-                row['Année'],
-                row['Valeur']
-            ))
+        df = pd.read_excel(file_path)
+        df.columns = ['Dimension', 'Modalites', 'Indicateurs', 'Année', 'Valeur']
         
-        # Valider les changements
-        conn.commit()
+        # Insertion dans la base de données
+        for _, row in df.iterrows():
+            data = V1Indicateur(
+                Dimension=row['Dimension'],
+                Modalites=row['Modalites'],
+                Indicateurs=row['Indicateurs'],
+                Annee=row['Année'],
+                Valeur=row['Valeur']
+            )
+            session.add(data)
+        
+        session.commit()  # Valider les changements
         print("Données insérées avec succès dans la table V1_indicateur.")
-    
-    except Error as e:
+    except Exception as e:
         print(f"Erreur lors de l'insertion des données : {e}")
-    
+        session.rollback()  # Annuler la transaction en cas d'erreur
     finally:
-        # Fermer la connexion
-        if conn.is_connected():
-            cursor.close()
-            conn.close()
-            print("Connexion MySQL fermée.")
-
-# Chemin du fichier Excel
-#file_path = 'V1_indicateurs.xlsx'
-#insert_data_from_excel(file_path)
-
+        session.close()  # Fermer la session

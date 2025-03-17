@@ -1,0 +1,297 @@
+/* === Réinitialisation et Styles Globaux === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat'; /* Changé de Poppins à Montserrat */
+    background: linear-gradient(135deg, #f4f4f4, #e9ecef);
+    color: #333;
+}
+
+
+
+.header-secondary {
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+    position: relative;
+    overflow: visible; /* Permet aux suggestions de dépasser */
+    z-index: 1000; /* Augmente pour être au-dessus des autres éléments, mais en dessous des suggestions */
+}
+
+.header-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* === Navigation === */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #49655A;
+    padding: 12px 22px;
+    font-size: 1.1rem;
+    border: 2px solid #49655A;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.nav-links a:hover {
+    background: linear-gradient(45deg, #49655A, #49655A);
+    color: #ffffff;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 107, 69, 0.3);
+}
+
+.nav-links .logo-link {
+    border: none;
+    padding: 0;
+    margin: 0 10px;
+}
+
+.nav-links .logo-link img {
+    display: block;
+    height: 45px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.nav-links .logo-link img:hover {
+    transform: scale(1.1);
+}
+
+/* === Barre de Recherche === */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 1000; /* Assure que la barre est au-dessus */
+}
+
+.search-bar input[type="text"] {
+    padding: 12px 18px;
+    font-size: 1rem;
+    border: 2px solid #49655A;
+    border-radius: 10px;
+    width: 320px;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-family: 'Montserrat';
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.search-bar input[type="text"]:focus {
+    border-color: #49655A;
+    box-shadow: 0 0 10px rgba(0, 107, 69, 0.5);
+}
+
+.search-bar button {
+    padding: 12px 20px;
+    background: linear-gradient(45deg, #49655A, #49655A);
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-bar button:hover {
+    background: linear-gradient(45deg, #49655A, #003820);
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 107, 69, 0.3);
+}
+
+.search-bar button:active {
+    transform: scale(0.95);
+}
+
+
+/* === Suggestions List === */
+.suggestions-list {
+    position: absolute;
+    top: 100%; /* Juste en dessous de l'input */
+    left: 0;
+    width: 320px; /* Même largeur que l'input */
+    background: #ffffff;
+    border: 1px solid #49655A;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    max-height: 150px; /* Limite la hauteur pour éviter un chevauchement excessif */
+    overflow-y: auto;
+    z-index: 2000; /* Très haut pour être au-dessus de tout */
+}
+
+.suggestions-list div {
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.suggestions-list div:hover {
+    background-color: #d9e6db;
+    color: #49655A;
+}
+
+.header-title {
+    text-align: center;
+    background: linear-gradient(45deg, #ffffff, #d9e6db);
+    padding: 30px 10px;
+    border-bottom: 3px solid #49655A;
+    border-radius: 15px 15px 0 0;
+}
+
+.header-title h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    font-size: 2.8rem;
+    color:#49655A;
+    margin: 0;
+    font-weight: 600;
+    text-shadow: 1px 1px 3px rgba(0, 107, 69, 0.3);
+}
+
+.logo-container {
+    position: relative;
+    display: inline-block;
+}
+
+.under-logo-link {
+    display: none;
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #F39323;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.logo-container:hover .under-logo-link {
+    display: block;
+}
+
+.logo {
+    height: 40px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.1);
+}
+
+/* Pour l'affichage API */
+h1, h2 {
+    color: #100f0f;
+}
+
+select, button {
+    padding: 10px;
+    margin: 5px;
+    font-size: 16px;
+}
+
+button {
+    background-color:  #49655A;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color:  #49655A;
+}
+
+#resultats ul {
+    list-style-type: none;
+    padding: 0;
+    max-height: 300px;    /* Hauteur maximale avant scroll */
+    overflow-y: auto;     /* Active le scroll vertical quand le contenu dépasse */
+}
+
+#resultats li {
+    background-color: #f9f9f9;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+.checkbox-container {
+    max-height: 100px; /* Hauteur maximale */
+    overflow-y: auto;  /* Activation du scroll vertical */
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+#resultats {
+    max-height: 200px; /* Hauteur maximale */
+    overflow-y: auto;  /* Activation du scroll vertical */
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+}
+
+#indicateursCheckbox {
+    max-height: 100px; /* Hauteur maximale de la liste */
+    overflow-y: auto;  /* Activation du scroll vertical */
+    border: 1px solid #ccc; /* Bordure pour bien délimiter */
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+#filtreIndicateur {
+    width: 100%;          /* Prend toute la largeur du conteneur */
+    padding: 12px;        /* Augmente l'espace intérieur */
+    margin-bottom: 15px;  /* Ajoute un espace sous le champ */
+    font-size: 16px;      /* Agrandit le texte */
+    border: 2px solid  #49655A;  /* Bordure bleu foncé */
+    border-radius: 8px;   /* Coins arrondis */
+    outline: none;        /* Supprime la bordure de focus par défaut */
+    transition: 0.3s;     /* Animation fluide */
+}
+
+#filtreIndicateur:focus {
+    border-color:  #49655A; /* Change la couleur au focus */
+    box-shadow: 0px 0px 5px  #49655A;
+}
+
+.checkbox-container {
+    max-height: 300px;   /* Augmente la hauteur max de la liste */
+    overflow-y: auto;    /* Active la barre de défilement */
+    border: 1px solid #ccc;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+

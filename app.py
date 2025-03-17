@@ -35,7 +35,7 @@ logging.basicConfig(level=logging.DEBUG)
 app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY')
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_PERMANENT'] = False
-app.config['SESSION_USE_SIGNER'] = True
+
 app.config['SESSION_REDIS'] = redis.Redis(host='localhost', port=6379)
 
 Session(app)
@@ -804,6 +804,56 @@ def generateur():
 
 
 
+
+
+#------------------------------------------------------------------------------------- DEBUT API
+from flask_cors import CORS
+
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:5000"}})  # Autoriser uniquement localhost pour plus de sécurité
+
+
+
+# Endpoint pour récupérer la liste des indicateurs
+
+@app.route('/api/indicateurs', methods=['GET'])
+def get_indicateurs():
+    try:
+        conn = cf.create_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT DISTINCT indicateur FROM valeur_indicateur_libelle_ok")
+        indicateurs = cursor.fetchall()
+        conn.close()
+        return jsonify(indicateurs)
+    except Exception as e:
+        return jsonify({"erreur": f"Erreur lors de la récupération des indicateurs : {str(e)}"}), 500
+
+# Endpoint pour récupérer les données d'un indicateur spécifique (retourne uniquement JSON)
+@app.route('/api/donnees', methods=['GET'])
+def get_donnees():
+    # Récupérer les indicateurs sous forme de liste (plusieurs valeurs possibles)
+    indicateurs = request.args.getlist('indicateur')
+    if not indicateurs:
+        return jsonify({"erreur": "Veuillez spécifier au moins un indicateur"}), 400
+
+    try:
+        conn = cf.create_connection()
+        cursor = conn.cursor(dictionary=True)
+        # Utiliser IN pour sélectionner plusieurs indicateurs
+        query = "SELECT * FROM valeur_indicateur_libelle_ok WHERE indicateur IN (%s)" % ','.join(['%s'] * len(indicateurs))
+        cursor.execute(query, tuple(indicateurs))
+        donnees = cursor.fetchall()
+        conn.close()
+        return jsonify(donnees)
+    except Exception as e:
+        return jsonify({"erreur": f"Erreur lors de la récupération des données : {str(e)}"}), 500
+
+# Route pour le template HTML (si vous voulez aussi rendre une page web)
+@app.route('/api')
+def api():
+    return render_template('api.html')
+
+
+#-------------------------------------------------FIN API
 
 if __name__ == '__main__':
     app.run(debug=True)
