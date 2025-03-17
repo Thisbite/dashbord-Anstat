@@ -34,7 +34,7 @@
                 <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" style="width: 50px; height: auto;">
             </a>
             <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
-            <a href="#connexion">Aide</a>
+            <a href="#">Aide</a>
         </div>
     
         <div class="search-bar">
@@ -70,7 +70,7 @@
                     <div class="card-title">
                         <i class="fas fa-clock clock-icon"></i> Population actuelle*
                     </div>
-                    <div id="birthsBox" class="card-value">{{pop_minute}}</div>
+                    <div id="birthsBox" class="card-value">{{ "{:,.0f}".format(pop_minute).replace(",", " ") }}</div>
                     <div id="dateBox" class="card-date"></div> 
                 </div>
 
@@ -78,13 +78,13 @@
                     <div class="card-title">
                         <i class="fas fa-baby"></i> Naissance*
                     </div>
-                    <div class="card-value" id="naissance">{{naissance}}</div>
+                    <div class="card-value" id="naissance">{{ "{:,.0f}".format(naissance).replace(",", " ") }}</div>
                     <p id="birthDateRange"> <i>Du 01-01-2025 au - </i> </p>
                     <div class="card-description"></div>
                     <div class="card-title">
                         <i class="fas fa-skull"></i> Décès*
                     </div>
-                    <div class="card-value" id="deces">{{deces}}</div>
+                    <div class="card-value" id="deces"> {{ "{:,.0f}".format(deces).replace(",", " ") }}</div>
                     <p id="deathDateRange">Du 01-01-2025 au - </p> <!-- Placeholder for dynamic date -->
                    
                 </div>
