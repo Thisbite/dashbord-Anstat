@@ -23,7 +23,7 @@ import config as cf
 from models import db
 import io
 global region_publication
-region_publication="PORO"# Cette variable va nous permettre de filtrer 
+region_publication="PORO"# Cette variable va nous permettre 
 #https://colab.research.google.com/drive/1oBqwcSMb4YTrn0NFUiQzJCiZ65uIay_S?hl=fr#scrollTo=CJAQGVAWNNPw
 #brew services restart elastic/tap/elasticsearch-full
 #redis-server
@@ -240,16 +240,16 @@ def list_regions():
     age_distribution = [40, 20, 30, 10, 18, 20]
     liste_region=regions
     return render_template('home.html',
-                           naissance=naissance,
-                           deces=deces,
-                           pop_minute=pop_minute,
-                           years=years,
-                           population=population,
-                           school_enrollment_rate=school_enrollment_rate,
-                           age_groups=age_groups,
-                           age_distribution=age_distribution,
-                           regions=regions,
-                           )
+                        naissance=naissance,
+                        deces=deces,
+                        pop_minute=pop_minute,
+                        years=years,
+                        population=population,
+                        school_enrollment_rate=school_enrollment_rate,
+                        age_groups=age_groups,
+                        age_distribution=age_distribution,
+                        regions=regions,
+    )
 
 
 
@@ -702,6 +702,56 @@ def generateur():
 
 
 
+#------------------------------------------------------------------------------------- DEBUT API
+from flask_cors import CORS
+
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:5000"}})  # Autoriser uniquement localhost pour plus de sécurité
+
+
+
+# Endpoint to get list of unique indicators
+@app.route('/api/indicateurs', methods=['GET'])
+def get_indicateurs():
+    try:
+        indicateurs = db.session.query(ValeurIndicateurLibelleOK.indicateur).distinct().all()
+        result = [ind[0] for ind in indicateurs]
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"erreur": f"Erreur lors de la récupération des indicateurs : {str(e)}"}), 500
+    finally:
+        db.session.close()
+
+# Endpoint to get detailed data for specific indicators
+@app.route('/api/donnees', methods=['GET'])
+def get_donnees():
+  
+    indicateurs = request.args.getlist('indicateur')
+    
+    if not indicateurs:
+        return jsonify({"erreur": "Veuillez spécifier au moins un indicateur"}), 400
+
+    try:
+        # Using SQLAlchemy query with filter
+        donnees = db.session.query(ValeurIndicateurLibelleOK)\
+            .filter(ValeurIndicateurLibelleOK.indicateur.in_(indicateurs))\
+            .all()
+        
+        # Convert results to dictionary format using model's to_dict method
+        result = [data.to_dict() for data in donnees]
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"erreur": f"Erreur lors de la récupération des données : {str(e)}"}), 500
+    finally:
+        db.session.close()
+
+# HTML template route
+@app.route('/api')
+def api():
+
+    try:
+        return render_template('api.html')
+    except Exception as e:
+        return jsonify({"erreur": f"Erreur lors du rendu de la page : {str(e)}"}), 500
 
 
 #-------------------------------------------------FIN API
