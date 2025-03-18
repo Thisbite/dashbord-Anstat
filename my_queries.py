@@ -47,12 +47,18 @@ def options_indicateur():
         print(f"Erreur lors de la récupération des indicateurs : {e}")
         return []
 
+from sqlalchemy import func
+from models import IndicateurV2, db  # Importer le modèle et db depuis models.py
+
 # Obtenir la définition d'un indicateur choisi
 def definition_indicateur(indicateur_choisi):
     try:
         # Requête pour récupérer la définition de l'indicateur
-        result = session.query(Indicateur.definitions).filter(func.lower(Indicateur.indicateur) == indicateur_choisi.lower()).first()
-        if result:
+        result = db.session.query(IndicateurV2.definitions).filter(
+            func.lower(IndicateurV2.indicateur) == indicateur_choisi.lower()
+        ).first()
+        
+        if result and result[0]:  # Vérifie si le résultat existe et n'est pas None
             return result[0]  # Retourne la définition
         else:
             return f"Définition pour l'indicateur '{indicateur_choisi}' non trouvée."
@@ -64,8 +70,11 @@ def definition_indicateur(indicateur_choisi):
 def mode_calcul_indicateur(indicateur_choisi):
     try:
         # Requête pour récupérer le mode de calcul de l'indicateur
-        result = session.query(Indicateur.mode_calcul).filter(func.lower(Indicateur.indicateur) == indicateur_choisi.lower()).first()
-        if result:
+        result = db.session.query(IndicateurV2.mode_calcul).filter(
+            func.lower(IndicateurV2.indicateur) == indicateur_choisi.lower()
+        ).first()
+        
+        if result and result[0]:  # Vérifie si le résultat existe et n'est pas None
             return result[0]  # Retourne le mode de calcul
         else:
             return f"Mode de calcul pour l'indicateur '{indicateur_choisi}' non trouvé."
@@ -128,3 +137,56 @@ def insert_data_from_excel(file_path):
         session.rollback()  # Annuler la transaction en cas d'erreur
     finally:
         session.close()  # Fermer la session
+        
+        
+
+#Importer le fichier  excel _______________________________Excel
+def index_data_from_excel():
+    # Lire le fichier Excel
+    data = pd.read_excel('lexique.xlsx')
+    # Vérifie si les données sont récupérées correctement
+    if data.empty:
+        print("Aucune donnée récupérée du fichier Excel.")
+    else:
+        print(f"{len(data)} lignes récupérées depuis Excel.")
+    # Nettoyer les données (remplacer les NaN par des chaînes vides)
+    data = data.fillna('')
+    # Convertir toutes les valeurs en minuscules
+    data = data.applymap(lambda x: x.lower() if isinstance(x, str) else x)
+    # Indexer chaque ligne du fichier Excel
+    for _, row in data.iterrows():
+        document = row.to_dict()  # Convertir la ligne en dictionnaire
+        print("Document à indexer:", document)  # Debug: affiche le document
+        # Essayer d'indexer le document
+        try:
+            es.index(index=index_name, body=document)
+            print(f"Indexing: {document}")
+        except Exception as e:
+            print(f"Erreur d'indexation pour le document {document}: {e}")
+    print("Données indexées avec succès.")
+    
+    
+import random
+def generate_region_data():
+    age_data = {
+        "male": [random.randint(-200, -50) for _ in range(5)],
+        "female": [random.randint(50, 220) for _ in range(5)],
+        "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']
+    }
+    
+    production_data = {
+        "years": [2010, 2012, 2014, 2016, 2018],
+        "production": [random.randint(300, 900) for _ in range(5)]
+    }
+    
+    indicateurs = {
+        "ind1": random.randint(20, 60),
+        "ind2": random.randint(40, 80),
+        "ind3": random.randint(10, 40)
+    }
+    
+    return {
+        "age_data": age_data,
+        "production_data": production_data,
+        "indicateurs": indicateurs
+    }

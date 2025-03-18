@@ -121,11 +121,11 @@
             $.get("/api/indicateurs", function(data) {
                 let html = '';
                 data.forEach(function(ind) {
-                    html += `
-                        <div class="checkbox-item">
-                            <input type="checkbox" name="indicateur" value="${ind.indicateur}" id="ind_${ind.indicateur}">
-                            <label for="ind_${ind.indicateur}">${ind.indicateur}</label>
-                        </div>`;
+                    let indicateur = ind.indicateur || ""; // Utiliser une chaîne vide si ind.indicateur est nul ou indéfini
+                    html += `<div class="checkbox-item">
+                        <input type="checkbox" name="indicateur" value="${indicateur}" id="ind_${indicateur}">
+                        <label for="ind_${indicateur}">${indicateur}</label>
+                    </div>`;
                 });
                 $("#indicateursCheckbox").html(html);
             }).fail(function(xhr, status, error) {
@@ -156,6 +156,7 @@
 
             // Construire les paramètres de la requête
             let params = indicateurs.map(ind => `indicateur=${encodeURIComponent(ind)}`).join('&');
+            console.log(params)
 
             $.get(`/api/donnees?${params}`, function(data) {
                 let html = "<h3>Données JSON pour les indicateurs sélectionnés</h3>";

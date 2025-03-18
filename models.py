@@ -23,12 +23,11 @@ class IndicateurV2(db.Model):
 
     indicateur_id = db.Column(db.Integer, primary_key=True)
     indicateur = db.Column(db.Text, nullable=False)
-    definitions = db.Column(db.Text, nullable=True)  # Longtext mappé à Text dans SQLAlchemy
-    mode_calcul = db.Column(db.Text, nullable=True)  # Longtext mappé à Text dans SQLAlchemy
+    definitions = db.Column(db.Text, nullable=True)
+    mode_calcul = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
-        return f"<IndicateurV2(indicateur_id={self.indicateur_id}, indicateur={self.indicateur})>"
-
+        return f"<IndicateurV2(indicateur_id={self.indicateur_id}, indicateur={self.indicateur},definitions={self.definitions},mode_calcul={self.mode_calcul})>"
 # Modèle pour la table 'V1_indicateur'
 class V1Indicateur(db.Model):
     __tablename__ = 'V1_indicateur'
@@ -66,3 +65,10 @@ class DirectionStatistique(db.Model):
 
     def __repr__(self):
         return f"<DirectionStatistique(id={self.id}, nom={self.nom})>"
+    
+    
+
+
+
+
+
