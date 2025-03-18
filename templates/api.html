@@ -1,0 +1,185 @@
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base de données des statistiques régionales</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/api.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="header-title">
+        <h1>
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="Logo" class="logo">
+                <a href="https://www.anstat.ci/" target="_blank" class="under-logo-link">Visitez notre site officiel</a>
+            </div>
+            Plateforme de données régionales
+        </h1>
+    </div>
+    <div class="header-secondary">
+        <div class="nav-links">
+            <a href="{{ url_for('list_regions') }}" class="logo-link">
+                <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" style="width: 50px; height: auto;">
+            </a>
+            <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
+            <a href="#">AIDE</a>
+        </div>
+    
+        <div class="search-bar">
+            <form method="POST" action="{{ url_for('search') }}" onsubmit="return submitSearch();">
+                <input type="text" id="search-input" name="query" placeholder="Entrez votre recherche..." required autocomplete="off">
+                <div id="suggestions" class="suggestions-list"></div>
+                <button type="submit" id="search-button">Rechercher</button>
+            </form>
+        </div>
+        
+    </div>
+    <h1>Choisir des indicateurs</h1>
+
+    <!-- Champ de recherche -->
+    <input type="text" id="filtreIndicateur" placeholder="Rechercher un indicateur..." />
+    
+    <div class="checkbox-container" id="indicateursCheckbox">
+        <!-- Les checkboxes seront insérées ici -->
+    </div>
+    <button onclick="genererLien()">Obtenir le lien</button>
+    <div id="lienApi"></div>
+
+    
+    <script>
+        function genererLien() {
+            // Récupérer tous les indicateurs cochés
+            let indicateurs = $('input[name="indicateur"]:checked')
+                .map(function() { return encodeURIComponent(this.value); })
+                .get();
+        
+            if (indicateurs.length === 0) {
+                alert("Veuillez choisir au moins un indicateur.");
+                return;
+            }
+        
+            // Construire le lien avec les indicateurs sélectionnés
+            let lien = `${window.location.origin}/api/donnees?` + indicateurs.map(ind => `indicateur=${ind}`).join('&');
+        
+            // Afficher le lien et charger les données
+            $("#lienApi").html(`
+                <p>Copiez ce lien pour accéder aux données :</p>
+                <input type="text" value="${lien}" id="lienInput" readonly style="width: 100%; padding: 5px; border: 1px solid #ccc;">
+                <button onclick="copierLien()" style="margin-top: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; cursor: pointer;">
+                    Copier le lien
+                </button>
+                <div id="aperçuDonnees" style="margin-top: 15px;"></div>
+            `);
+        
+            // Charger et afficher les données JSON
+            $.get(lien, function(data) {
+                let html = "<h3>Aperçu des données JSON</h3>";
+                if (data.erreur) {
+                    html += `<p style="color: red;">Erreur : ${data.erreur}</p>`;
+                } else if (data.length === 0) {
+                    html += `<p>Aucune donnée trouvée pour ces indicateurs.</p>`;
+                } else {
+                    // Filtrer les données en supprimant les clés avec des valeurs null
+                    let donneesFiltrees = data.map(obj => {
+                        return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== null));
+                    });
+        
+                    // Formater le JSON pour une lecture facile
+                    let formattedJson = JSON.stringify(donneesFiltrees, null, 2);
+                    html += `
+                        <pre style="background-color: #f5f5f5; padding: 10px; border: 1px solid #ddd; border-radius: 5px; overflow-x: auto; white-space: pre-wrap; max-height: 300px; overflow-y: auto;">${formattedJson}</pre>`;
+                }
+                $("#aperçuDonnees").html(html);
+            }).fail(function(xhr, status, error) {
+                $("#aperçuDonnees").html(`<p style="color: red;">Erreur : Impossible de charger les données. Détails : ${error}</p>`);
+            });
+        }
+        
+        function copierLien() {
+            let lienInput = document.getElementById("lienInput");
+            lienInput.select();
+            document.execCommand("copy");
+            alert("Lien copié !");
+        }
+        </script>  
+    
+
+    <script>
+        $(document).ready(function() {
+            // Charger les indicateurs au chargement de la page
+            $.get("/api/indicateurs", function(data) {
+                let html = '';
+                data.forEach(function(ind) {
+                    let indicateur = ind.indicateur || ""; // Utiliser une chaîne vide si ind.indicateur est nul ou indéfini
+                    html += `<div class="checkbox-item">
+                        <input type="checkbox" name="indicateur" value="${indicateur}" id="ind_${indicateur}">
+                        <label for="ind_${indicateur}">${indicateur}</label>
+                    </div>`;
+                });
+                $("#indicateursCheckbox").html(html);
+            }).fail(function(xhr, status, error) {
+                alert("Erreur lors du chargement des indicateurs : " + error);
+            });
+        
+            // Filtrage des indicateurs en fonction du texte saisi
+            $("#filtreIndicateur").on("keyup", function() {
+                let filtre = $(this).val().toLowerCase();
+                $(".checkbox-item").each(function() {
+                    let texte = $(this).text().toLowerCase();
+                    $(this).toggle(texte.includes(filtre));
+                });
+            });
+        });
+        
+
+        function chargerDonnees() {
+            // Récupérer tous les indicateurs cochés
+            let indicateurs = $('input[name="indicateur"]:checked')
+                .map(function() { return this.value; })
+                .get();
+
+            if (indicateurs.length === 0) {
+                alert("Veuillez choisir au moins un indicateur.");
+                return;
+            }
+
+            // Construire les paramètres de la requête
+            let params = indicateurs.map(ind => `indicateur=${encodeURIComponent(ind)}`).join('&');
+            console.log(params)
+
+            $.get(`/api/donnees?${params}`, function(data) {
+                let html = "<h3>Données JSON pour les indicateurs sélectionnés</h3>";
+                if (data.erreur) {
+                    html += `<p style="color: red;">Erreur : ${data.erreur}</p>`;
+                } else if (data.length === 0) {
+                    html += `<p>Aucune donnée trouvée pour ces indicateurs.</p>`;
+                } else {
+                    // Filtrer les données en supprimant les clés avec des valeurs null
+                    let donneesFiltrees = data.map(obj => {
+                        return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== null));
+                    });
+
+                    // Formater le JSON pour une lecture facile
+                    let formattedJson = JSON.stringify(donneesFiltrees, null, 2);
+                    html += `
+                        <pre style="background-color: #f5f5f5; padding: 10px; border: 1px solid #ddd; border-radius: 5px; overflow-x: auto; white-space: pre-wrap;">${formattedJson}</pre>`;
+                }
+                $("#resultats").html(html);
+            }).fail(function(xhr, status, error) {
+                $("#resultats").html(`<p style="color: red;">Erreur : Impossible de charger les données. Détails : ${error}</p>`);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -20,10 +20,10 @@ from itertools import chain
 import my_queries as qr
 import data as dt
 import config as cf
+from models import db
 import io
 global region_publication
 region_publication="PORO"# Cette variable va nous permettre 
-print(" Région détectée par défaut",region_publication )
 #https://colab.research.google.com/drive/1oBqwcSMb4YTrn0NFUiQzJCiZ65uIay_S?hl=fr#scrollTo=CJAQGVAWNNPw
 #brew services restart elastic/tap/elasticsearch-full
 #redis-server
@@ -35,7 +35,7 @@ logging.basicConfig(level=logging.DEBUG)
 app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY')
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_PERMANENT'] = False
-app.config['SESSION_USE_SIGNER'] = True
+
 app.config['SESSION_REDIS'] = redis.Redis(host='localhost', port=6379)
 
 Session(app)
@@ -82,30 +82,7 @@ else:
     print(f"L'index '{index_name}' existe déjà.")
 
 
-#Importer le fichier  excel _______________________________Excel
-def index_data_from_excel():
-    # Lire le fichier Excel
-    data = pd.read_excel('lexique.xlsx')
-    # Vérifie si les données sont récupérées correctement
-    if data.empty:
-        print("Aucune donnée récupérée du fichier Excel.")
-    else:
-        print(f"{len(data)} lignes récupérées depuis Excel.")
-    # Nettoyer les données (remplacer les NaN par des chaînes vides)
-    data = data.fillna('')
-    # Convertir toutes les valeurs en minuscules
-    data = data.applymap(lambda x: x.lower() if isinstance(x, str) else x)
-    # Indexer chaque ligne du fichier Excel
-    for _, row in data.iterrows():
-        document = row.to_dict()  # Convertir la ligne en dictionnaire
-        print("Document à indexer:", document)  # Debug: affiche le document
-        # Essayer d'indexer le document
-        try:
-            es.index(index=index_name, body=document)
-            print(f"Indexing: {document}")
-        except Exception as e:
-            print(f"Erreur d'indexation pour le document {document}: {e}")
-    print("Données indexées avec succès.")
+
     
     
 
@@ -175,126 +152,80 @@ es.indices.put_settings(index='requete_elastic', body={
 """
  Présentation de la population par minute 
 """
-START_DATE = datetime(2022, 1, 1)
-STORAGE_FILE = 'births_data.json'
-
-def get_births_per_minute():
-    moyenne_naissance =777556/525600  # naissances par seconde, c'est la pop 2024 avec 2025 et on fait un ratio par minute sur toute l'année
-    variation = random.uniform(-0.034, 0.034)
-    return int(moyenne_naissance + variation )  # Convertir en naissances par minute
-
-# Fonction pour charger l'état actuel du compteur
-def load_birth_data():
-    # Fonction pour calculer les naissances par minute avec variation
-    if os.path.exists(STORAGE_FILE):
-        with open(STORAGE_FILE, 'r') as f:
-            data = json.load(f)
-            return data
-    return {'total_births':30153004, 'last_time': START_DATE.timestamp()}
-
-# Fonction pour sauvegarder l'état actuel du compteur
-def save_birth_data(total_births, last_time):
-    data = {'total_births': total_births, 'last_time': last_time}
-    with open(STORAGE_FILE, 'w') as f:
-        json.dump(data, f)
-
-# Fonction pour calculer les naissances accumulées depuis une date de départ
-def calculate_accumulated_births():
-    birth_data = load_birth_data()
-    last_time = birth_data['last_time']
-    total_births = birth_data['total_births']
-    # Temps écoulé depuis la date de départ ou la dernière mise à jour (en secondes)
-    current_time = time.time()
-    elapsed_time = current_time - last_time
-    # Calculer les naissances accumulées pendant ce temps
-    births_per_minute = get_births_per_minute()
-    accumulated_births = (births_per_minute / 60) * elapsed_time  # Convertir en naissances par seconde
-    # Mettre à jour le total des naissances
-    total_births += accumulated_births
-    # Sauvegarder le nouvel état
-    save_birth_data(total_births, current_time)
-    return total_births
-
-@app.route('/births_data')
-def births_data():
-    # Calculer les naissances accumulées
-    total_births = calculate_accumulated_births()
-    # Obtenir la date et l'heure actuelles
-    now = datetime.now()
-    # Extraire le jour, le mois et l'année
-    day = now.day
-    month = now.month
-    year = now.year
-
-    # Renvoie les données en JSON pour le frontend
-    data = {
-        'time': time.time(),
-        'total_births': round(total_births, 0),  # Afficher comme un entier
-        'births_per_minute': get_births_per_minute(),  # Renvoyer les naissances par minute
-        'day': day,
-        'month': month,
-        'year': year
-    }
-    return jsonify(data)
 
 
-
-#---------------------------------------------------Home page pour accueil
-from datetime import datetime
 
 def days_in_year(year):
-    # Vérifier si l'année est bissextile
-    is_leap_year = lambda year: year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
-    return 366 if is_leap_year(year) else 365
+    # Retourne 366 si bissextile, 365 sinon
+    return 366 if (year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)) else 365
 
 def minutes_in_year(year):
-    # Vérifier si l'année est bissextile
-    is_leap_year = lambda year: year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
-    days_in_year = 366 if is_leap_year(year) else 365
-    minutes_in_year = days_in_year * 24 * 60  # 24 heures × 60 minutes = 1 440 minutes par jour
-    return minutes_in_year
+    # Calcule le nombre total de minutes dans une année
+    return days_in_year(year) * 24 * 60
 
 def naissance_deces_pop():
+    # Données démographiques prédéfinies
     data_nais_deces_pop = {
-        "population":[777556,797114,793064,787604,804768,796472],
-        "population_add":[31719274,32496830,33293944 ,34087008, 34874612 ,35679380],
+        "population": [777556, 797114, 793064, 787604, 804768, 796472],
+        "population_add": [31719274, 32496830, 33293944, 34087008, 34874612, 35679380],
         "naissance": [1025716, 1047630, 1045355, 1041416, 1061168, 1054794],
         "deces": [248159, 250517, 252290, 253814, 256397, 258324],
-        "year": [2025 + i for i in range(6)]  # Correction range(6)
+        "year": [2025 + i for i in range(6)]  # 2025 à 2030
     }
 
-    # Récupérer l'année actuelle
+    # Année actuelle
     current_year = datetime.now().year
-    
 
     # Vérifier si l'année est dans les données
-    if current_year in data_nais_deces_pop["year"]:
-        index = data_nais_deces_pop["year"].index(current_year)
-        date_ref=datetime(current_year,1,1)
-        date_ref_M= datetime(current_year, 1, 1, 0, 0, 0) 
-        date_actu=datetime.now()
-        nbre_jour=date_actu-date_ref
-        nbre_jour=nbre_jour.days
-        naissance_annuelle = data_nais_deces_pop["naissance"][index]
-        deces_annuel = data_nais_deces_pop["deces"][index]
-        population_annuelle=data_nais_deces_pop["population"][index]
-        day_now=datetime
-        # Minute de l'année
-        minute=minutes_in_year(current_year)
-        difference=date_actu-date_ref_M
-        dif_total_minute=difference.total_seconds() / 60
-        # Calcul du taux journalier
-        days = days_in_year(current_year)
-        naissance_journalier = int(naissance_annuelle / days)*nbre_jour
-        deces_journalier =int( deces_annuel / days)*nbre_jour
-        pop_minute=int(population_annuelle/ minute)*int(dif_total_minute)+data_nais_deces_pop["population_add"][index]
+    if current_year not in data_nais_deces_pop["year"]:
+        return f"Données non disponibles pour l'année {current_year}"
 
-        return naissance_journalier, deces_journalier,pop_minute
-    else:
-        return "Données non disponibles pour l'année", current_year
+    # Index de l'année actuelle
+    index = data_nais_deces_pop["year"].index(current_year)
 
-# Exemple d'utilisation
-print('Extrapolation naissance',naissance_deces_pop())
+    # Dates de référence et actuelle
+    date_ref = datetime(current_year, 1, 1)  # Début de l'année
+    date_actu = datetime.now()
+
+    # Nombre de jours écoulés
+    elapsed_days = (date_actu - date_ref).days
+
+    # Nombre de minutes écoulées
+    elapsed_minutes = (date_actu - date_ref).total_seconds() / 60
+
+    # Données annuelles
+    naissance_annuelle = data_nais_deces_pop["naissance"][index]
+    deces_annuel = data_nais_deces_pop["deces"][index]
+    population_annuelle = data_nais_deces_pop["population"][index]
+    population_base = data_nais_deces_pop["population_add"][index]
+
+    # Calculs
+    days = days_in_year(current_year)
+    minutes = minutes_in_year(current_year)
+
+    # Naissances et décès cumulés jusqu'à maintenant
+    naissance_cumulee = int(naissance_annuelle / days) * elapsed_days
+    deces_cumule = int(deces_annuel / days) * elapsed_days
+    pop_actuelle = population_base + int(population_annuelle / minutes * elapsed_minutes)
+
+    return naissance_cumulee, deces_cumule, pop_actuelle
+
+@app.route('/population_data')
+def population_data():
+    result = naissance_deces_pop()
+    now = datetime.now()
+
+    if isinstance(result, dict) and "error" in result:  # Gestion d'erreur
+        return jsonify(result)
+
+    naissances, deces, population = result
+    data = {
+        "time": now.timestamp(),  # Timestamp pour la date
+        "population_actuelle": population,  # Population actuelle
+        "naissances_cumulees": naissances,  # Optionnel
+        "deces_cumules": deces  # Optionnel
+    }
+    return jsonify(data)
 
     
 @app.route('/')
@@ -308,18 +239,17 @@ def list_regions():
     age_groups = ['0-14 ans', '15-24 ans', '25-54 ans', '55 - 59 ans','60 -64 ','65-69','70-74 ans']
     age_distribution = [40, 20, 30, 10, 18, 20]
     liste_region=regions
-    print(liste_region)
     return render_template('home.html',
-                           naissance=naissance,
-                           deces=deces,
-                           pop_minute=pop_minute,
-                           years=years,
-                           population=population,
-                           school_enrollment_rate=school_enrollment_rate,
-                           age_groups=age_groups,
-                           age_distribution=age_distribution,
-                           regions=regions,
-                           )
+                        naissance=naissance,
+                        deces=deces,
+                        pop_minute=pop_minute,
+                        years=years,
+                        population=population,
+                        school_enrollment_rate=school_enrollment_rate,
+                        age_groups=age_groups,
+                        age_distribution=age_distribution,
+                        regions=regions,
+    )
 
 
 
@@ -329,38 +259,9 @@ def list_regions():
 
 
 
-import random
-def generate_region_data():
-    age_data = {
-        "male": [random.randint(-200, -50) for _ in range(5)],
-        "female": [random.randint(50, 220) for _ in range(5)],
-        "ages": ['0-4', '5-9', '10-14', '15-19', '20-24']
-    }
-    
-    production_data = {
-        "years": [2010, 2012, 2014, 2016, 2018],
-        "production": [random.randint(300, 900) for _ in range(5)]
-    }
-    
-    indicateurs = {
-        "ind1": random.randint(20, 60),
-        "ind2": random.randint(40, 80),
-        "ind3": random.randint(10, 40)
-    }
-    
-    return {
-        "age_data": age_data,
-        "production_data": production_data,
-        "indicateurs": indicateurs
-    }
-regions = qr.options_regions()
+
 # Générer les données pour toutes les régions restantes
-data = {region: generate_region_data() for region in regions}
-
-# Afficher les premières données générées
-#import json
-#print(json.dumps(data, indent=4))
-
+data = {region: qr.generate_region_data() for region in  qr.options_regions()}
 regions = list(data.keys())  
 import plotly.graph_objs as go
 @app.route('/region_vitrine/<region>')  
@@ -370,13 +271,11 @@ def region_vitrine(region):
     region_data = data[region]
     global region_publication
     region_publication=region
-    print("Nouvelle région détectée",region_publication )
     return render_template('region_vitrine.html',  
                            indicateurs=region_data['indicateurs'],  
                            region_name=region_publication,  
                            all_regions=regions) 
 
-print('la region issue des fonctions',region_publication)
 #--------------------------------------------------Fin du tableau de bord
 
 # Load Excel data (assuming the Excel file is named 'publications.xlsx' in a 'data' folder)
@@ -385,8 +284,6 @@ print('la region issue des fonctions',region_publication)
 def load_publications():
     try:
         df = pd.read_excel('static/data/publications2.xlsx')  # Chemin vers le fichier Excel
-        print("DataFrame chargé avec succès :")
-        print(df)  # Affiche le contenu du DataFrame pour vérification
 
         # Convertit le DataFrame en dictionnaire avec des clés uniques basées sur le titre normalisé
         publications = {}
@@ -403,7 +300,7 @@ def load_publications():
             }
         return publications
     except FileNotFoundError:
-        print("Erreur : Le fichier publications2.xlsx n'a pas été trouvé dans /static/data/")
+        print("Erreur : Le fichier publications2.xlsx n'a pas été trouvé dans ")
         return {}  # Retourne un dictionnaire vide si le fichier n'est pas trouvé
     except Exception as e:
         print(f"Une erreur s'est produite : {e}")
@@ -423,7 +320,6 @@ def publications_region():
         # Préparer les données pour le template (convertir en liste de dictionnaires)
         publications = df.to_dict(orient='records')
         region_name = region_publication
-        print('publications ', region_name)
         return render_template('publications.html', publications=publications, region_name=region_name)
     except Exception as e:
         print(f"Erreur lors de la lecture du fichier Excel : {e}")
@@ -445,7 +341,6 @@ def publication_detail(title):
         abort(404, description=f"Publication '{normalized_title}' non trouvée")
     # Génère le numéro de publication en utilisant normalized_title pour être cohérent
     publication_number = f"P{list(publications_data.keys()).index(pub_title) + 1:03d}"
-    print('vue de region dans publication',region_publication)
     return render_template('publications_detail.html',
                           publication_title=publication['title'],
                           publication_description=publication['description'],
@@ -646,6 +541,7 @@ def request_indicateur():
     if request.method == 'GET':
         indicateur_SELECT = request.args.get('indicateur_elastic')
         df_filtered = data_mysql
+        print('indicateur pris:',indicateur_SELECT)
         
         if indicateur_SELECT and 'Indicateurs' in df_filtered.columns:
             try:
@@ -804,6 +700,61 @@ def generateur():
 
 
 
+
+
+#------------------------------------------------------------------------------------- DEBUT API
+from flask_cors import CORS
+
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:5000"}})  # Autoriser uniquement localhost pour plus de sécurité
+
+
+
+# Endpoint to get list of unique indicators
+@app.route('/api/indicateurs', methods=['GET'])
+def get_indicateurs():
+    try:
+        indicateurs = db.session.query(ValeurIndicateurLibelleOK.indicateur).distinct().all()
+        result = [ind[0] for ind in indicateurs]
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"erreur": f"Erreur lors de la récupération des indicateurs : {str(e)}"}), 500
+    finally:
+        db.session.close()
+
+# Endpoint to get detailed data for specific indicators
+@app.route('/api/donnees', methods=['GET'])
+def get_donnees():
+  
+    indicateurs = request.args.getlist('indicateur')
+    
+    if not indicateurs:
+        return jsonify({"erreur": "Veuillez spécifier au moins un indicateur"}), 400
+
+    try:
+        # Using SQLAlchemy query with filter
+        donnees = db.session.query(ValeurIndicateurLibelleOK)\
+            .filter(ValeurIndicateurLibelleOK.indicateur.in_(indicateurs))\
+            .all()
+        
+        # Convert results to dictionary format using model's to_dict method
+        result = [data.to_dict() for data in donnees]
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"erreur": f"Erreur lors de la récupération des données : {str(e)}"}), 500
+    finally:
+        db.session.close()
+
+# HTML template route
+@app.route('/api')
+def api():
+
+    try:
+        return render_template('api.html')
+    except Exception as e:
+        return jsonify({"erreur": f"Erreur lors du rendu de la page : {str(e)}"}), 500
+
+
+#-------------------------------------------------FIN API
 
 if __name__ == '__main__':
     app.run(debug=True)

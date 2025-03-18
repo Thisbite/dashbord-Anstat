@@ -330,7 +330,7 @@ new Chart(ctxTauxChomage, {
       },
       x: {
         title: {
-          display: true,
+          display: false,
           text: "Régions",
         },
       },

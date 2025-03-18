@@ -1,113 +1,4 @@
-/* === Réinitialisation et Styles Globaux === */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
-body {
-    font-family: 'Montserrat'; /* Changé de Poppins à Montserrat */
-    background: linear-gradient(135deg, #f4f4f4, #e9ecef);
-    color: #333;
-}
-
-
-
-.frame-container::before {
-    content: '';
-    position: absolute;
-    top: -5px;
-    left: -5px;
-    right: -5px;
-    bottom: -5px;
-    border: 2px solid #F39323;
-    border-radius: 18px;
-    z-index: -1;
-    animation: glow 4s infinite ease-in-out;
-}
-
-@keyframes glow {
-    0%, 100% { box-shadow: 0 0 10px #F39323, 0 0 20px #F39323; }
-    50% { box-shadow: 0 0 15px #F39323, 0 0 25px #F39323; }
-}
-
-.frame-container:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 50px 40px rgba(0, 0, 0, 0.15);
-}
-
-/* === Header === */
-.header-title {
-    text-align: center;
-    background: linear-gradient(45deg, #ffffff, #d9e6db);
-    padding: 30px 10px;
-    border-bottom: 3px solid #49655A;
-    border-radius: 15px 15px 0 0;
-}
-
-.header-title h1 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 30px;
-    font-size: 2.8rem;
-    color:#49655A;
-    margin: 0;
-    font-weight: 600;
-    text-shadow: 1px 1px 3px rgba(0, 107, 69, 0.3);
-}
-
-.logo-container {
-    position: relative;
-    display: inline-block;
-}
-
-.under-logo-link {
-    display: none;
-    position: absolute;
-    bottom: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #F39323;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: bold;
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 5px 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.logo-container:hover .under-logo-link {
-    display: block;
-}
-
-.logo {
-    height: 40px;
-    width: auto;
-    transition: transform 0.3s ease;
-}
-
-.logo:hover {
-    transform: scale(1.1);
-}
-
-/* === Frame Container === */
-.frame-container {
-    max-width: 1400px;
-    margin: 20px auto;
-    padding: 30px;
-    background: linear-gradient(135deg, #ffffff, #f8f9fa);
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border: 2px solid #49655A; 
-    position: relative; 
-    overflow: visible; /* Assure que les éléments enfants dépassant peuvent être visibles */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    z-index: 100; /* Niveau de base, plus bas que suggestions */
-}
-
-/* === Header Secondary === */
 .header-secondary {
     background-color: #ffffff;
     display: flex;
@@ -245,6 +136,61 @@ body {
 .suggestions-list div:hover {
     background-color: #d9e6db;
     color: #49655A;
+}
+
+.header-title {
+    text-align: center;
+    background: linear-gradient(45deg, #ffffff, #d9e6db);
+    padding: 30px 10px;
+    border-bottom: 3px solid #49655A;
+    border-radius: 15px 15px 0 0;
+}
+
+.header-title h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    font-size: 2.8rem;
+    color:#49655A;
+    margin: 0;
+    font-weight: 600;
+    text-shadow: 1px 1px 3px rgba(0, 107, 69, 0.3);
+}
+
+.logo-container {
+    position: relative;
+    display: inline-block;
+}
+
+.under-logo-link {
+    display: none;
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #F39323;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.logo-container:hover .under-logo-link {
+    display: block;
+}
+
+.logo {
+    height: 60px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.1);
 }
 
 /* === Conteneur Principal === */
