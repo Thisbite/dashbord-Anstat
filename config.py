@@ -16,10 +16,12 @@ database = os.getenv('MYSQL_DATABASE')
 user = os.getenv('MYSQL_USER')
 password = os.getenv('MYSQL_PASSWORD')
 
-# Configurer Elasticsearch avec le schéma 'http'
-es_host = os.getenv('ELASTICSEARCH_HOST', 'localhost')
-es_port = int(os.getenv('ELASTICSEARCH_PORT', '9200'))  # Conversion explicite en entier
-es = Elasticsearch([{'host': es_host, 'port': es_port, 'scheme': 'http'}])
+from elasticsearch import Elasticsearch
+
+es = Elasticsearch(
+    "http://localhost:9200",
+    basic_auth=("elastic", "Q7-4rkZNuZgVGCMinB+8")
+)
 
 # Vérifier la connexion à Elasticsearch
 if es.ping():

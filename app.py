@@ -254,13 +254,12 @@ def list_regions():
 #Bloc du dashbord------------------------------------------Pour le tableau de bord par région
 
 
-
+print('test region:',qr.options_regions())
 
 
 # Générer les données pour toutes les régions restantes
 data = {region: qr.generate_region_data() for region in  qr.options_regions()}
 regions = list(data.keys())  
-import plotly.graph_objs as go
 @app.route('/region_vitrine/<region>')  
 def region_vitrine(region):  
     if region not in regions:  

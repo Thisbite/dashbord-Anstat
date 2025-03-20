@@ -3,3 +3,14 @@ pymysql
 elasticsearch
 pandas
 numpy
+sqlalchemy
+flask
+flask-cors
+flask-migrate
+urllib3
+unidecode
+python-dotenv
+flask_session
+redis
+mysql-connector
+openpyxl

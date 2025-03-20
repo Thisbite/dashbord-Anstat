@@ -75,14 +75,14 @@
                 </div>
 
                 <div class="indicator-card">
-                    <div class="card-title">
-                        <i class="fas fa-baby"></i> Naissance*
+                    <div class="card-fastitle">
+                        <i class="fa fa-baby fa-2x"></i>  Naissance*
                     </div>
                     <div class="card-value" id="naissance">{{ "{:,.0f}".format(naissance).replace(",", " ") }}</div>
                     <p id="birthDateRange"> <i>Du 01-01-2025 au - </i> </p>
                     <div class="card-description"></div>
                     <div class="card-title">
-                        <i class="fas fa-skull"></i> Décès*
+                        <i class="fas fa-skullfas-4x"></i> Décès*
                     </div>
                     <div class="card-value" id="deces"> {{ "{:,.0f}".format(deces).replace(",", " ") }}</div>
                     <p id="deathDateRange">Du 01-01-2025 au - </p> <!-- Placeholder for dynamic date -->
@@ -93,17 +93,19 @@
         </div>
 
         <div class="right-column">
-            <h2><i class="fas fa-tachometer-alt"></i> Tableau de bord par région</h2>
-            <ul class="region-list">
-                {% for region in regions %}
-                <li onmouseover="highlightRegion('{{ region }}')" onmouseout="resetRegionHighlight(event)">
-                    <i class="fas fa-map-marker-alt" style="font-size: 30px; color: #49655A;"></i>
-                    <a href="{{ url_for('region_vitrine', region=region) }}">
-                        {{ region }}
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
+            <h2><i class="fas fa-tachometer-alt small-icon"></i>
+ <!-- Taille réduite -->
+                Infos régions</h2>
+                <ul class="region-list">
+                    {% for region in regions %}
+                    <li class="region-item" onmouseover="highlightRegion('{{ region }}')" onmouseout="resetRegionHighlight(event)">
+                        <i class="fas fa-map-marker-alt" style="font-size: 16px; color: #49655A;"></i>
+                        <a href="{{ url_for('region_vitrine', region=region) }}">
+                            {{ region }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
             <div class="scroll-indicator" style="text-align: center; margin-top: 10px; color: #49655A;">
                 ▼
             </div>
@@ -345,7 +347,7 @@
     };
     
     // Dimensions de la carte
-    const width = 800, height = 500;
+    const width = 760, height = 500;
 
     // Créer une projection géographique pour la Côte d'Ivoire
     const projection = d3.geoMercator()
