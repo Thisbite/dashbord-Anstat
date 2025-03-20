@@ -12,13 +12,10 @@ import urllib
 from io import StringIO
 from datetime import datetime
 from unidecode import unidecode
-import folium
-import branca.colormap as cm 
 import mysql.connector
 import redis
 from itertools import chain
 import my_queries as qr
-import data as dt
 import config as cf
 from models import db
 import io
