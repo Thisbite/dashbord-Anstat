@@ -253,10 +253,6 @@ def list_regions():
 
 #Bloc du dashbord------------------------------------------Pour le tableau de bord par région
 
-
-print('test region:',qr.options_regions())
-
-
 # Générer les données pour toutes les régions restantes
 data = {region: qr.generate_region_data() for region in  qr.options_regions()}
 regions = list(data.keys())  
@@ -709,7 +705,7 @@ CORS(app, resources={r"/api/*": {"origins": "http://localhost:5000"}})  # Autori
 @app.route('/api/indicateurs', methods=['GET'])
 def get_indicateurs():
     try:
-        indicateurs = db.session.query(ValeurIndicateurLibelleOK.indicateur).distinct().all()
+        indicateurs = db.session.query("").distinct().all()
         result = [ind[0] for ind in indicateurs]
         return jsonify(result)
     except Exception as e:
@@ -728,8 +724,8 @@ def get_donnees():
 
     try:
         # Using SQLAlchemy query with filter
-        donnees = db.session.query(ValeurIndicateurLibelleOK)\
-            .filter(ValeurIndicateurLibelleOK.indicateur.in_(indicateurs))\
+        donnees = db.session.query("")\
+            .filter("")\
             .all()
         
         # Convert results to dictionary format using model's to_dict method
