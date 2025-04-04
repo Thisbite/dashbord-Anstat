@@ -463,3 +463,323 @@ tr:hover {
 #metadonnees:hover {
     background-color: var(--accent-color);
 }
+/* === Variables globales === */
+:root {
+    --primary-color: #49655A;
+    --secondary-color: #49655A;
+    --secondary-color2: #bbcbbf;
+    --accent-color: #49655A;
+    --light-color: #f8f9fa;
+    --text-color: black;
+    --font-family: 'Open Sans', sans-serif;
+    --border-radius: 5px;
+    --font-weight-regular: 400;
+    --font-weight-bold: 600;
+    --primary-hover-color: #004D32; /* Ajouté pour cohérence */
+}
+
+/* === Réinitialisation et Styles Globaux === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    line-height: 1.6;
+    background-color: var(--light-color);
+    color: var(--text-color);
+}
+
+/* === Frame Container === */
+.frame-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 30px;
+    background: linear-gradient(135deg, #ffffff, var(--light-color));
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 2px solid var(--primary-color);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* === Header === */
+.header-title {
+    text-align: center;
+    background: linear-gradient(45deg, #ffffff, var(--secondary-color2));
+    padding: 30px 10px;
+    border-bottom: 3px solid var(--primary-color);
+    border-radius: 15px 15px 0 0;
+}
+
+.header-title h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    font-size: 2.8rem;
+    color: var(--primary-color);
+    margin: 0;
+    font-weight: var(--font-weight-bold);
+    text-shadow: 1px 1px 3px rgba(0, 107, 69, 0.3);
+    flex-wrap: wrap; /* Permet au texte de s'adapter */
+}
+
+.logo {
+    height: 40px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.header-secondary {
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* === Navigation === */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* === Barre de Recherche === */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 320px;
+}
+
+.search-bar input[type="text"] {
+    padding: 12px 18px;
+    font-size: 1rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 10px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-family: var(--font-family);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* === Conteneur principal === */
+.container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 15px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap; /* Permet aux éléments de passer à la ligne */
+}
+
+/* Colonne gauche */
+.container > div:first-child {
+    flex: 1;
+    min-width: 200px;
+    max-width: 250px;
+    border: 1px solid var(--accent-color);
+    padding: 10px;
+    background-color: #fff;
+    border-radius: var(--border-radius);
+}
+
+/* Zones de dépôt */
+#droppable-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: stretch;
+    margin: 20px 0;
+    flex-wrap: wrap; /* Permet aux zones de s'empiler */
+}
+
+#droppable-area-rows, #droppable-area-cols {
+    flex: 1;
+    padding: 20px;
+    min-width: 0; /* Supprime la contrainte de largeur minimale */
+    width: 100%;
+    max-width: 500px; /* Limite la largeur maximale */
+    min-height: 100px;
+    border: 3px dashed var(--primary-color);
+    border-radius: 15px;
+    background-color: var(--light-color);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Conteneur des filtres */
+#filter-container {
+    margin-top: 20px;
+    padding: 20px;
+    border: 2px solid #c3d0bf;
+    border-radius: var(--border-radius);
+    background-color: var(--light-color);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+/* Conteneur tableau */
+#table-container {
+    margin-top: 20px;
+    border: 2px solid #6c757d;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: var(--border-radius);
+    overflow-x: auto; /* Permet le défilement horizontal sur petits écrans */
+    width: 100%;
+}
+
+/* Media Queries pour la réactivité */
+@media (max-width: 1024px) {
+    .frame-container {
+        padding: 20px;
+    }
+
+    .header-title h1 {
+        font-size: 2rem;
+        gap: 15px;
+    }
+
+    .header-secondary {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .nav-links {
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .search-bar {
+        max-width: 100%;
+    }
+
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .container > div:first-child {
+        max-width: 100%;
+    }
+
+    #droppable-area-rows, #droppable-area-cols {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-title h1 {
+        font-size: 1.8rem;
+    }
+
+    .logo {
+        height: 30px;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .nav-links a {
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+        font-size: 1rem;
+    }
+
+    .search-bar {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .search-bar input[type="text"] {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    .search-bar button {
+        padding: 10px 15px;
+        width: 100%;
+    }
+
+    #droppable-container {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .frame-container {
+        padding: 15px;
+        margin: 10px;
+    }
+
+    .header-title h1 {
+        font-size: 1.5rem;
+        gap: 10px;
+    }
+
+    .nav-links a {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+
+    .search-bar input[type="text"] {
+        font-size: 0.8rem;
+    }
+
+    .search-bar button {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    #filter-container select {
+        width: 100%; /* Les sélecteurs prennent toute la largeur */
+    }
+
+    .download-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .download-buttons button {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+}

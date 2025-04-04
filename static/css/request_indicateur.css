@@ -28,15 +28,16 @@ body {
     line-height: 1.6;
     background-color: #f8f9fa;
     color: var(--text-color);
+    padding: 10px; /* Réduction pour petits écrans */
 }
 
 /* === Header === */
 .header-title {
     text-align: center;
-    font-size: 2.5rem;
+    font-size: clamp(1.5rem, 5vw, 2.5rem); /* Taille ajustable */
     font-weight: var(--font-weight-bold);
     background: linear-gradient(45deg, #ffffff, var(--secondary-color));
-    padding: 20px 10px;
+    padding: 15px 5px; /* Réduction pour petits écrans */
     border-bottom: 2px solid var(--primary-color);
     color: var(--primary-color);
 }
@@ -45,12 +46,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    gap: 10px; /* Réduction pour petits écrans */
     margin: 0;
 }
 
 .header-title .logo {
-    height: 40px;
+    height: clamp(30px, 8vw, 40px); /* Taille responsive */
     width: auto;
     transition: transform var(--transition-speed);
 }
@@ -62,26 +63,28 @@ body {
 .header-secondary {
     background-color: #ffffff;
     display: flex;
+    flex-wrap: wrap; /* Permet le retour à la ligne sur petits écrans */
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
+    padding: 10px 15px; /* Réduction pour petits écrans */
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-light);
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 /* === Navigation === */
 .nav-links {
     display: flex;
+    flex-wrap: wrap; /* Retour à la ligne si nécessaire */
     align-items: center;
-    gap: 15px;
+    gap: 10px; /* Réduction pour petits écrans */
 }
 
 .nav-links a {
     text-decoration: none;
     color: var(--primary-color);
-    padding: 10px 18px;
-    font-size: 1rem;
+    padding: 8px 12px; /* Réduction pour petits écrans */
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
     border: 2px solid var(--primary-color);
     border-radius: var(--border-radius);
     transition: all var(--transition-speed);
@@ -95,319 +98,154 @@ body {
     box-shadow: var(--shadow-hover);
 }
 
-.nav-links .logo-link {
-    border: none;
-    padding: 0;
-    margin: 0 10px;
-}
-
 .nav-links .logo-link img {
-    display: block;
-    height: 40px;
+    height: clamp(25px, 6vw, 40px); /* Taille responsive */
     width: auto;
     transition: transform var(--transition-speed);
-}
-
-.nav-links .logo-link img:hover {
-    transform: scale(1.1);
 }
 
 /* === Barre de Recherche === */
 .search-bar {
     display: flex;
+    flex-wrap: wrap; /* Permet un retour à la ligne */
     align-items: center;
     gap: 10px;
+    width: 100%; /* Prend toute la largeur sur petits écrans */
 }
 
 .search-bar input[type="text"] {
-    padding: 10px 16px;
-    font-size: 1rem;
+    padding: 8px 12px; /* Réduction pour petits écrans */
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
     border: 2px solid var(--primary-color);
     border-radius: var(--border-radius);
-    width: 300px;
+    width: 100%; /* Pleine largeur sur petits écrans */
+    max-width: 300px; /* Limite sur grands écrans */
     outline: none;
     transition: all var(--transition-speed);
-    box-sizing: border-box;
     font-family: var(--font-family);
 }
 
-.search-bar input[type="text"]:focus {
-    border-color: var(--primary-hover-color);
-    box-shadow: 0 0 8px rgba(0, 107, 69, 0.3);
-}
-
 .search-bar button {
-    padding: 10px 18px;
+    padding: 8px 12px; /* Réduction pour petits écrans */
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
     background-color: var(--primary-color);
     color: #ffffff;
     border: none;
     border-radius: var(--border-radius);
     cursor: pointer;
-    font-size: 1rem;
-    font-weight: var(--font-weight-bold);
     transition: background-color var(--transition-speed), transform var(--transition-speed);
 }
 
-.search-bar button:hover {
-    background-color: var(--primary-hover-color);
-    transform: scale(1.05);
-}
-
-.search-bar button:active {
-    transform: scale(0.95);
-}
-
-/*Autocomplétion */
+/* === Autocomplétion === */
 .suggestions-list {
     position: absolute;
     background: white;
     border: 1px solid #ddd;
     max-height: 200px;
     overflow-y: auto;
-    width: calc(100% - 2px);
+    width: 100%; /* Pleine largeur pour s’aligner avec l’input */
+    max-width: 300px; /* Limite sur grands écrans */
     z-index: 1000;
 }
 
-.suggestions-list div {
-    padding: 8px;
-    cursor: pointer;
-}
-
-.suggestions-list div:hover {
-    background: #f0f0f0;
-}
-
-/* Form container styling */
+/* === Form Container === */
 .form-container {
-    max-width: 800px;
+    max-width: 100%; /* Pleine largeur sur petits écrans */
+    width: 800px; /* Limite sur grands écrans */
     margin: 0 auto;
-    padding: 20px;
-    background-color: #ffffff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-}
-
-/* Form heading */
-.form-container h2 {
-    color: #004085;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-/* Input field styling */
-select, button {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    box-sizing: border-box;
-}
-
-/* Button styling */
-button {
-    background-color: #004085;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #003366;
-}
-
-/*
-Pour le data list et input
-*/
-/* Style pour le champ de saisie avec une apparence similaire à un select */
-input[type="text"]#indicateur-search {
-    width: 100%; /* Adapter à la largeur souhaitée */
-    padding: 10px; /* Ajouter un peu de padding pour ressembler à un select */
-    font-size: 16px; /* Taille de texte similaire à un select */
-    border: 1px solid #ccc; /* Bordure similaire à un select */
-    border-radius: 4px; /* Ajouter un léger arrondi */
-    background-color: #fff; /* Arrière-plan blanc */
-    appearance: none; /* Supprimer l'apparence par défaut de certains navigateurs */
-    -webkit-appearance: none; /* Pour les navigateurs basés sur Webkit */
-    -moz-appearance: none; /* Pour Firefox */
-    box-sizing: border-box; /* Assurer que le padding soit bien géré */
-}
-
-/* Style pour aligner le champ de saisie avec une icône de flèche, comme un select */
-input[type="text"]#indicateur-search {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 20 20"><path fill="gray" d="M7 10l5 5 5-5H7z"/></svg>');
-    background-repeat: no-repeat;
-    background-position: right 10px center; /* Positionner l'icône à droite */
-    background-size: 12px; /* Ajuster la taille de l'icône */
-    padding-right: 30px; /* Laisser de la place pour l'icône */
-}
-
-/* Style pour la liste des suggestions */
-datalist {
-    border: 1px solid #ccc; /* Bordure similaire à un select */
-    background-color: #fff; /* Fond blanc */
-    font-size: 16px; /* Taille similaire à un select */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ajouter une ombre pour le menu */
-}
-
-/* Optionnel : Style personnalisé pour les options suggérées */
-option {
-    padding: 10px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-
-/* Blue dashed frame for sections */
-.blue-dashed-frame {
-    border: 2px dashed #0c29ff;
     padding: 15px;
-    margin-bottom: 20px;
     background-color: #ffffff;
-    border-radius: 5px;
+    box-shadow: var(--shadow-light);
+    border-radius: var(--border-radius);
 }
 
-/* Columns styling */
+/* === Columns === */
 .columns {
     display: flex;
-    gap: 20px;
+    flex-direction: column; /* Par défaut en colonne pour petits écrans */
+    gap: 15px;
 }
 
 .column {
     flex: 1;
 }
 
-/* Message styling (success, warning, error) */
+/* === Media Queries === */
+@media (min-width: 768px) { /* Tablettes et plus */
+    .header-title {
+        padding: 20px 10px;
+    }
+
+    .header-secondary {
+        padding: 15px 20px;
+    }
+
+    .nav-links {
+        gap: 15px;
+    }
+
+    .nav-links a {
+        padding: 10px 18px;
+    }
+
+    .search-bar {
+        width: auto; /* Retour à une largeur naturelle */
+    }
+
+    .search-bar input[type="text"] {
+        width: 300px; /* Largeur fixe sur grands écrans */
+    }
+
+    .search-bar button {
+        padding: 10px 18px;
+    }
+
+    .columns {
+        flex-direction: row; /* Retour en ligne pour grands écrans */
+    }
+}
+
+@media (max-width: 480px) { /* Petits écrans (mobiles) */
+    .header-title {
+        font-size: 1.5rem;
+    }
+
+    .nav-links a {
+        padding: 6px 10px;
+        font-size: 0.9rem;
+    }
+
+    .search-bar input[type="text"] {
+        max-width: 100%; /* Pleine largeur sur petits écrans */
+    }
+
+    .form-container {
+        padding: 10px;
+    }
+}
+
+/* === Autres styles inchangés (boutons, messages, etc.) === */
+button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: none;
+    background-color: #004085;
+    color: white;
+    cursor: pointer;
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
+}
+
+button:hover {
+    background-color: #003366;
+}
+
 .flash-message {
     padding: 10px;
     border-radius: 5px;
-    margin-bottom: 20px;
-}
-
-.flash-success {
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
-    color: #155724;
-}
-
-.flash-error {
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    color: #721c24;
-}
-
-.flash-warning {
-    background-color: #fff3cd;
-    border: 1px solid #ffeeba;
-    color: #856404;
-}
-
-/* Style global */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
-    margin: 0;
-    padding: 20px;
-}
-
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Style des titres */
-h1 {
-    text-align: center;
-    color: #2008d5;
-    margin-bottom: 20px;
-}
-
-/* Style des cadres (frames) */
-.frame {
-    border: 1px solid #ddd;
-    padding: 15px;
     margin-bottom: 15px;
-    border-radius: 5px;
-    background-color: #f7f7f7;
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
 }
 
-.frame label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
-}
-
-.frame select {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-/* Bouton de recherche */
-.btn-recherche {
-    background-color: #380cd7;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.btn-recherche:hover {
-    background-color: #45a049;
-}
-
-/* Messages flash */
-.flash-messages {
-    list-style: none;
-    padding: 0;
-}
-
-.flash-messages li {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-}
-
-.flash-messages li.success {
-    background-color: #dff0d8;
-    color: #3c763d;
-}
-
-.flash-messages li.error {
-    background-color: #f2dede;
-    color: #a94442;
-}
-
-/* 
-Pour la liste de filtre des indicateurs
-*/
-.suggestions-box {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    max-height: 200px;
-    overflow-y: auto;
-    position: absolute;
-    background-color: white;
-    width: 100%;
-    z-index: 1000;
-}
-
-.suggestion-item {
-    padding: 10px;
-    cursor: pointer;
-}
-
-.suggestion-item:hover {
-    background-color: #f0f0f0;
-}
-
+/* Ajoute d'autres styles spécifiques si nécessaire */

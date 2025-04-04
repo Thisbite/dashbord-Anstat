@@ -45,7 +45,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialisation de la base de données et de la migration
+# Initialisation de l lp^
+# ùa base de données et de la migration
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 #import de elastic
@@ -679,7 +680,6 @@ def get_data2():
     # Grouper les données par Domaine et Thématique
     data = df.groupby(['Domaine', 'Thematique'])['Indicateurs'].apply(list).to_dict()
     data_str_keys = {f"{key[0]}, {key[1]}": value for key, value in data.items()}
-
     # Retourner les données en JSON
     return jsonify(data_str_keys)
 
@@ -695,11 +695,7 @@ def generateur():
 
 
 #------------------------------------------------------------------------------------- DEBUT API
-from flask_cors import CORS
-
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:5000"}})  # Autoriser uniquement localhost pour plus de sécurité
-
-
+ 
 
 # Endpoint to get list of unique indicators
 @app.route('/api/indicateurs', methods=['GET'])

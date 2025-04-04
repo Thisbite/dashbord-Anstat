@@ -74,9 +74,12 @@ def get_regions():
         try:
             # Récupérer les résultats de la requête
             result = db.session.query(Region.nom_region).order_by(Region.nom_region.asc()).all()
-            
+            region_list = [r.nom_region for r in result]
             # Transformer les résultats en DataFrame
             regions = pd.DataFrame(result, columns=['nom_region'])
+            
+            
+
             
             return regions  # Retourner le DataFrame
         except Exception as e:
@@ -155,3 +158,4 @@ def pivot_table_2(df, row_dimensions, col_dimensions, Valeurs, Annee, row_label=
     )
     return tableau_croise
 
+print(get_regions)

@@ -1,41 +1,43 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Base de données des statistiques régionales</title>
-        
-        <!-- CSS -->
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/region_vitrine.css') }}">
-        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-    
-        <!-- JS -->
-        <script src="https://d3js.org/d3.v7.min.js"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="{{ url_for('static', filename='js/education.js') }}"></script>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base de données des statistiques régionales</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/region_vitrine.css') }}">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- JS -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/education.js') }}"></script>
+</head>
 <body>
     <!-- Header -->
     <div class="header-title">
-        <h1> <img src="{{ url_for('static', filename='img/logo.jpeg') }}"alt="Logo" class="logo">Plateforme de données régionales:{{region_name}}</h1>
+        <h1>
+            <img src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="Logo" class="logo">
+            Plateforme de données régionales : {{ region_name }}
+        </h1>
     </div>
-    <div class="header-secondary">
 
+    <div class="header-secondary">
         <div class="nav-links">
             <a href="{{ url_for('list_regions') }}" class="logo-link">
-                <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" style="width: 50px; height: auto;">
+                <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques">
             </a>
             <a href="{{ url_for('search_indicatorsR') }}">Accéder aux indicateurs</a>
             <a href="{{ url_for('publications_region') }}">Publications</a>
         </div>
-    
+
         <div class="search-bar">
             <form method="POST" action="{{ url_for('search') }}" onsubmit="return submitSearch();">
                 <input type="text" id="search-input" name="query" placeholder="Entrez votre recherche..." required autocomplete="off">
@@ -45,173 +47,121 @@
         </div>
     </div>
 
-    <!-- Affichage par défaut -->
-    <div id="defaultView">
-        <!-- Section Régionale (Description et Image) -->
-        <div class="section-regionaless">
-            <!-- Colonne gauche (Image) -->
-            <div class="colonnes image-column">
-                <img src="{{ url_for('static', filename='img/PORO.jpg') }}" alt="Région du Poro" class="responsive-imagess">
-            </div>
-        
-            <!-- Colonne droite (Texte) -->
-            <div class="colonnes text-column">
-                <h2><i>Description de la région </i></h2>
-                <p class="justified-text">
-                    La région du <strong>Poro</strong>, située dans le nord de la Côte d'Ivoire, bénéficie d'un climat tropical de type soudanais, marqué par deux saisons principales : une saison des pluies et une saison sèche.
-                </p>
-                <p class="justified-text">
-                    Les précipitations annuelles varient entre 1 000 et 1 200 mm, favorisant les activités agricoles, notamment la culture du maïs, du coton, et du riz. La région du Poro, avec Korhogo comme chef-lieu, est l'une des plus vastes régions administratives de la Côte d'Ivoire.
-                </p>
-                <p class="justified-text">
-                    Elle est composée de quatre départements principaux : <strong>Korhogo, Dikodougou, Sinématiali, et M'Bengué</strong>. Sur le plan économique, le Poro est un centre agricole clé, produisant non seulement des cultures vivrières mais aussi des cultures de rente comme le coton, contribuant à l'économie nationale.
-                </p>
-            </div>
-        </div>
-    
-        <!-- Section Régionale (Statistiques Clés) -->
-        <div class="section-regionales">
-            <h1 class="section-titre">Statistiques clés de la région</h1>
-        
-            <div class="conteneur-graphiques">
-                <div class="colonne">
-                    <h2>Taux de chômage</h2>
-                    <canvas id="tauxChomageChart" width="600" height="250"></canvas>      
+    <!-- Conteneur principal -->
+    <div class="frame-container">
+        <div id="defaultView">
+            <!-- Section Régionale (Description et Image) -->
+            <div class="section-regionaless">
+                <div class="colonnes image-column">
+                    <img src="{{ url_for('static', filename='img/PORO.jpg') }}" alt="Région du Poro" class="responsive-imagess">
                 </div>
-                <div class="colonne">
-                    <h2>Indice synthétique de fécondité</h2>
-                    <canvas id="idhChart" width="600" height="250"></canvas>
+                <div class="colonnes text-column">
+                    <h2><i>Description de la région</i></h2>
+                    <p class="justified-text">
+                        La région du <strong>Poro</strong>, située dans le nord de la Côte d'Ivoire, bénéficie d'un climat tropical de type soudanais, marqué par deux saisons principales : une saison des pluies et une saison sèche.
+                    </p>
+                    <p class="justified-text">
+                        Les précipitations annuelles varient entre 1 000 et 1 200 mm, favorisant les activités agricoles, notamment la culture du maïs, du coton, et du riz. La région du Poro, avec Korhogo comme chef-lieu, est l'une des plus vastes régions administratives de la Côte d'Ivoire.
+                    </p>
+                    <p class="justified-text">
+                        Elle est composée de quatre départements principaux : <strong>Korhogo, Dikodougou, Sinématiali, et M'Bengué</strong>. Sur le plan économique, le Poro est un centre agricole clé, produisant non seulement des cultures vivrières mais aussi des cultures de rente comme le coton, contribuant à l'économie nationale.
+                    </p>
                 </div>
             </div>
-    
-            <div class="conteneur-graphiques">
-                <div class="colonne">
-                    <h2>Taux brut de scolarisation</h2>
-                    <canvas id="tauxBruteChart" width="600" height="250"></canvas>      
+
+            <!-- Section Régionale (Statistiques Clés) -->
+            <div class="section-regionales">
+                <h1 class="section-titre">Statistiques clés de la région</h1>
+                <div class="conteneur-graphiques">
+                    <div class="colonne">
+                        <h2>Taux de chômage</h2>
+                        <canvas id="tauxChomageChart"></canvas>
+                    </div>
+                    <div class="colonne">
+                        <h2>Indice synthétique de fécondité</h2>
+                        <canvas id="idhChart"></canvas>
+                    </div>
                 </div>
-                <div class="colonne">
-                    <h2>Nombre de localités électrifiées</h2>
-                    <canvas id="tauxElectChart" width="600" height="250"></canvas>
+                <div class="conteneur-graphiques">
+                    <div class="colonne">
+                        <h2>Taux brut de scolarisation</h2>
+                        <canvas id="tauxBruteChart"></canvas>
+                    </div>
+                    <div class="colonne">
+                        <h2>Nombre de localités électrifiées</h2>
+                        <canvas id="tauxElectChart"></canvas>
+                    </div>
                 </div>
-            </div>
-    
-            <div class="conteneur-graphiques">
-                <div class="colonne">
-                    <h2>Taux d'alphabétisation (2016-2023)</h2>
-                    <canvas id="alphabetisationChartPoro" width="400" height="250"></canvas>
-                </div>
-                <div class="colonne">
-                    <h2>Population urbaine vs rurale (2023)</h2>
-                    <canvas id="popRuralUrbain" width="400" height="250"></canvas>
-                </div>
-            </div>
-        </div>
-    
-        <!-- Section Départementale -->
-        <div class="section-departementale">
-            <h1 class="section-titre">Statistiques clés des départements</h1>
-        
-            <div class="conteneur-graphiques">
-                <div class="colonne">
-                    <h2>Ratio élèves enseignant</h2>
-                    <canvas id="pyramideAgesChart" width="600" height="250"></canvas>      
-                </div>
-                <div class="colonne">
-                    <h2>Taux de natalité</h2>
-                    <canvas id="tauxNataliteChart" width="600" height="250"></canvas>
+                <div class="conteneur-graphiques">
+                    <div class="colonne">
+                        <h2>Taux d'alphabétisation (2016-2023)</h2>
+                        <canvas id="alphabetisationChartPoro"></canvas>
+                    </div>
+                    <div class="colonne">
+                        <h2>Population urbaine vs rurale (2023)</h2>
+                        <canvas id="popRuralUrbain"></canvas>
+                    </div>
                 </div>
             </div>
-    
-            <div class="conteneur-graphiques">
-                <div class="colonne">
-                    <h2>Effectif de la population en 2023</h2>
-                    <table id="tableauPop">
-                        <thead>
-                            <tr>
-                                <th>Département</th>
-                                <!-- Les modalités de sexe et total seront ajoutées dynamiquement ici -->
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Les départements et effectifs seront insérés dynamiquement ici -->
-                        </tbody>
-                    </table>
+
+            <!-- Section Départementale -->
+            <div class="section-departementale">
+                <h1 class="section-titre">Statistiques clés des départements</h1>
+                <div class="conteneur-graphiques">
+                    <div class="colonne">
+                        <h2>Ratio élèves enseignant</h2>
+                        <canvas id="pyramideAgesChart"></canvas>
+                    </div>
+                    <div class="colonne">
+                        <h2>Taux de natalité</h2>
+                        <canvas id="tauxNataliteChart"></canvas>
+                    </div>
                 </div>
-                <div class="colonne">
-                    <h2>Personnel médical en 2023</h2>
-                    <canvas id="effectifMedical" width="600" height="250"></canvas>
+                <div class="conteneur-graphiques">
+                    <div class="colonne">
+                        <h2>Effectif de la population en 2023</h2>
+                        <table id="tableauPop">
+                            <thead>
+                                <tr>
+                                    <th>Département</th>
+                                    <!-- Modalités ajoutées dynamiquement -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Données insérées dynamiquement -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="colonne">
+                        <h2>Personnel médical en 2023</h2>
+                        <canvas id="effectifMedical"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
-    
-        <script src="{{ url_for('static', filename='js/education.js') }}"></script>
     </div>
 
-<script>
-    function filterList(event, listId) {
-        event.preventDefault();
-
-        const startPeriod = new Date(document.getElementById('startPeriod').value);
-        const endPeriod = new Date(document.getElementById('endPeriod').value);
-
-        const list = document.getElementById(listId);
-        const items = list.getElementsByTagName('li');
-
-        for (const item of items) {
-            const itemDate = new Date(item.getAttribute('data-date')); // Assurez-vous que chaque élément a un attribut data-date
-            if (itemDate >= startPeriod && itemDate <= endPeriod) {
-                item.style.display = '';
-            } else {
-                item.style.display = 'none';
-            }
-        }
-    }
-
-    function downloadFile(fileId) {
-        alert(`Téléchargement de ${fileId}`);
-        // Ajoutez ici votre logique pour le téléchargement du fichier.
-    }
-</script>     
-
+    <!-- Scripts JavaScript -->
     <script>
-        function toggleVisibility() {
-            var defaultView = document.getElementById("defaultView");
-            var publicationSection = document.getElementById("publicationSection");
-            if (publicationSection.style.display === "none" || publicationSection.style.display === "") {
-                publicationSection.style.display = "block";
-                defaultView.style.display = "none";
-            } else {
-                publicationSection.style.display = "none";
-                defaultView.style.display = "block";
+        function submitSearch() {
+            const query = document.getElementById("search-input").value.trim();
+            if (query) {
+                window.location.href = `/search_indicatorsR/${encodeURIComponent(query)}`;
             }
+            return false; // Empêche la soumission par défaut
         }
 
-        function showDetails(detailId) {
-            // Masquer tous les détails
-            const details = document.querySelectorAll('.details');
-            details.forEach(detail => detail.style.display = 'none');
-    
-            // Afficher la section sélectionnée
-            const selectedDetail = document.getElementById(detailId);
-            if (selectedDetail) {
-                selectedDetail.style.display = 'block';
-            }
-        }
-    </script>
-
-
-    <script>
         document.addEventListener("DOMContentLoaded", function () {
             const searchInput = document.getElementById("search-input");
             const suggestionsContainer = document.getElementById("suggestions");
-        
+
             searchInput.addEventListener("input", function () {
                 const query = searchInput.value.trim();
                 if (query.length < 2) {
                     suggestionsContainer.innerHTML = "";
                     return;
                 }
-        
+
                 fetch(`/autocomplete?query=${encodeURIComponent(query)}`)
                     .then(response => response.json())
                     .then(data => {
@@ -230,15 +180,15 @@
                         }
                     });
             });
-        
-            // Cacher les suggestions si on clique ailleurs
+
             document.addEventListener("click", function (event) {
                 if (!searchInput.contains(event.target) && !suggestionsContainer.contains(event.target)) {
                     suggestionsContainer.innerHTML = "";
                 }
             });
         });
-        </script>
+    </script>
 
-</body>  
+    <script src="{{ url_for('static', filename='js/education.js') }}"></script>
+</body>
 </html>
