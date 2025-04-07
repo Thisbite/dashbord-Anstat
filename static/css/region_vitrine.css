@@ -224,7 +224,7 @@ body {
     border: 1px solid #ddd;
 }
 
-.section-regionaless {
+.section-regionaless ,.section-departementale{
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -265,23 +265,126 @@ body {
 }
 
 /* === Graphiques === */
+
+/* === Graphiques === */
 .conteneur-graphiques {
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
     gap: 20px;
     padding: 15px;
+    justify-content: center;
+    box-sizing: border-box;
+    background: linear-gradient(135deg, #ffffff, var(--secondary-color));
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+    transition: box-shadow var(--transition-speed);
+}
+
+.conteneur-graphiques:hover {
+    box-shadow: var(--shadow-hover);
 }
 
 .colonne {
     flex: 1;
-    min-width: clamp(250px, 45%, 280px);
-    max-width: 600px;
-    padding: 15px;
+    min-width: clamp(250px, 45%, 350px); /* Largeur minimale ajustée pour plus d'espace */
+    max-width: 500px; /* Limite la largeur maximale */
+    padding: 20px;
     background-color: #ffffff;
     border-radius: var(--border-radius);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    position: relative;
+    overflow: hidden;
+    height: 400px; /* Hauteur fixe pour desktop */
 }
+
+.colonne:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 107, 69, 0.2);
+}
+
+.colonne h2 {
+    color: var(--primary-color);
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    font-weight: var(--font-weight-bold);
+    text-align: center;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+}
+
+.colonne h2::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 3px;
+    background: var(--accent-color);
+    border-radius: 2px;
+}
+
+/* Assure que le canvas s'adapte au conteneur */
+.colonne canvas {
+    width: 100% !important;
+    height: 100% !important;
+    padding: 5px;
+}
+
+/* Animation subtile pour les graphiques */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.colonne canvas {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Media Queries pour responsivité */
+@media (max-width: 768px) {
+    .conteneur-graphiques {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .colonne {
+        min-width: 100%;
+        height: 300px; /* Hauteur réduite pour tablette */
+    }
+
+    .colonne h2 {
+        font-size: 1.1rem;
+    }
+
+    .colonne h2::after {
+        width: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .colonne {
+        height: 250px; /* Hauteur encore réduite pour mobile */
+        padding: 15px;
+    }
+
+    .colonne h2 {
+        font-size: 1rem;
+    }
+
+    .colonne h2::after {
+        width: 30px;
+    }
+}
+
+
+
+
+
+
 
 .section-titre {
     text-align: center;
@@ -291,32 +394,62 @@ body {
     font-weight: var(--font-weight-bold);
 }
 
-.colonne h2 {
-    color: var(--primary-color);
-    font-size: clamp(1rem, 3vw, 1.2rem);
-    margin-bottom: 10px;
-    text-align: center;
-}
+
 
 /* === Tableau === */
 #tableauPop {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
+    display: block; /* Permet le défilement horizontal */
+    overflow-x: auto; /* Ajoute une barre de défilement horizontal si nécessaire */
+    white-space: nowrap; /* Empêche le texte de passer à la ligne */
 }
 
+/* Style des cellules */
 #tableauPop th, #tableauPop td {
     padding: 10px;
     border: 1px solid var(--primary-color);
     text-align: center;
+    min-width: 100px; /* Assure une largeur minimale pour chaque colonne */
 }
 
+/* Style des en-têtes */
 #tableauPop th {
     background-color: var(--primary-color);
     color: #ffffff;
     font-weight: var(--font-weight-bold);
 }
 
+/* Amélioration visuelle pour le défilement */
+#tableauPop::-webkit-scrollbar {
+    height: 8px;
+}
+
+#tableauPop::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 4px;
+}
+
+#tableauPop::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+/* Media Queries pour ajustements supplémentaires */
+@media (max-width: 768px) {
+    #tableauPop th, #tableauPop td {
+        padding: 8px; /* Réduit le padding sur tablette/mobile */
+        font-size: 14px; /* Réduit la taille de la police */
+    }
+}
+
+@media (max-width: 480px) {
+    #tableauPop th, #tableauPop td {
+        padding: 6px; /* Encore plus petit sur mobile */
+        font-size: 12px;
+        min-width: 80px; /* Réduit la largeur minimale */
+    }
+}
 /* === Media Queries === */
 /* Mobile */
 @media (max-width: 768px) {

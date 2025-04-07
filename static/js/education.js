@@ -1,550 +1,480 @@
 // Données fictives pour le ratio élèves/enseignant (élèves par enseignant) de 2019 à 2024
 var dataRatioEleveEnseignant = {
   Sinematiali: [
-    { year: 2019, ratio: 45 }, { year: 2020, ratio: 43 }, { year: 2021, ratio: 42 },
-    { year: 2022, ratio: 41 }, { year: 2023, ratio: 40 }, { year: 2024, ratio: 39 }
+      { year: 2019, ratio: 45 }, { year: 2020, ratio: 43 }, { year: 2021, ratio: 42 },
+      { year: 2022, ratio: 41 }, { year: 2023, ratio: 40 }, { year: 2024, ratio: 39 }
   ],
   Korhogo: [
-    { year: 2019, ratio: 50 }, { year: 2020, ratio: 49 }, { year: 2021, ratio: 48 },
-    { year: 2022, ratio: 47 }, { year: 2023, ratio: 46 }, { year: 2024, ratio: 45 }
+      { year: 2019, ratio: 50 }, { year: 2020, ratio: 49 }, { year: 2021, ratio: 48 },
+      { year: 2022, ratio: 47 }, { year: 2023, ratio: 46 }, { year: 2024, ratio: 45 }
   ],
   Mbengue: [
-    { year: 2019, ratio: 38 }, { year: 2020, ratio: 37 }, { year: 2021, ratio: 36 },
-    { year: 2022, ratio: 35 }, { year: 2023, ratio: 34 }, { year: 2024, ratio: 33 }
+      { year: 2019, ratio: 38 }, { year: 2020, ratio: 37 }, { year: 2021, ratio: 36 },
+      { year: 2022, ratio: 35 }, { year: 2023, ratio: 34 }, { year: 2024, ratio: 33 }
   ],
   Dikodougou: [
-    { year: 2019, ratio: 42 }, { year: 2020, ratio: 41 }, { year: 2021, ratio: 40 },
-    { year: 2022, ratio: 39 }, { year: 2023, ratio: 38 }, { year: 2024, ratio: 37 }
+      { year: 2019, ratio: 42 }, { year: 2020, ratio: 41 }, { year: 2021, ratio: 40 },
+      { year: 2022, ratio: 39 }, { year: 2023, ratio: 38 }, { year: 2024, ratio: 37 }
   ]
 };
 
-// Configuration du graphique
-var ctx1 = document.getElementById("pyramideAgesChart").getContext("2d");
-new Chart(ctx1, {
-  type: "line", // Changement de "bar" à "line" pour un graphique linéaire
-  data: {
-    labels: dataRatioEleveEnseignant.Sinematiali.map(d => d.year), // Années sur l'axe X
-    datasets: [
-      {
-        label: "Sinematiali",
-        data: dataRatioEleveEnseignant.Sinematiali.map(d => d.ratio),
-        borderColor: "orange",
-        backgroundColor: "rgba(255,165,0,0.2)",
-        fill: false
-      },
-      {
-        label: "Korhogo",
-        data: dataRatioEleveEnseignant.Korhogo.map(d => d.ratio),
-        borderColor: "blue",
-        backgroundColor:  "white",
-        fill: false
-      },
-      {
-        label: "M'bengué",
-        data: dataRatioEleveEnseignant.Mbengue.map(d => d.ratio),
-        borderColor: "green",
-        backgroundColor:  "white",
-        fill: false
-      },
-      {
-        label: "Dikodougou",
-        data: dataRatioEleveEnseignant.Dikodougou.map(d => d.ratio),
-        borderColor: "red",
-        backgroundColor: "white",
-        fill: false
-      }
-    ]
-  },
-  options: {
-    scales: {
-      x: { title: { display: true, text: "Année" } },
-      y: { 
-        beginAtZero: false, // Pas besoin de commencer à 0, les ratios sont généralement > 0
-        min: 30, // Ajuste selon tes données
-        max: 55, // Ajuste selon tes données
-        title: { display: true, text: "Ratio élèves/enseignant" }
-      }
-    },
-    plugins: {
-      legend: { display: true } // Affiche la légende pour identifier les départements
-    }
-  }
-});
-
-// Données générées pour les quatre départements (taux de natalité en ‰)
+// Données fictives pour le taux de natalité
 var dataNatalite = {
   Sinematiali: [
-    { year: 2013, natalite: 20 }, { year: 2014, natalite: 22 }, { year: 2015, natalite: 18 },
-    { year: 2016, natalite: 21 }, { year: 2017, natalite: 19 }, { year: 2018, natalite: 24 },
-    { year: 2019, natalite: 23 }, { year: 2020, natalite: 22 }, { year: 2021, natalite: 25 },
-    { year: 2022, natalite: 26 }, { year: 2023, natalite: 27 }
+      { year: 2013, natalite: 20 }, { year: 2014, natalite: 22 }, { year: 2015, natalite: 18 },
+      { year: 2016, natalite: 21 }, { year: 2017, natalite: 19 }, { year: 2018, natalite: 24 },
+      { year: 2019, natalite: 23 }, { year: 2020, natalite: 22 }, { year: 2021, natalite: 25 },
+      { year: 2022, natalite: 26 }, { year: 2023, natalite: 27 }
   ],
   Korhogo: [
-    { year: 2013, natalite: 25 }, { year: 2014, natalite: 26 }, { year: 2015, natalite: 24 },
-    { year: 2016, natalite: 23 }, { year: 2017, natalite: 25 }, { year: 2018, natalite: 27 },
-    { year: 2019, natalite: 28 }, { year: 2020, natalite: 26 }, { year: 2021, natalite: 29 },
-    { year: 2022, natalite: 30 }, { year: 2023, natalite: 31 }
+      { year: 2013, natalite: 25 }, { year: 2014, natalite: 26 }, { year: 2015, natalite: 24 },
+      { year: 2016, natalite: 23 }, { year: 2017, natalite: 25 }, { year: 2018, natalite: 27 },
+      { year: 2019, natalite: 28 }, { year: 2020, natalite: 26 }, { year: 2021, natalite: 29 },
+      { year: 2022, natalite: 30 }, { year: 2023, natalite: 31 }
   ],
   Mbengue: [
-    { year: 2013, natalite: 18 }, { year: 2014, natalite: 19 }, { year: 2015, natalite: 17 },
-    { year: 2016, natalite: 20 }, { year: 2017, natalite: 21 }, { year: 2018, natalite: 22 },
-    { year: 2019, natalite: 23 }, { year: 2020, natalite: 21 }, { year: 2021, natalite: 24 },
-    { year: 2022, natalite: 25 }, { year: 2023, natalite: 26 }
+      { year: 2013, natalite: 18 }, { year: 2014, natalite: 19 }, { year: 2015, natalite: 17 },
+      { year: 2016, natalite: 20 }, { year: 2017, natalite: 21 }, { year: 2018, natalite: 22 },
+      { year: 2019, natalite: 23 }, { year: 2020, natalite: 21 }, { year: 2021, natalite: 24 },
+      { year: 2022, natalite: 25 }, { year: 2023, natalite: 26 }
   ],
   Dikodougou: [
-    { year: 2013, natalite: 22 }, { year: 2014, natalite: 23 }, { year: 2015, natalite: 20 },
-    { year: 2016, natalite: 24 }, { year: 2017, natalite: 23 }, { year: 2018, natalite: 25 },
-    { year: 2019, natalite: 26 }, { year: 2020, natalite: 24 }, { year: 2021, natalite: 27 },
-    { year: 2022, natalite: 28 }, { year: 2023, natalite: 29 }
+      { year: 2013, natalite: 22 }, { year: 2014, natalite: 23 }, { year: 2015, natalite: 20 },
+      { year: 2016, natalite: 24 }, { year: 2017, natalite: 23 }, { year: 2018, natalite: 25 },
+      { year: 2019, natalite: 26 }, { year: 2017, natalite: 23 }, { year: 2018, natalite: 25 },
+      { year: 2019, natalite: 26 }, { year: 2020, natalite: 24 }, { year: 2021, natalite: 27 },
+      { year: 2022, natalite: 28 }, { year: 2023, natalite: 29 }
   ]
 };
 
-// Configuration du graphique, taux de natalité
-var ctx2 = document.getElementById("tauxNataliteChart").getContext("2d");
-new Chart(ctx2, {
-  type: "line",
-  data: {
-    labels: dataNatalite.Sinematiali.map(d => d.year), // Les années sont les mêmes pour tous
-    datasets: [
-      {
-        label: "Sinematiali",
-        data: dataNatalite.Sinematiali.map(d => d.natalite),
-        borderColor: "orange",
-        backgroundColor: "rgba(255,165,0,0.2)",
-        fill: false // Désactive le remplissage sous la courbe
-      },
-      {
-        label: "Korhogo",
-        data: dataNatalite.Korhogo.map(d => d.natalite),
-        borderColor: "blue",
-        backgroundColor: "rgba(0,0,255,0.2)",
-        fill: false
-      },
-      {
-        label: "M'bengué",
-        data: dataNatalite.Mbengue.map(d => d.natalite),
-        borderColor: "green",
-        backgroundColor: "rgba(0,255,0,0.2)",
-        fill: false
-      },
-      {
-        label: "Dikodougou",
-        data: dataNatalite.Dikodougou.map(d => d.natalite),
-        borderColor: "red",
-        backgroundColor: "rgba(255,0,0,0.2)",
-        fill: false
-      }
-    ]
-  },
-  options: {
-    scales: {
-      x: { title: { display: true, text: "Année" } },
-      y: { 
-        beginAtZero: true,
-        title: { display: true, text: "Taux de natalité (‰)" }
-      }
-    },
-    plugins: {
-      legend: { display: true } // Affiche la légende pour identifier les courbes
-    }
-  }
-});
+// Données fictives pour les effectifs médicaux
+var dataMedical = [
+  { "Nombre hôpital": 2, corps: "Infirmiers", Korhogo: 80, Sinematiali: 60, Dikodougou: 75, "M'bengué": 50 },
+  { "Nombre hôpital": 1, corps: "Sage-femmes", Korhogo: 40, Sinematiali: 30, Dikodougou: 35, "M'bengué": 25 },
+  { "Nombre hôpital": 2, corps: "Généralistes", Korhogo: 30, Sinematiali: 25, Dikodougou: 40, "M'bengué": 20 }
+];
+var labelsMedical = ["Korhogo", "Sinematiali", "Dikodougou", "M'bengué"];
+var corpsMedical = ["Infirmiers", "Sage-femmes", "Généralistes"];
 
-// Taux brut de scolarité
-var dataTauxBrut = [
-  { year: 2013, taux: 85 },
-  { year: 2014, taux: 87 },
-  { year: 2015, taux: 89 },
-  { year: 2016, taux: 90 },
-  { year: 2017, taux: 88 },
-  { year: 2018, taux: 92 },
-  { year: 2019, taux: 94 },
-  { year: 2020, taux: 91 },
-  { year: 2021, taux: 93 },
-  { year: 2022, taux: 95 },
-  { year: 2023, taux: 96 },
+// Données fictives pour l’indice synthétique de fécondité (ISF)
+var dataIDH = [
+  { region: "2016", idh: 0.55 }, { region: "2020", idh: 0.72 },
+  { region: "2022", idh: 0.60 }, { region: "2023", idh: 0.65 }
 ];
 
+// Données fictives pour le taux de chômage
+var dataTauxChomage = [
+  { region: "2008", taux: 12 }, { region: "2010", taux: 8 },
+  { region: "2018", taux: 10 }, { region: "2023", taux: 9 }
+];
 
-// Données fictives pour la population par département et par sexe
+// Données fictives pour le taux brut de scolarisation
+var dataTauxBrut = [
+  { year: 2018, taux: 85 }, { year: 2019, taux: 87 }, { year: 2020, taux: 89 },
+  { year: 2021, taux: 90 }, { year: 2022, taux: 92 }
+];
+
+// Données fictives pour le taux d’électrification
+var dataTauxElect = [
+  { year: 2018, taux: 60 }, { year: 2019, taux: 65 }, { year: 2020, taux: 70 },
+  { year: 2021, taux: 75 }, { year: 2022, taux: 80 }
+];
+
+// Données fictives pour le taux d’alphabétisation
+var dataAlphabetisationPoro = [
+  { year: "2016", taux: 45 }, { year: "2017", taux: 48 }, { year: "2018", taux: 50 },
+  { year: "2019", taux: 52 }, { year: "2020", taux: 55 }, { year: "2021", taux: 58 },
+  { year: "2022", taux: 60 }, { year: "2023", taux: 62 }
+];
+
+// Données fictives pour la population urbaine vs rurale
+var dataPopRuralUrbain = {
+  labels: ["Urbaine", "Rurale"],
+  datasets: [{
+      label: "Répartition Population 2023 (Poro)",
+      data: [150000, 250000],
+      backgroundColor: ['#49655A', '#F39323'],
+      hoverBackgroundColor: ['#3a4e45', '#e08500'],
+      borderColor: '#ffffff',
+      borderWidth: 2
+  }]
+};
+
 // Données fictives pour la population par département et par sexe
 var dataPopulation = [
   { departement: "Korhogo", hommes: 60000, femmes: 60000 },
   { departement: "Sinematiali", hommes: 45000, femmes: 50000 },
   { departement: "Dikodougou", hommes: 55000, femmes: 55000 },
-  { departement: "M'bengué", hommes: 40000, femmes: 45000 },
+  { departement: "M'bengué", hommes: 40000, femmes: 45000 }
 ];
 
-// Sélectionner le tableau
-var tableauPop = document.getElementById("tableauPop");
-var headersRow = tableauPop.querySelector("thead tr"); // Ligne d'en-têtes
-
-// Ajouter les colonnes pour les modalités de sexe et le total
-var thHommes = document.createElement("th");
-thHommes.textContent = "Hommes";
-headersRow.appendChild(thHommes);
-
-var thFemmes = document.createElement("th");
-thFemmes.textContent = "Femmes";
-headersRow.appendChild(thFemmes);
-
-var thTotal = document.createElement("th");
-thTotal.textContent = "Total";
-headersRow.appendChild(thTotal);
-
-// Ajouter les lignes des départements et les données correspondantes
-var tbody = tableauPop.querySelector("tbody");
-dataPopulation.forEach(function(d) {
-    var row = document.createElement("tr");
-
-    // Ajouter le nom du département
-    var tdDepartement = document.createElement("td");
-    tdDepartement.textContent = d.departement;
-    row.appendChild(tdDepartement);
-
-    // Ajouter les effectifs pour les hommes
-    var tdHommes = document.createElement("td");
-    tdHommes.textContent = d.hommes;
-    row.appendChild(tdHommes);
-
-    // Ajouter les effectifs pour les femmes
-    var tdFemmes = document.createElement("td");
-    tdFemmes.textContent = d.femmes;
-    row.appendChild(tdFemmes);
-
-    // Ajouter le total
-    var tdTotal = document.createElement("td");
-    tdTotal.textContent = d.hommes + d.femmes;
-    row.appendChild(tdTotal);
-
-    // Ajouter la ligne au tableau
-    tbody.appendChild(row);
-});
-
-
-// Données fictives pour les effectifs médicaux
-var dataMedical = [
-  { "Nombre hôpital":2,corps: "Infirmiers", Korhogo: 80, Sinematiali: 60, Dikodougou: 75, "M'bengué": 50 },
-  { "Nombre hôpital":1,corps: "Sage-femmes", Korhogo: 40, Sinematiali: 30, Dikodougou: 35, "M'bengué": 25 },
-  { "Nombre hôpital":2,corps: "Généralistes", Korhogo: 30, Sinematiali: 25, Dikodougou: 40, "M'bengué": 20 },
-];
-// Extraire les départements et corps médicaux
-var labelsMedical = ["Korhogo", "Sinematiali", "Dikodougou", "M'bengué"];
-var corpsMedical = ["Infirmiers", "Sage-femmes", "Généralistes"];
-
-// Configuration du graphe pour les effectifs médicaux
-var ctxMedical = document.getElementById("effectifMedical").getContext("2d");
-
-new Chart(ctxMedical, {
-  type: "bar",
-  data: {
-    labels: labelsMedical,
-    datasets: corpsMedical.map((corps, index) => ({
-      label: corps,
-      data: labelsMedical.map(departement => {
-        var corpsData = dataMedical.find(d => d.corps === corps);
-        return corpsData ? corpsData[departement] : 0; // Retourne 0 si aucune donnée trouvée
-      }),
-      backgroundColor: ["#e09705", "#006B45", "white","#ddd"][index],
-      borderColor: "#000",
-      borderWidth: 1,
-    })),
-  },
-  options: {
-    scales: {
-      x: { beginAtZero: true },
-      y: { beginAtZero: true, max: 100 },
-    },
-  },
-});
-
-
-
-
-var dataIDH = [
-  { region: "2016", idh: 0.55 },
-  { region: "2020", idh: 0.72 },
-  { region: "2022", idh: 0.60 },
-  { region: "2023", idh: 0.65 },
-];
-
-
-var ctxIDH = document.getElementById("idhChart").getContext("2d");
-new Chart(ctxIDH, {
-  type: "line",
-  data: {
-    labels: dataIDH.map(d => d.region),
-    datasets: [
-      {
-        label: "ISF(%)",
-        data: dataIDH.map(d => d.idh),
-        borderColor: "green",
-        fill: false,
-      },
-    ],
-  },
-  options: {
-    scales: {
-      y: { beginAtZero: true, max: 1 },
-    },
-  },
-});
-
-
-
-
-var dataTauxChomage = [
-  { region: "2008", taux: 12 },
-  { region: "2010", taux: 8 },
-  { region: "2018", taux: 10 },
-  { region: "2023", taux: 9 },
-];
-
-var ctxTauxChomage = document.getElementById("tauxChomageChart").getContext("2d");
-new Chart(ctxTauxChomage, {
-  type: "line",
-  data: {
-    labels: dataTauxChomage.map(d => d.region),
-    datasets: [
-      {
-        label: "Taux",
-        data: dataTauxChomage.map(d => d.taux),
-        borderColor: "#e09705", // Couleur de la ligne
-        fill: false, // Pas de remplissage sous la courbe
-        pointBackgroundColor: "#e09705", // Couleur des points
-        pointBorderColor: "#e09705", // Bordure des points
-      },
-    ],
-  },
-  options: {
-    scales: {
-      y: {
-        beginAtZero: true, // L'axe Y commence à zéro
-        ticks: {
-          stepSize: 2, // Intervalle entre les graduations
-        },
-        title: {
-          display: true,
-          text: "Taux (%)",
-        },
-      },
-      x: {
-        title: {
-          display: false,
-          text: "Régions",
-        },
-      },
-    },
-    plugins: {
+// Thème commun simplifié pour Chart.js
+const chartTheme = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
       legend: {
-        display: true, // Affiche la légende
-        position: "top",
-      },
-    },
-  },
-});
-
-var dataPopulationPoro = {
-  labels: ["Urbaine", "Rurale"],
-  datasets: [
-    {
-      label: "Répartition Population 2022 (Poro)",
-      data: [150000, 250000], // Exemple de données
-      backgroundColor: ["#4CAF50", "#FFC107"], // Couleurs pour les segments
-      hoverBackgroundColor: ["#388E3C", "#FFA000"], // Couleurs au survol
-    },
-  ],
-};
-
-// Initialisation du graphique
-var ctxPopRuralUrbain = document.getElementById("popRuralUrbain").getContext("2d");
-new Chart(ctxPopRuralUrbain, {
-  type: "doughnut",
-  data: dataPopulationPoro,
-  options: {
-    responsive: true,
-    plugins: {
-     legend: {
-        display: true,
-        position: "top",
-        labels: {
-          generateLabels: function (chart) {
-            const data = chart.data;
-            const total = data.datasets[0].data.reduce((acc, val) => acc + val, 0);
-            return data.labels.map((label, i) => {
-              const value = data.datasets[0].data[i];
-              const percentage = ((value / total) * 100).toFixed(1);
-              return {
-                text: `${label} (${percentage}%)`,
-                fillStyle: data.datasets[0].backgroundColor[i],
-                hidden: chart.isDatasetVisible(0) && !chart.getDataVisibility(i),
-                lineWidth: 0,
-                index: i,
-              };
-            });
-          },
-        },
+          position: 'top',
+          labels: {
+              font: {
+                  size: 12,
+                  family: "'Montserrat', sans-serif",
+                  weight: '600'
+              },
+              color: '#49655A',
+              padding: 10
+          }
       },
       tooltip: {
-        callbacks: {
-          label: function (tooltipItem) {
-            let label = tooltipItem.label || "";
-            let value = tooltipItem.raw;
-            
-            // Calculer le pourcentage total
-            const dataset = tooltipItem.dataset;
-            const total = dataset.data.reduce((acc, val) => acc + val, 0);
-            const percentage = ((value / total) * 100).toFixed(1); // Pourcentage avec 1 décimale
-            
-            return `${label}: ${value.toLocaleString()} habitants (${percentage}%)`;
-          },
-        },
-      },
-    },
+          backgroundColor: 'rgba(73, 101, 90, 0.9)',
+          titleFont: { size: 14, family: "'Montserrat', sans-serif" },
+          bodyFont: { size: 12, family: "'Montserrat', sans-serif" },
+          cornerRadius: 6,
+          padding: 10,
+          borderColor: '#F39323',
+          borderWidth: 1
+      }
   },
-});
-
-
-
-var dataAlphabetisationPoro = {
-  labels: ["2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023"], // Années
-  datasets: [
-    {
-      label: "Taux d'Alphabétisation (%)",
-      data: [45, 48, 50, 52, 55, 58, 60, 62], // Exemple de données
-      backgroundColor: "#4CAF50", // Couleur des barres
-      borderColor: "#388E3C", // Couleur de bordure des barres
-      borderWidth: 1,
-    },
-  ],
-};
-
-// Initialisation du graphique
-var ctxAlphabetisationPoro = document
-  .getElementById("alphabetisationChartPoro")
-  .getContext("2d");
-new Chart(ctxAlphabetisationPoro, {
-  type: "bar",
-  data: dataAlphabetisationPoro,
-  options: {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: true,
-        position: "top",
-      },
-      tooltip: {
-        callbacks: {
-          label: function (tooltipItem) {
-            let value = tooltipItem.raw;
-            return `Taux : ${value}%`;
-          },
-        },
-      },
-    },
-    scales: {
+  scales: {
       x: {
-        title: {
-          display: true,
-          text: "Année",
-        },
+          ticks: {
+              color: '#49655A',
+              font: { size: 11, family: "'Montserrat', sans-serif" }
+          },
+          grid: { display: false },
+          title: {
+              display: true,
+              color: '#49655A',
+              font: { size: 12, family: "'Montserrat', sans-serif", weight: '600' }
+          }
       },
       y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: "Taux d'Alphabétisation (%)",
-        },
-      },
-    },
-  },
-});
-
-
-
-function showPublicationFunction(event) {
-  event.preventDefault();  // Empêche le comportement par défaut
-
-  var publicationSection = document.getElementById('connexion');
-  var dashboardSection = document.getElementById('dashbordId');
-
-  // Masquer ou afficher la section Publication
-  if (publicationSection.style.display === "none" || publicationSection.style.display === "") {
-      publicationSection.style.display = "block";
-      dashboardSection.style.display = 'none';
-  } else {
-      publicationSection.style.display = "none";
+          ticks: {
+              color: '#49655A',
+              font: { size: 11, family: "'Montserrat', sans-serif" }
+          },
+          grid: { color: 'rgba(73, 101, 90, 0.2)', borderDash: [5, 5] },
+          title: {
+              display: true,
+              color: '#49655A',
+              font: { size: 12, family: "'Montserrat', sans-serif", weight: '600' }
+          }
+      }
   }
+};
+
+// Fonction pour ajuster les tailles de police sur mobile
+function adjustChartFontSizes(chart) {
+  if (!chart || !chart.options) return;
+
+  const isMobile = window.innerWidth <= 768;
+  const sizes = {
+      legend: isMobile ? 10 : 12,
+      ticks: isMobile ? 9 : 11,
+      title: isMobile ? 10 : 12
+  };
+
+  // Mise à jour des tailles seulement si les propriétés existent
+  if (chart.options.plugins.legend?.labels?.font) {
+      chart.options.plugins.legend.labels.font.size = sizes.legend;
+  }
+  if (chart.options.scales.x?.ticks?.font) {
+      chart.options.scales.x.ticks.font.size = sizes.ticks;
+  }
+  if (chart.options.scales.y?.ticks?.font) {
+      chart.options.scales.y.ticks.font.size = sizes.ticks;
+  }
+  if (chart.options.scales.x?.title?.font) {
+      chart.options.scales.x.title.font.size = sizes.title;
+  }
+  if (chart.options.scales.y?.title?.font) {
+      chart.options.scales.y.title.font.size = sizes.title;
+  }
+  chart.update();
 }
 
+// Fonction pour créer un graphique avec vérification
+function createChart(elementId, config) {
+  const ctx = document.getElementById(elementId);
+  if (!ctx) {
+      console.error(`Élément HTML avec l'ID "${elementId}" non trouvé.`);
+      return null;
+  }
+  if (typeof Chart === 'undefined') {
+      console.error("Chart.js n'est pas chargé correctement.");
+      return null;
+  }
+  const chart = new Chart(ctx.getContext("2d"), config);
+  if (chart) {
+      window.addEventListener('resize', () => adjustChartFontSizes(chart));
+      adjustChartFontSizes(chart);
+  }
+  return chart;
+}
 
-// Données fictives pour Taux brut de scolarité
-var tauxBruteData = {
-  labels: ['2018', '2019', '2020', '2021', '2022'],
-  datasets: [{
-      label: 'Taux (%)',
-      data: [85, 87, 89, 90, 92],
-      backgroundColor: '#e09705',
-      borderColor: '#e09705',
-      borderWidth: 2
-  }]
-};
-
-// Configuration du graphique pour Taux brut de scolarité
-var tauxBruteConfig = {
+// Graphique : Ratio élèves/enseignant
+createChart("pyramideAgesChart", {
   type: 'line',
-  data: tauxBruteData,
+  data: {
+      labels: dataRatioEleveEnseignant.Sinematiali.map(d => d.year),
+      datasets: [
+          { label: "Sinematiali", data: dataRatioEleveEnseignant.Sinematiali.map(d => d.ratio), borderColor: '#F39323', backgroundColor: 'rgba(243, 147, 35, 0.2)', fill: true, tension: 0.4, pointBackgroundColor: '#F39323' },
+          { label: "Korhogo", data: dataRatioEleveEnseignant.Korhogo.map(d => d.ratio), borderColor: '#49655A', backgroundColor: 'rgba(73, 101, 90, 0.2)', fill: true, tension: 0.4, pointBackgroundColor: '#49655A' },
+          { label: "M'bengué", data: dataRatioEleveEnseignant.Mbengue.map(d => d.ratio), borderColor: '#d9e6db', backgroundColor: 'rgba(217, 230, 219, 0.2)', fill: true, tension: 0.4, pointBackgroundColor: '#d9e6db' },
+          { label: "Dikodougou", data: dataRatioEleveEnseignant.Dikodougou.map(d => d.ratio), borderColor: '#e08500', backgroundColor: 'rgba(224, 133, 0, 0.2)', fill: true, tension: 0.4, pointBackgroundColor: '#e08500' }
+      ]
+  },
   options: {
-      responsive: true,
+      ...chartTheme,
+      scales: {
+          x: { ...chartTheme.scales.x, title: { text: "Année" } },
+          y: { ...chartTheme.scales.y, title: { text: "Ratio élèves/enseignant" }, min: 30, max: 55 }
+      }
+  }
+});
+
+// Graphique : Taux de natalité
+createChart("tauxNataliteChart", {
+  type: "line",
+  data: {
+      labels: dataNatalite.Sinematiali.map(d => d.year),
+      datasets: [
+          { label: "Sinematiali", data: dataNatalite.Sinematiali.map(d => d.natalite), borderColor: '#F39323', backgroundColor: 'rgba(243, 147, 35, 0.2)', fill: true, tension: 0.4, pointBackgroundColor: '#F39323' },
+          { label: "Korhogo", data: dataNatalite.Korhogo.map(d => d.natalite), borderColor: '#49655A', backgroundColor: 'rgba(73, 101, 90, 0.2)', fill: true, tension: 0.4, pointBackgroundColor: '#49655A' },
+          { label: "M'bengué", data: dataNatalite.Mbengue.map(d => d.natalite), borderColor: '#d9e6db', backgroundColor: 'rgba(217, 230, 219, 0.2)', fill: true, tension: 0.4, pointBackgroundColor: '#d9e6db' },
+          { label: "Dikodougou", data: dataNatalite.Dikodougou.map(d => d.natalite), borderColor: '#e08500', backgroundColor: 'rgba(224, 133, 0, 0.2)', fill: true, tension: 0.4, pointBackgroundColor: '#e08500' }
+      ]
+  },
+  options: {
+      ...chartTheme,
+      scales: {
+          x: { ...chartTheme.scales.x, title: { text: "Année" } },
+          y: { ...chartTheme.scales.y, title: { text: "Taux de natalité (‰)" }, beginAtZero: true }
+      }
+  }
+});
+
+// Graphique : Effectif médical
+createChart("effectifMedical", {
+  type: "bar",
+  data: {
+      labels: labelsMedical,
+      datasets: corpsMedical.map((corps, index) => ({
+          label: corps,
+          data: labelsMedical.map(dept => dataMedical.find(d => d.corps === corps)[dept] || 0),
+          backgroundColor: ['#49655A', '#F39323', '#d9e6db'][index],
+          borderColor: '#ffffff',
+          borderWidth: 1
+      }))
+  },
+  options: {
+      ...chartTheme,
+      scales: {
+          x: { ...chartTheme.scales.x, title: { text: "Départements" } },
+          y: { ...chartTheme.scales.y, title: { text: "Effectif" }, beginAtZero: true, max: 100 }
+      }
+  }
+});
+
+// Graphique : Indice synthétique de fécondité (ISF)
+createChart("idhChart", {
+  type: "line",
+  data: {
+      labels: dataIDH.map(d => d.region),
+      datasets: [{
+          label: "ISF",
+          data: dataIDH.map(d => d.idh),
+          borderColor: '#49655A',
+          backgroundColor: 'rgba(73, 101, 90, 0.2)',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#49655A'
+      }]
+  },
+  options: {
+      ...chartTheme,
+      scales: {
+          x: { ...chartTheme.scales.x, title: { text: "Année" } },
+          y: { ...chartTheme.scales.y, title: { text: "Indice" }, beginAtZero: true, max: 1 }
+      }
+  }
+});
+
+// Graphique : Taux de chômage
+createChart("tauxChomageChart", {
+  type: "line",
+  data: {
+      labels: dataTauxChomage.map(d => d.region),
+      datasets: [{
+          label: "Taux de chômage (%)",
+          data: dataTauxChomage.map(d => d.taux),
+          borderColor: '#F39323',
+          backgroundColor: 'rgba(243, 147, 35, 0.2)',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#F39323'
+      }]
+  },
+  options: {
+      ...chartTheme,
+      scales: {
+          x: { ...chartTheme.scales.x, title: { text: "Année" } },
+          y: { ...chartTheme.scales.y, title: { text: "Taux (%)" }, beginAtZero: true, ticks: { stepSize: 2 } }
+      }
+  }
+});
+
+// Graphique : Taux brut de scolarisation
+createChart("tauxBruteChart", {
+  type: "line",
+  data: {
+      labels: dataTauxBrut.map(d => d.year),
+      datasets: [{
+          label: "Taux (%)",
+          data: dataTauxBrut.map(d => d.taux),
+          borderColor: '#F39323',
+          backgroundColor: 'rgba(243, 147, 35, 0.2)',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#F39323'
+      }]
+  },
+  options: {
+      ...chartTheme,
+      scales: {
+          x: { ...chartTheme.scales.x, title: { text: "Année" } },
+          y: { ...chartTheme.scales.y, title: { text: "Taux (%)" }, beginAtZero: true }
+      }
+  }
+});
+
+// Graphique : Nombre de localités électrifiées
+createChart("tauxElectChart", {
+  type: "bar",
+  data: {
+      labels: dataTauxElect.map(d => d.year),
+      datasets: [{
+          label: "Nombre",
+          data: dataTauxElect.map(d => d.taux),
+          backgroundColor: '#49655A',
+          borderColor: '#3a4e45',
+          borderWidth: 1
+      }]
+  },
+  options: {
+      ...chartTheme,
+      scales: {
+          x: { ...chartTheme.scales.x, title: { text: "Année" } },
+          y: { ...chartTheme.scales.y, title: { text: "Nombre" }, beginAtZero: true }
+      }
+  }
+});
+
+// Graphique : Taux d’alphabétisation
+createChart("alphabetisationChartPoro", {
+  type: "bar",
+  data: {
+      labels: dataAlphabetisationPoro.map(d => d.year),
+      datasets: [{
+          label: "Taux d'Alphabétisation (%)",
+          data: dataAlphabetisationPoro.map(d => d.taux),
+          backgroundColor: '#49655A',
+          borderColor: '#3a4e45',
+          borderWidth: 1
+      }]
+  },
+  options: {
+      ...chartTheme,
+      scales: {
+          x: { ...chartTheme.scales.x, title: { text: "Année" } },
+          y: { ...chartTheme.scales.y, title: { text: "Taux (%)" }, beginAtZero: true }
+      },
       plugins: {
-          legend: {
-              position: 'top',
+          ...chartTheme.plugins,
+          tooltip: {
+              callbacks: {
+                  label: function (tooltipItem) {
+                      return `Taux : ${tooltipItem.raw}%`;
+                  }
+              }
           }
       }
   }
-};
+});
 
-// Création du graphique pour Taux brut de scolarité
-var tauxBruteChart = new Chart(
-  document.getElementById('tauxBruteChart'),
-  tauxBruteConfig
-);
-
-// Données fictives pour Taux d'électrification
-var tauxElectData = {
-  labels: ['2018', '2019', '2020', '2021', '2022'],
-  datasets: [{
-      label: 'Nombre',
-      data: [60, 65, 70, 75, 80],
-      backgroundColor: '#006B45',
-      borderColor: '#006B45',
-      borderWidth: 1
-  }]
-};
-
-// Configuration du graphique pour Taux d'électrification
-var tauxElectConfig = {
-  type: 'bar',
-  data: tauxElectData,
+// Graphique : Population urbaine vs rurale
+createChart("popRuralUrbain", {
+  type: "doughnut",
+  data: dataPopRuralUrbain,
   options: {
-      responsive: true,
+      ...chartTheme,
       plugins: {
+          ...chartTheme.plugins,
           legend: {
-              position: 'top',
+              labels: {
+                  generateLabels: function (chart) {
+                      const data = chart.data;
+                      const total = data.datasets[0].data.reduce((acc, val) => acc + val, 0);
+                      return data.labels.map((label, i) => {
+                          const value = data.datasets[0].data[i];
+                          const percentage = ((value / total) * 100).toFixed(1);
+                          return {
+                              text: `${label} (${percentage}%)`,
+                              fillStyle: data.datasets[0].backgroundColor[i],
+                              hidden: !chart.getDataVisibility(i),
+                              index: i
+                          };
+                      });
+                  }
+              }
+          },
+          tooltip: {
+              callbacks: {
+                  label: function (tooltipItem) {
+                      const label = tooltipItem.label || "";
+                      const value = tooltipItem.raw;
+                      const total = tooltipItem.dataset.data.reduce((acc, val) => acc + val, 0);
+                      const percentage = ((value / total) * 100).toFixed(1);
+                      return `${label}: ${value.toLocaleString()} habitants (${percentage}%)`;
+                  }
+              }
           }
       }
   }
-};
+});
 
-// Création du graphique pour Taux d'électrification
-var tauxElectChart = new Chart(
-  document.getElementById('tauxElectChart'),
-  tauxElectConfig
-);
+// Tableau : Population par département
+const tableauPop = document.getElementById("tableauPop");
+if (tableauPop) {
+  const headersRow = tableauPop.querySelector("thead tr");
+  if (headersRow) {
+      headersRow.innerHTML = '<th>Département</th><th>Hommes</th><th>Femmes</th><th>Total</th>';
+  }
+  const tbody = tableauPop.querySelector("tbody");
+  if (tbody) {
+      dataPopulation.forEach(d => {
+          const row = document.createElement("tr");
+          row.innerHTML = `<td>${d.departement}</td><td>${d.hommes.toLocaleString()}</td><td>${d.femmes.toLocaleString()}</td><td>${(d.hommes + d.femmes).toLocaleString()}</td>`;
+          tbody.appendChild(row);
+      });
+  }
+} else {
+  console.error("Tableau avec l'ID 'tableauPop' non trouvé.");
+}
 
-// Pour la carte région***********************************************************************************
-
-
-
-
-
+// Fonction pour afficher/masquer la section publication
+function showPublicationFunction(event) {
+  event.preventDefault();
+  const publicationSection = document.getElementById('connexion');
+  const dashboardSection = document.getElementById('dashbordId');
+  if (publicationSection && dashboardSection) {
+      if (publicationSection.style.display === "none" || publicationSection.style.display === "") {
+          publicationSection.style.display = "block";
+          dashboardSection.style.display = 'none';
+      } else {
+          publicationSection.style.display = "none";
+      }
+  } else {
+      console.error("Section 'connexion' ou 'dashbordId' non trouvée.");
+  }
+}
