@@ -10,21 +10,31 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-
 </head>
 <body>
-    <!-- Header (unchanged for brevity) -->
+    <!-- Header -->
     <div class="header-title">
-        <h1><img src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="Logo" class="logo">Plateforme de données régionales {{region_name}}</h1>
+        <h1>
+            <img src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="Logo" class="logo">
+            Plateforme de données régionales {{region_name}}
+        </h1>
     </div>
     <div class="header-secondary">
-        <div class="nav-links">
+        <!-- Bouton Hamburger (visible uniquement sur mobile) -->
+        <div class="hamburger">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <!-- Menu de navigation -->
+        <div class="nav-links" id="nav-links">
             <a href="{{ url_for('list_regions') }}" class="logo-link">
                 <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" style="width: 50px; height: auto;">
             </a>
             <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
             <a href="{{ url_for('publications_region') }}">Publications</a>
         </div>
+
+        <!-- Barre de recherche -->
         <div class="search-bar">
             <form method="POST" action="{{ url_for('search') }}" onsubmit="return submitSearch();">
                 <input type="text" id="search-input" name="query" placeholder="Entrez votre recherche..." required autocomplete="off">
@@ -35,8 +45,7 @@
     </div>
 
     <!-- Publication Section -->
-     <!-- Publication Section -->
-     <div id="publicationSection">
+    <div id="publicationSection">
         <h3>Collection de publications</h3>
         <div class="publication-grid">
             {% for publication in publications %}
@@ -50,16 +59,58 @@
         </div>
     </div>
 
+       <!-- Pied de page ajouté -->
+       <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>À propos</h3>
+                <p>Plateforme de données régionales développée par <a href="https://www.anstat.ci/" target="_blank">ANSTAT</a>. Toutes les données sont basées sur les projections RGPH 2021.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens utiles</h3>
+                <ul>
+                    <li><a href="{{ url_for('list_regions') }}">Liste des régions</a></li>
+                    <li><a href="{{ url_for('search_indicators') }}">Indicateurs</a></li>
+                    <li><a href="#">Contactez-nous</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Suivez-nous</h3>
+                <div class="social-links">
+                    <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 ANSTAT - Tous droits réservés</p>
+        </div>
+    </footer>
 
-
-
+    <!-- Scripts -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            // Gestion du menu hamburger
+            const hamburger = document.querySelector(".hamburger");
+            const navLinks = document.querySelector("#nav-links");
+
+            hamburger.addEventListener("click", function () {
+                navLinks.classList.toggle("active");
+            });
+
+            // Ferme le menu si on clique en dehors
+            document.addEventListener("click", function (event) {
+                if (!hamburger.contains(event.target) && !navLinks.contains(event.target)) {
+                    navLinks.classList.remove("active");
+                }
+            });
+
+            // Gestion de la barre de recherche
             const searchInput = document.getElementById("search-input");
             const suggestionsContainer = document.getElementById("suggestions");
-            const regionList = document.querySelector(".region-list");
-            let isSuggestionsActive = false; // Drapeau pour suivre l'état des suggestions
-        
+            let isSuggestionsActive = false;
+
             searchInput.addEventListener("input", function () {
                 const query = searchInput.value.trim();
                 if (query.length < 2) {
@@ -67,7 +118,7 @@
                     isSuggestionsActive = false;
                     return;
                 }
-        
+
                 fetch(`/autocomplete?query=${encodeURIComponent(query)}`)
                     .then(response => response.json())
                     .then(data => {
@@ -84,30 +135,27 @@
                                 };
                                 suggestionsContainer.appendChild(div);
                             });
-                            isSuggestionsActive = true; // Suggestions actives
+                            isSuggestionsActive = true;
                         } else {
                             isSuggestionsActive = false;
                         }
                     });
             });
-        
-            // Garder les suggestions visibles si le curseur est dessus
+
             suggestionsContainer.addEventListener("mouseover", function () {
                 isSuggestionsActive = true;
             });
-        
+
             suggestionsContainer.addEventListener("mouseout", function (event) {
                 if (!searchInput.contains(event.relatedTarget)) {
                     isSuggestionsActive = false;
                 }
             });
-        
-            // Masquer les suggestions uniquement si le clic est hors de tout élément pertinent
+
             document.addEventListener("click", function (event) {
                 if (
                     !searchInput.contains(event.target) &&
-                    !suggestionsContainer.contains(event.target) &&
-                    !regionList.contains(event.target)
+                    !suggestionsContainer.contains(event.target)
                 ) {
                     suggestionsContainer.innerHTML = "";
                     isSuggestionsActive = false;
@@ -116,5 +164,4 @@
         });
     </script>
 </body>
-
 </html>

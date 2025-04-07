@@ -158,4 +158,3 @@ def pivot_table_2(df, row_dimensions, col_dimensions, Valeurs, Annee, row_label=
     )
     return tableau_croise
 
-print(get_regions)
