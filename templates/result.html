@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -9,14 +8,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://d3js.org/d3.v6.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <!-- Pour SheetJS (XLSX.js) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- Pour jsPDF et jspdf-autotable -->
@@ -25,16 +20,22 @@
 </head>
 <body>
     <div class="header-title">
-        <h1> <img src="{{ url_for('static', filename='img/logo.jpeg') }}"alt="Logo" class="logo">Plateforme de données régionales</h1>
+        <h1>
+            <img src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="Logo" class="logo">
+            Plateforme de données régionales
+        </h1>
     </div>
     <div class="header-secondary">
+        <div class="hamburger">
+            <i class="fas fa-bars"></i>
+        </div>
         <div class="nav-links">
             <a href="{{ url_for('list_regions') }}" class="logo-link">
                 <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" style="width: 50px; height: auto;">
             </a>
             <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
             <a href="#connexion">Aide</a>
-        </div>    
+        </div>
     </div>
     <h3 id="pdf-title" class="titre-indicateur">Indicateur: {{indicateur2.capitalize()}}</h3>
     <div class="parent-frame">
@@ -64,7 +65,7 @@
                 <h3>Niveau désagrégation</h3>
                 <div id="initial-list">
                     {% for colonne in colonne_valable %}
-                        <div class="draggable-item" data-column="{{ colonne }}" draggable="true">{{ colonne.capitalize() }}</div>
+                        <div class="draggable-item" data-column="{{ colonne }}" id="drag-{{ colonne }}-initial" draggable="true">{{ colonne.capitalize() }}</div>
                     {% endfor %}
                 </div>
             </div>
@@ -74,15 +75,11 @@
                     <div id="droppable-area-rows">
                         <span id="placeholder-rows">Glissez ici pour modalités en ligne</span>
                     </div>
-            
                     <div id="droppable-area-cols">
                         <span id="placeholder-cols">Glissez ici pour modalités en colonne</span>
                     </div>
                 </div>
-            
                 <div id="filter-container"></div>
-            </div>
-            
             </div>
         </div>
 
@@ -94,8 +91,8 @@
         </div>
         <iframe id="pdf-preview" style="width:100%; height:90%; border:none;"></iframe>
     </div>
-       <!-- Pied de page ajouté -->
-       <footer class="footer">
+    <!-- Pied de page -->
+    <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
                 <h3>À propos</h3>
@@ -119,42 +116,44 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 ANSTAT - Tous droits réservés</p>
+            <p>© 2025 ANSTAT - Tous droits réservés</p>
         </div>
     </footer>
 
-    <script>
-        // Gestionnaire pour afficher/masquer les métadonnées
-        document.getElementById('metadonnees').addEventListener('click', function() {
-            const metadataContainer = document.getElementById('metadata-container');
-            if (metadataContainer.style.display === 'none') {
-                metadataContainer.style.display = 'block';
-            } else {
-                metadataContainer.style.display = 'none';
-            }
-        });
-    </script>
+    <!-- Scripts -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Sélectionne tous les conteneurs de filtre
+            // Gestionnaire pour afficher/masquer les métadonnées
+            document.getElementById('metadonnees').addEventListener('click', function() {
+                const metadataContainer = document.getElementById('metadata-container');
+                metadataContainer.style.display = metadataContainer.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // Gestion du menu hamburger
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+
+            hamburger.addEventListener('click', function () {
+                navLinks.classList.toggle('active');
+            });
+
+            document.addEventListener('click', function (event) {
+                if (!hamburger.contains(event.target) && !navLinks.contains(event.target)) {
+                    navLinks.classList.remove('active');
+                }
+            });
+
+            // Gestion des filtres dépliables
             document.querySelectorAll('.filter-title').forEach(function (title) {
                 title.addEventListener('click', function () {
-                    // Accède au parent '.filter-group' et bascule la classe 'open'
                     const filterGroup = this.parentElement;
                     filterGroup.classList.toggle('open');
-    
-                    // Affiche ou masque le conteneur des checkboxes
                     const checkboxContainer = filterGroup.querySelector('.checkbox-container');
-                    if (filterGroup.classList.contains('open')) {
-                        checkboxContainer.style.display = 'block';
-                    } else {
-                        checkboxContainer.style.display = 'none';
-                    }
+                    checkboxContainer.style.display = filterGroup.classList.contains('open') ? 'block' : 'none';
                 });
             });
         });
     </script>
-    
     <script src="{{ url_for('static', filename='js/pivot_table.js') }}"></script>
 </body>
 </html>

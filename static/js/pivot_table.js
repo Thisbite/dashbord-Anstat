@@ -1,6 +1,7 @@
 const draggableItems = document.querySelectorAll('.draggable-item');
 const droppableAreaRows = document.getElementById('droppable-area-rows');
 const droppableAreaCols = document.getElementById('droppable-area-cols');
+const initialList = document.getElementById('initial-list');
 const tableContainer = document.getElementById('table-container');
 const filterContainer = document.getElementById('filter-container');
 
@@ -19,8 +20,12 @@ droppableAreaRows.addEventListener('drop', event => handleDrop(event, 'row'));
 droppableAreaCols.addEventListener('dragover', handleDragOver);
 droppableAreaCols.addEventListener('drop', event => handleDrop(event, 'col'));
 
+initialList.addEventListener('dragover', handleDragOver);
+initialList.addEventListener('drop', event => handleDrop(event, 'initial'));
+
 function handleDragStart(event) {
     event.dataTransfer.setData('text/plain', event.target.dataset.column);
+    event.dataTransfer.setData('source-id', event.target.id); // Ajoute l'ID pour identifier l'origine
 }
 
 function handleDragOver(event) {
@@ -29,30 +34,40 @@ function handleDragOver(event) {
 
 function handleDrop(event, type) {
     event.preventDefault();
-    //const column = event.dataTransfer.getData('text/plain');
-    //console.table(column,type);
-    
     const column = event.dataTransfer.getData('text/plain');
+    const sourceId = event.dataTransfer.getData('source-id');
+    const draggedElement = document.querySelector(`[data-column="${column}"][id="${sourceId}"]`) || document.querySelector(`[data-column="${column}"]`);
 
+    if (!draggedElement) return;
+
+    // Supprimer l'élément de sa zone d'origine
+    if (draggedElement.parentElement) {
+        draggedElement.parentElement.removeChild(draggedElement);
+    }
+
+    // Retirer des tableaux rowColumns ou colColumns si nécessaire
+    if (rowColumns.includes(column)) {
+        rowColumns.splice(rowColumns.indexOf(column), 1);
+    } else if (colColumns.includes(column)) {
+        colColumns.splice(colColumns.indexOf(column), 1);
+    }
+
+    // Ajouter à la nouvelle zone
     if (type === 'row' && !rowColumns.includes(column)) {
         rowColumns.push(column);
         addColumnToArea(column, droppableAreaRows, rowColumns, type);
-    } 
-    
-    else if (type === 'col') {
-
-        // Vérifie si une colonne est déjà présente dans `colColumns`
-       if (!colColumns.includes(column)) {
-            colColumns.push(column);
-            addColumnToArea(column, droppableAreaCols, colColumns, type);
-        } else {
-            alert("Cette variable existe déjà...");
-        }
+    } else if (type === 'col' && !colColumns.includes(column)) {
+        colColumns.push(column);
+        addColumnToArea(column, droppableAreaCols, colColumns, type);
+    } else if (type === 'initial') {
+        addColumnToArea(column, initialList, null, type);
     }
-    sendColumnsToServer();
-    console.table(colColumns.length);
-}
 
+    // Cacher les placeholders si des éléments sont présents
+    togglePlaceholders();
+
+    sendColumnsToServer();
+}
 
 function addColumnToArea(column, area, columnList, type) {
     const newItem = document.createElement('div');
@@ -60,15 +75,29 @@ function addColumnToArea(column, area, columnList, type) {
     newItem.textContent = column;
     newItem.setAttribute('draggable', 'true');
     newItem.setAttribute('data-column', column);
+    newItem.id = `drag-${column}-${Date.now()}`; // ID unique pour éviter les conflits
     newItem.addEventListener('dragstart', handleDragStart);
 
-    newItem.addEventListener('click', function () {
-        area.removeChild(newItem);
-        columnList.splice(columnList.indexOf(column), 1);
-        sendColumnsToServer();
-    });
+    // Supprimer l'élément au clic (sauf dans initial-list)
+    if (type !== 'initial') {
+        newItem.addEventListener('click', function () {
+            area.removeChild(newItem);
+            if (columnList) {
+                columnList.splice(columnList.indexOf(column), 1);
+            }
+            togglePlaceholders();
+            sendColumnsToServer();
+        });
+    }
 
     area.appendChild(newItem);
+}
+
+function togglePlaceholders() {
+    const rowPlaceholder = droppableAreaRows.querySelector('#placeholder-rows');
+    const colPlaceholder = droppableAreaCols.querySelector('#placeholder-cols');
+    rowPlaceholder.style.display = droppableAreaRows.children.length > 1 ? 'none' : 'block';
+    colPlaceholder.style.display = droppableAreaCols.children.length > 1 ? 'none' : 'block';
 }
 
 function sendColumnsToServer() {
@@ -85,16 +114,15 @@ function sendColumnsToServer() {
     })
     .then(response => response.json())
     .then(data => {
-        // Reformatez tableData pour qu'il soit un tableau d'objets
         tableData = data.data.map(row => {
             const rowData = {};
             data.columns.forEach((col, index) => {
-                rowData[col.join(' ')] = row[index];  // Combine les noms de colonnes multi-niveaux
+                rowData[col.join(' ')] = row[index];
             });
             return rowData;
         });
 
-        tableData.columns = data.columns; // Stockez les colonnes
+        tableData.columns = data.columns;
         filteredTableData = tableData;
         generateTable(data);
         generateFilters();
@@ -102,10 +130,8 @@ function sendColumnsToServer() {
     .catch(error => console.error('Erreur:', error));
 }
 
-
-
-
-
+// Le reste des fonctions (generateTable, generateFilters, applyFilters, etc.) reste inchangé
+// Assurez-vous d'inclure ces fonctions dans votre fichier JS si elles ne sont pas déjà présentes
 
 function generateTable(data) {
     tableContainer.innerHTML = '';
@@ -114,7 +140,6 @@ function generateTable(data) {
     const thead = document.createElement('thead');
     const tbody = document.createElement('tbody');
 
-    // Créer les en-têtes hiérarchiques pour les colonnes avec fusion
     const columns = data.columns;
     const levels = columns.length > 0 ? columns[0].length : 0;
 
@@ -127,9 +152,8 @@ function generateTable(data) {
             const currentValue = col[level];
 
             if (currentValue === previousValue) {
-                colspan += 1;  // Incrémente le colspan pour les valeurs identiques
+                colspan += 1;
             } else {
-                // Si la valeur change, appliquez le colspan et réinitialisez-le
                 if (colspan > 0) {
                     headerRow.lastChild.setAttribute('colspan', colspan);
                 }
@@ -137,10 +161,9 @@ function generateTable(data) {
                 th.textContent = currentValue || '';
                 headerRow.appendChild(th);
                 previousValue = currentValue;
-                colspan = 1;  // Réinitialise colspan pour la nouvelle valeur
+                colspan = 1;
             }
 
-            // Pour la dernière cellule de la ligne, appliquez le colspan
             if (index === columns.length - 1 && colspan > 1) {
                 headerRow.lastChild.setAttribute('colspan', colspan);
             }
@@ -148,7 +171,6 @@ function generateTable(data) {
         thead.appendChild(headerRow);
     }
 
-    // Génération du corps du tableau en respectant l’ordre des colonnes
     data.data.forEach(row => {
         const tr = document.createElement('tr');
         columns.forEach((col, index) => {
@@ -164,6 +186,8 @@ function generateTable(data) {
     table.appendChild(tbody);
     tableContainer.appendChild(table);
 }
+
+// Ajoutez ici les autres fonctions (generateFilters, applyFilters, etc.) si elles ne sont pas déjà incluses
 
 
 // Déclaration de lastValidValues en dehors de la fonction pour conserver les valeurs

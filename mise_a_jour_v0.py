@@ -71,7 +71,8 @@ def insert_from_excel(file_path):
                 )
             db.session.commit()
             print(f"Données de la feuille '{sheet_name}' insérées avec succès.")
+
 if __name__ == "__main__":
-    clear_v1_indicateur()
-    #excel_file = "data_v0.xlsx"
-    #insert_from_excel(excel_file)
+    #clear_v1_indicateur()
+    excel_file = "data_v0.xlsx"
+    insert_from_excel(excel_file)
