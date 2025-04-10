@@ -4,254 +4,278 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ publication_title }} - Détails</title>
-    
-    <!-- CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/publications_detail.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { overflow-x: hidden; font-family: 'Montserrat', sans-serif; }
+        .logo-img { width: clamp(50px, 5vw, 100px); height: auto; }
+        .suggestions-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            max-height: 150px;
+            overflow-y: auto;
+            z-index: 50;
+            display: none;
+            border-radius: 0 0 0.5rem 0.5rem;
+            background: white;
+            border: 1px solid #49655A;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .suggestions-list div { padding: 8px; cursor: pointer; }
+        .suggestions-list div:hover { background: #d9e6db; color: #49655A; }
+    </style>
 </head>
-<body>
-    <!-- Header -->
-    <div class="header-title">
-        <h1>
-            <img src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="Logo" class="logo">
-            Plateforme de données régionales {{ region_name }}
-        </h1>
-    </div>
-    <div class="header-secondary">
-        <!-- Bouton Hamburger (visible uniquement sur mobile) -->
-        <div class="hamburger">
-            <i class="fas fa-bars"></i>
+<body class="bg-gray-100">
+    <!-- Menu harmonisé avec Home -->
+    <header class="bg-white shadow-lg p-4 fixed top-0 left-0 w-full z-50">
+        <div class="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto">
+            <div class="flex items-center justify-between w-full md:w-auto">
+                <a href="{{ url_for('list_regions') }}" class="flex-shrink-0">
+                    <img src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="Logo" class="logo-img">
+                </a>
+                <button id="hamburger" class="md:hidden text-[#49655A] text-xl focus:outline-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <nav id="nav-links" class="flex-col md:flex-row md:flex items-center space-y-3 md:space-y-0 md:space-x-4 w-full md:w-auto mt-4 md:mt-0 hidden">
+                <a href="{{ url_for('search_indicators') }}"
+                   class="text-[#49655A] border-2 border-[#49655A] rounded-full px-4 py-2 uppercase font-semibold text-sm hover:bg-[#49655A] hover:text-white transition-all w-full md:w-auto text-center">
+                    Accéder aux indicateurs
+                </a>
+                <a href="{{ url_for('publications_region') }}"
+                   class="text-[#49655A] border-2 border-[#49655A] rounded-full px-4 py-2 uppercase font-semibold text-sm hover:bg-[#49655A] hover:text-white transition-all w-full md:w-auto text-center">
+                    Publications
+                </a>
+            </nav>
+            <div class="flex items-center space-x-4 mt-4 md:mt-0 w-full md:w-auto">
+                <form method="POST" action="{{ url_for('search') }}" class="flex items-center w-full max-w-lg" onsubmit="return submitSearch();">
+                    <div class="relative w-full">
+                        <input type="text" id="search-input" name="query" placeholder="Entrez votre recherche..."
+                               class="w-full px-4 py-2 bg-gray-50 border border-[#49655A] rounded-full focus:outline-none focus:ring-2 focus:ring-[#49655A] shadow-sm text-sm"
+                               required autocomplete="off">
+                        <div id="suggestions" class="suggestions-list"></div>
+                    </div>
+                    <button type="submit" id="search-button"
+                            class="bg-[#49655A] text-white px-4 py-2 rounded-full hover:bg-[#003820] transition-all font-semibold text-sm ml-2">
+                        Rechercher
+                    </button>
+                </form>
+            </div>
         </div>
+    </header>
 
-        <!-- Menu de navigation -->
-        <div class="nav-links" id="nav-links">
-            <a href="{{ url_for('list_regions') }}" class="logo-link">
-                <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" style="width: 50px; height: auto;">
-            </a>
-            <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
-            <a href="{{ url_for('publications_region') }}">Publications</a>
-        </div>
-
-        <!-- Barre de recherche -->
-        <div class="search-bar">
-            <form method="POST" action="{{ url_for('search') }}" onsubmit="return submitSearch();">
-                <input type="text" id="search-input" name="query" placeholder="Entrez votre recherche..." required autocomplete="off">
-                <div id="suggestions" class="suggestions-list"></div>
-                <button type="submit" id="search-button">Rechercher</button>
-            </form>
-        </div>
-    </div>
+    <!-- Sous-titre avec nom de la région -->
+    <h1 class="text-center text-base font-semibold text-[#49655A] mt-20 mx-auto w-fit">
+        Région: {{ region_name }}
+    </h1>
 
     <!-- Publication Details Section -->
-    <div class="publication-details">
-        <h2>{{ publication_title }}</h2>
-        <div class="tabs">
-            <button class="tab-button active" onclick="openTab('description')">Description</button>
-            <button class="tab-button" onclick="openTab('downloads')">Liste</button>
-        </div>
-
-        <div class="tab-content active" id="description">
-            <p>{{ publication_description }}</p>
-        </div>
-        <div class="tab-content" id="downloads">
-            <p>Liste des fichiers téléchargeables :</p>
-            <ul>
-                {% if publication_title == 'COMPTES REGIONAUX' %}
-                    <li>
-                        <div class="download-item">
-                            <span class="download-name">Comptes Régionaux Annuels 2024</span>
-                            <div class="download-icons">
-                                <a href="{{ url_for('static', filename='pdf/comptes_regionaux.pdf') }}" download>
-                                    <i class="fas fa-file-pdf" style="color: #ff0000; margin-right: 5px;"></i> PDF
-                                </a>
-                                <a href="{{ url_for('static', filename='excel/comptes_regionaux.xlsx') }}" download>
-                                    <i class="fas fa-file-excel" style="color: #00ff00; margin-left: 10px;"></i> Excel
-                                </a>
-                            </div>
-                        </div>
-                    </li>
-                {% elif publication_title == 'Annuaire' %}
-                    <li>
-                        <div class="download-item">
-                            <span class="download-name">Annuaires Statistiques Régionaux 2025</span>
-                            <div class="download-icons">
-                                <a href="{{ url_for('static', filename='pdf/annuaires_statistiques.pdf') }}" download>
-                                    <i class="fas fa-file-pdf" style="color: #ff0000; margin-right: 5px;"></i> PDF
-                                </a>
-                                <a href="{{ url_for('static', filename='excel/annuaires_statistiques.xlsx') }}" download>
-                                    <i class="fas fa-file-excel" style="color: #00ff00; margin-left: 10px;"></i> Excel
-                                </a>
-                            </div>
-                        </div>
-                    </li>
-                {% elif publication_title == 'Fiches Synoptiques Régionales' %}
-                    <li>
-                        <div class="download-item">
-                            <span class="download-name">Fiches Synoptiques Régionales 2025</span>
-                            <div class="download-icons">
-                                <a href="{{ url_for('static', filename='pdf/fiches_synoptiques.pdf') }}" download>
-                                    <i class="fas fa-file-pdf" style="color: #ff0000; margin-right: 5px;"></i> PDF
-                                </a>
-                                <a href="{{ url_for('static', filename='excel/fiches_synoptiques.xlsx') }}" download>
-                                    <i class="fas fa-file-excel" style="color: #00ff00; margin-left: 10px;"></i> Excel
-                                </a>
-                            </div>
-                        </div>
-                    </li>
-                {% elif publication_title == 'Indice Harmonisé des Prix à la Consommation des Ménages de Décembre 2024' %}
-                    <li>
-                        <div class="download-item">
-                            <span class="download-name">IHPC Décembre 2024</span>
-                            <div class="download-icons">
-                                <a href="{{ url_for('static', filename='pdf/ihpc_decembre2024.pdf') }}" download>
-                                    <i class="fas fa-file-pdf" style="color: #ff0000; margin-right: 5px;"></i> PDF
-                                </a>
-                                <a href="{{ url_for('static', filename='excel/ihpc_decembre2024.xlsx') }}" download>
-                                    <i class="fas fa-file-excel" style="color: #00ff00; margin-left: 10px;"></i> Excel
-                                </a>
-                            </div>
-                        </div>
-                    </li>
-                {% elif publication_title == 'Indice du Chiffre d’Affaires dans le Commerce Décembre 2024' %}
-                    <li>
-                        <div class="download-item">
-                            <span class="download-name">Commerce Décembre 2024</span>
-                            <div class="download-icons">
-                                <a href="{{ url_for('static', filename='pdf/commerce_decembre2024.pdf') }}" download>
-                                    <i class="fas fa-file-pdf" style="color: #ff0000; margin-right: 5px;"></i> PDF
-                                </a>
-                                <a href="{{ url_for('static', filename='excel/commerce_decembre2024.xlsx') }}" download>
-                                    <i class="fas fa-file-excel" style="color: #00ff00; margin-left: 10px;"></i> Excel
-                                </a>
-                            </div>
-                        </div>
-                    </li>
-                {% endif %}
-            </ul>
-        </div>
-
-        <button class="back-button" onclick="window.location.href='{{ url_for('publications_region') }}'">Retour aux publications</button>
-    </div>
-       <!-- Pied de page ajouté -->
-       <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>À propos</h3>
-                <p>Plateforme de données régionales développée par <a href="https://www.anstat.ci/" target="_blank">ANSTAT</a>. Toutes les données sont basées sur les projections RGPH 2021.</p>
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#F39323]">
+            <h2 class="text-lg font-semibold text-[#49655A] text-center mb-6">{{ publication_title }}</h2>
+            <div class="flex flex-wrap gap-2 border-b-2 border-[#F39323] mb-4">
+                <button class="tab-button px-4 py-2 text-sm text-[#2c3e50] border-b-2 border-transparent hover:border-[#F39323] focus:outline-none active" onclick="openTab('description')">
+                    Description
+                </button>
+                <button class="tab-button px-4 py-2 text-sm text-[#2c3e50] border-b-2 border-transparent hover:border-[#F39323] focus:outline-none" onclick="openTab('downloads')">
+                    Liste
+                </button>
             </div>
-            <div class="footer-section">
-                <h3>Liens utiles</h3>
-                <ul>
-                    <li><a href="{{ url_for('list_regions') }}">Liste des régions</a></li>
-                    <li><a href="{{ url_for('search_indicators') }}">Indicateurs</a></li>
-                    <li><a href="#">Contactez-nous</a></li>
+
+            <div class="tab-content active" id="description">
+                <p class="text-sm text-gray-700 leading-relaxed">{{ publication_description }}</p>
+            </div>
+            <div class="tab-content hidden" id="downloads">
+                <p class="text-sm text-gray-700 mb-2">Liste des fichiers téléchargeables :</p>
+                <ul class="space-y-4">
+                    {% if publication_title == 'COMPTES REGIONAUX' %}
+                        <li class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                            <span class="text-sm font-semibold text-gray-800">Comptes Régionaux Annuels 2024</span>
+                            <div class="flex gap-4">
+                                <a href="{{ url_for('static', filename='pdf/comptes_regionaux.pdf') }}" download class="text-[#F39323] hover:underline">
+                                    <i class="fas fa-file-pdf text-red-600 mr-1"></i> PDF
+                                </a>
+                                <a href="{{ url_for('static', filename='excel/comptes_regionaux.xlsx') }}" download class="text-[#F39323] hover:underline">
+                                    <i class="fas fa-file-excel text-green-600 mr-1"></i> Excel
+                                </a>
+                            </div>
+                        </li>
+                    {% elif publication_title == 'Annuaire' %}
+                        <li class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                            <span class="text-sm font-semibold text-gray-800">Annuaires Statistiques Régionaux 2025</span>
+                            <div class="flex gap-4">
+                                <a href="{{ url_for('static', filename='pdf/annuaires_statistiques.pdf') }}" download class="text-[#F39323] hover:underline">
+                                    <i class="fas fa-file-pdf text-red-600 mr-1"></i> PDF
+                                </a>
+                                <a href="{{ url_for('static', filename='excel/annuaires_statistiques.xlsx') }}" download class="text-[#F39323] hover:underline">
+                                    <i class="fas fa-file-excel text-green-600 mr-1"></i> Excel
+                                </a>
+                            </div>
+                        </li>
+                    {% elif publication_title == 'Fiches Synoptiques Régionales' %}
+                        <li class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                            <span class="text-sm font-semibold text-gray-800">Fiches Synoptiques Régionales 2025</span>
+                            <div class="flex gap-4">
+                                <a href="{{ url_for('static', filename='pdf/fiches_synoptiques.pdf') }}" download class="text-[#F39323] hover:underline">
+                                    <i class="fas fa-file-pdf text-red-600 mr-1"></i> PDF
+                                </a>
+                                <a href="{{ url_for('static', filename='excel/fiches_synoptiques.xlsx') }}" download class="text-[#F39323] hover:underline">
+                                    <i class="fas fa-file-excel text-green-600 mr-1"></i> Excel
+                                </a>
+                            </div>
+                        </li>
+                    {% elif publication_title == 'Indice Harmonisé des Prix à la Consommation des Ménages de Décembre 2024' %}
+                        <li class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                            <span class="text-sm font-semibold text-gray-800">IHPC Décembre 2024</span>
+                            <div class="flex gap-4">
+                                <a href="{{ url_for('static', filename='pdf/ihpc_decembre2024.pdf') }}" download class="text-[#F39323] hover:underline">
+                                    <i class="fas fa-file-pdf text-red-600 mr-1"></i> PDF
+                                </a>
+                                <a href="{{ url_for('static', filename='excel/ihpc_decembre2024.xlsx') }}" download class="text-[#F39323] hover:underline">
+                                    <i class="fas fa-file-excel text-green-600 mr-1"></i> Excel
+                                </a>
+                            </div>
+                        </li>
+                    {% elif publication_title == 'Indice du Chiffre d’Affaires dans le Commerce Décembre 2024' %}
+                        <li class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                            <span class="text-sm font-semibold text-gray-800">Commerce Décembre 2024</span>
+                            <div class="flex gap-4">
+                                <a href="{{ url_for('static', filename='pdf/commerce_decembre2024.pdf') }}" download class="text-[#F39323] hover:underline">
+                                    <i class="fas fa-file-pdf text-red-600 mr-1"></i> PDF
+                                </a>
+                                <a href="{{ url_for('static', filename='excel/commerce_decembre2024.xlsx') }}" download class="text-[#F39323] hover:underline">
+                                    <i class="fas fa-file-excel text-green-600 mr-1"></i> Excel
+                                </a>
+                            </div>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
-            <div class="footer-section">
-                <h3>Suivez-nous</h3>
-                <div class="social-links">
-                    <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
-                    <a href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a>
-                </div>
-            </div>
+
+            <button class="block mx-auto mt-6 bg-[#F39323] text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-[#e08500] transition-all"
+                    onclick="window.location.href='{{ url_for('publications_region') }}'">
+                Retour aux publications
+            </button>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 ANSTAT - Tous droits réservés</p>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#49655A] text-white py-6 mt-8">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-4 md:mb-0">
+                <p class="text-sm font-semibold">© 2025 Base de données statistiques régionales</p>
+                <p class="text-xs">Développé par <a href="https://www.anstat.ci/" target="_blank" class="text-[#F39323] hover:underline">ANSTAT</a></p>
+            </div>
+            <div class="flex space-x-6">
+                <a href="{{ url_for('list_regions') }}" class="text-sm hover:text-[#F39323] transition-colors">Liste des régions</a>
+                <a href="{{ url_for('search_indicators') }}" class="text-sm hover:text-[#F39323] transition-colors">Indicateurs</a>
+                <a href="#" class="text-sm hover:text-[#F39323] transition-colors">Contact</a>
+            </div>
+            <div class="mt-4 md:mt-0 flex space-x-4">
+                <a href="#" class="text-white hover:text-[#F39323] transition-colors"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-white hover:text-[#F39323] transition-colors"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-white hover:text-[#F39323] transition-colors"><i class="fab fa-linkedin-in"></i></a>
+            </div>
         </div>
     </footer>
 
     <!-- Scripts -->
     <script>
+        let isSuggestionsActive = false;
+
+        function submitSearch() {
+            const query = document.getElementById('search-input').value.trim();
+            if (query) {
+                window.location.href = `/search_indicatorsR/${encodeURIComponent(query)}`;
+            }
+            return false;
+        }
+
         function openTab(tabName) {
             const tabContents = document.getElementsByClassName('tab-content');
             for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.add('hidden');
                 tabContents[i].classList.remove('active');
             }
-
             const tabButtons = document.getElementsByClassName('tab-button');
             for (let i = 0; i < tabButtons.length; i++) {
                 tabButtons[i].classList.remove('active');
             }
-
+            document.getElementById(tabName).classList.remove('hidden');
             document.getElementById(tabName).classList.add('active');
             event.currentTarget.classList.add('active');
         }
 
-        window.onload = function() {
-            openTab('description');
-        };
-    </script>
-    <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Gestion du menu hamburger
-            const hamburger = document.querySelector(".hamburger");
-            const navLinks = document.querySelector("#nav-links");
+            console.log('DOM chargé');
+            openTab('description');
 
-            hamburger.addEventListener("click", function () {
-                navLinks.classList.toggle("active");
+            // Menu hamburger
+            const hamburger = document.getElementById('hamburger');
+            const navLinks = document.getElementById('nav-links');
+            hamburger.addEventListener('click', () => {
+                navLinks.classList.toggle('hidden');
+                navLinks.classList.toggle('flex');
             });
-
-            document.addEventListener("click", function (event) {
+            document.addEventListener('click', (event) => {
                 if (!hamburger.contains(event.target) && !navLinks.contains(event.target)) {
-                    navLinks.classList.remove("active");
+                    navLinks.classList.add('hidden');
+                    navLinks.classList.remove('flex');
                 }
             });
 
-            // Gestion de la barre de recherche
-            const searchInput = document.getElementById("search-input");
-            const suggestionsContainer = document.getElementById("suggestions");
-            let isSuggestionsActive = false;
-
-            searchInput.addEventListener("input", function () {
-                const query = searchInput.value.trim();
+            // Autocomplétion
+            const searchInput = document.getElementById('search-input');
+            const suggestionsContainer = document.getElementById('suggestions');
+            searchInput.addEventListener('input', function () {
+                const query = this.value.trim();
+                console.log('Input recherche :', query);
                 if (query.length < 2) {
-                    suggestionsContainer.innerHTML = "";
+                    suggestionsContainer.innerHTML = '';
+                    suggestionsContainer.style.display = 'none';
                     isSuggestionsActive = false;
                     return;
                 }
-
                 fetch(`/autocomplete?query=${encodeURIComponent(query)}`)
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) throw new Error('Erreur réseau');
+                        return response.json();
+                    })
                     .then(data => {
-                        suggestionsContainer.innerHTML = "";
+                        console.log('Suggestions reçues :', data);
+                        suggestionsContainer.innerHTML = '';
                         if (data.length > 0) {
                             data.forEach(item => {
-                                const div = document.createElement("div");
+                                const div = document.createElement('div');
                                 div.textContent = item;
-                                div.onclick = function () {
+                                div.className = 'text-sm';
+                                div.onclick = () => {
                                     searchInput.value = item;
-                                    suggestionsContainer.innerHTML = "";
+                                    suggestionsContainer.innerHTML = '';
+                                    suggestionsContainer.style.display = 'none';
                                     isSuggestionsActive = false;
                                     window.location.href = `/search_indicatorsR/${encodeURIComponent(item)}`;
                                 };
                                 suggestionsContainer.appendChild(div);
                             });
+                            suggestionsContainer.style.display = 'block';
                             isSuggestionsActive = true;
                         } else {
+                            suggestionsContainer.style.display = 'none';
                             isSuggestionsActive = false;
                         }
-                    });
+                    })
+                    .catch(error => console.error('Erreur autocomplétion :', error));
             });
 
-            suggestionsContainer.addEventListener("mouseover", function () {
-                isSuggestionsActive = true;
-            });
-
-            suggestionsContainer.addEventListener("mouseout", function (event) {
-                if (!searchInput.contains(event.relatedTarget)) {
-                    isSuggestionsActive = false;
-                }
-            });
-
-            document.addEventListener("click", function (event) {
-                if (
-                    !searchInput.contains(event.target) &&
-                    !suggestionsContainer.contains(event.target)
-                ) {
-                    suggestionsContainer.innerHTML = "";
+            document.addEventListener('click', (event) => {
+                if (!searchInput.contains(event.target) && !suggestionsContainer.contains(event.target)) {
+                    suggestionsContainer.innerHTML = '';
+                    suggestionsContainer.style.display = 'none';
                     isSuggestionsActive = false;
                 }
             });
