@@ -362,7 +362,7 @@ tr:hover {
     font-weight: var(--font-weight-bold);
     padding: 10px;
     border-radius: var(--border-radius);
-    background-color: var(--accent-color);
+    background-color: var(--primary-color);
     color: #fff;
     display: inline-block;
     margin: 20px auto;
@@ -378,7 +378,7 @@ tr:hover {
 
 .download-buttons button {
     background: none;
-    border: 2px solid var(--primary-color);
+
     border-radius: 10px;
     padding: 12px 16px;
     cursor: pointer;
