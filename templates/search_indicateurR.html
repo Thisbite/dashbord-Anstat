@@ -27,16 +27,38 @@
         }
         .suggestions-list div { padding: 8px; cursor: pointer; }
         .suggestions-list div:hover { background: #d9e6db; color: #49655A; }
-        .logo-img { width: clamp(40px, 4vw, 80px); height: auto; } /* Réduit pour un look pro */
+        .logo-img { width: clamp(150px, 5vw, 250px); height: auto; }
         .modal-content { animation: slideIn 0.5s ease-out; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         .list-group { max-height: 400px; overflow-y: auto; }
         .list-group::-webkit-scrollbar { width: 8px; }
         .list-group::-webkit-scrollbar-thumb { background-color: #49655A; border-radius: 4px; }
         .list-group::-webkit-scrollbar-track { background: #f1f1f1; }
+        /* Barre de progression ajoutée */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: #e0e0e0;
+            z-index: 100;
+            display: none;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #F39323;
+            width: 0;
+            transition: width 0.1s linear;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
+    <!-- Barre de progression ajoutée -->
+    <div id="progress-container" class="progress-container">
+        <div id="progress-bar" class="progress-bar"></div>
+    </div>
+
     <!-- Menu -->
     <header class="bg-white shadow-lg p-4 fixed top-0 left-0 w-full z-50">
         <div class="flex flex-col md:flex-row justify-between items-center">
@@ -53,7 +75,7 @@
                    class="text-[#49655A] border-2 border-[#49655A] rounded-full px-4 py-2 uppercase font-semibold text-sm hover:bg-[#49655A] hover:text-white transition-all w-full md:w-auto text-center">
                     Accéder aux indicateurs
                 </a>
-                <a href="{{ url_for('api') }}"
+                <a href="#"
                    class="text-[#49655A] border-2 border-[#49655A] rounded-full px-4 py-2 uppercase font-semibold text-sm hover:bg-[#49655A] hover:text-white transition-all w-full md:w-auto text-center">
                     Demande API
                 </a>
@@ -127,11 +149,13 @@
     </div>
 
     <!-- Footer -->
+
+    <!-- Footer -->
     <footer class="bg-[#49655A] text-white py-6 mt-8">
         <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
             <div class="mb-4 md:mb-0">
                 <p class="text-sm font-semibold">© 2025 Base de données statistiques régionales</p>
-                <p class="text-xs">Développé par ANSTAT</p>
+                <p class="text-xs">Développé par <a href="https://www.anstat.ci/" target="_blank" class="text-[#F39323] hover:underline">ANSTAT</a></p>
             </div>
             <div class="flex space-x-6">
                 <a href="{{ url_for('list_regions') }}" class="text-sm hover:text-[#F39323] transition-colors">Liste des régions</a>
@@ -140,8 +164,8 @@
             </div>
             <div class="mt-4 md:mt-0 flex space-x-4">
                 <a href="#" class="text-white hover:text-[#F39323] transition-colors"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="text-white hover:text-[#F39323] transition-colors"><i class="fab fa-linkedin"></i></a>
-                <a href="#" class="text-white hover:text-[#F39323] transition-colors"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.linkedin.com/company/anstat/" class="text-white hover:text-[#F39323] transition-colors"><i class="fab fa-linkedin"></i></a>
+                <a href="https://www.facebook.com/anstatci" class="text-white hover:text-[#F39323] transition-colors"><i class="fab fa-facebook"></i></a>
             </div>
         </div>
     </footer>
@@ -154,6 +178,28 @@
             const query = document.getElementById('search-input').value;
             console.log('Recherche soumise : ' + query);
             return true;
+        }
+
+        // Fonction pour afficher la barre de progression et rediriger
+        function showProgressBarAndRedirect(indicateur) {
+            const progressContainer = document.getElementById('progress-container');
+            const progressBar = document.getElementById('progress-bar');
+            progressContainer.style.display = 'block';
+            let progress = 0;
+            const duration = 2000; // Durée en millisecondes (2 secondes)
+            const interval = 100; // Mise à jour toutes les 100ms
+            const steps = duration / interval;
+
+            const progressInterval = setInterval(() => {
+                progress += 100 / steps;
+                progressBar.style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    progressContainer.style.display = 'none';
+                    progressBar.style.width = '0%';
+                    window.location.href = `/search_indicators2/${encodeURIComponent(indicateur)}`;
+                }
+            }, interval);
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -329,15 +375,15 @@
             if (isChecked) {
                 domaines[domaine].thematiques[thematique].forEach(indicateur => {
                     const li = document.createElement('li');
-                    li.className = 'text-[#ff3366] p-2 rounded hover:bg-[#d9e6db] text-sm';
+                    li.className = 'text-[#d9e6db] p-2 rounded hover:bg-[#d9e6db] text-sm';
                     li.id = `indicateur-${indicateur.replace(/\s+/g, '-')}`;
                     const a = document.createElement('a');
                     a.href = '#';
                     a.textContent = indicateur;
-                    a.className = 'text-[#ff3366] hover:text-[#49655A]';
+                    a.className = 'text-[#000000] hover:text-[#49655A]';
                     a.onclick = (e) => {
                         e.preventDefault();
-                        searchIndicatorInElastic(indicateur);
+                        showProgressBarAndRedirect(indicateur); // Remplace la redirection directe
                     };
                     li.appendChild(a);
                     indicateursList.appendChild(li);
@@ -353,8 +399,26 @@
             }
         }
 
-        function searchIndicatorInElastic(indicateur) {
-            window.location.href = `/search_indicators2/${encodeURIComponent(indicateur)}`;
+        // Fonction pour afficher la barre de progression et rediriger
+        function showProgressBarAndRedirect(indicateur) {
+            const progressContainer = document.getElementById('progress-container');
+            const progressBar = document.getElementById('progress-bar');
+            progressContainer.style.display = 'block';
+            let progress = 0;
+            const duration = 2000; // Durée en millisecondes (2 secondes)
+            const interval = 100; // Mise à jour toutes les 100ms
+            const steps = duration / interval;
+
+            const progressInterval = setInterval(() => {
+                progress += 100 / steps;
+                progressBar.style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    progressContainer.style.display = 'none';
+                    progressBar.style.width = '0%';
+                    window.location.href = `/search_indicators2/${encodeURIComponent(indicateur)}`;
+                }
+            }, interval);
         }
 
         const descriptionsDomaines = {

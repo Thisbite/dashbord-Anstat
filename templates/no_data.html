@@ -12,6 +12,26 @@
         <p>Veuillez prendre attache avec le service accueil pour plus de détail.</p>
         <a href="{{ url_for('list_regions') }}" class="back-button">Retour</a>
     </div>
+    
+    <!-- Footer -->
+    <footer class="bg-[#49655A] text-white py-6 mt-8">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-4 md:mb-0">
+                <p class="text-sm font-semibold">© 2025 Base de données statistiques régionales</p>
+                <p class="text-xs">Développé par <a href="https://www.anstat.ci/" target="_blank" class="text-[#F39323] hover:underline">ANSTAT</a></p>
+            </div>
+            <div class="flex space-x-6">
+                <a href="{{ url_for('list_regions') }}" class="text-sm hover:text-[#F39323] transition-colors">Liste des régions</a>
+                <a href="{{ url_for('search_indicators') }}" class="text-sm hover:text-[#F39323] transition-colors">Indicateurs</a>
+                <a href="#" class="text-sm hover:text-[#F39323] transition-colors">Contact</a>
+            </div>
+            <div class="mt-4 md:mt-0 flex space-x-4">
+                <a href="#" class="text-white hover:text-[#F39323] transition-colors"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.linkedin.com/company/anstat/" class="text-white hover:text-[#F39323] transition-colors"><i class="fab fa-linkedin"></i></a>
+                <a href="https://www.facebook.com/anstatci" class="text-white hover:text-[#F39323] transition-colors"><i class="fab fa-facebook"></i></a>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
 

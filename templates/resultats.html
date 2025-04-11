@@ -4,114 +4,137 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Base de données des statistiques régionales</title>
-    
-    <!-- CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/resultats.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { overflow-x: hidden; font-family: 'Montserrat', sans-serif; }
+        .container { max-width: 100%; box-sizing: border-box; }
+        .logo-img { width: clamp(150px, 5vw, 250px); height: auto; }
+        .table-responsive::-webkit-scrollbar { width: 8px; }
+        .table-responsive::-webkit-scrollbar-thumb { background-color: #49655A; border-radius: 4px; }
+        .table-responsive::-webkit-scrollbar-track { background: #f1f1f1; }
+    </style>
 </head>
-<body>
+<body class="bg-gray-100">
     <!-- Header -->
-    <div class="header-title">
-        <h1>
-            <img src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="Logo" class="logo">
-            Plateforme de données régionales {{region_name}}
-        </h1>
-    </div>
-    <div class="header-secondary">
-        <!-- Bouton Hamburger (visible uniquement sur mobile) -->
-        <div class="hamburger">
-            <i class="fas fa-bars"></i>
+    <header class="bg-white shadow-lg p-4 fixed top-0 left-0 w-full z-50">
+        <div class="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto">
+            <div class="header-title flex items-center justify-center w-full md:w-auto">
+                <a href="{{ url_for('list_regions') }}" class="flex-shrink-0">
+                    <img src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="Logo" class="logo-img transition-transform hover:scale-110">
+                </a>
+                <h1 class="text-xl md:text-2xl font-semibold text-[#49655A] ml-4">Plateforme de données régionales {{ region_name }}</h1>
+            </div>
+            <div class="flex items-center justify-between w-full md:w-auto mt-4 md:mt-0">
+                <button id="hamburger" class="md:hidden text-[#49655A] text-xl focus:outline-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <nav id="nav-links" class="flex-col md:flex-row md:flex items-center space-y-3 md:space-y-0 md:space-x-4 w-full md:w-auto hidden">
+                    <a href="{{ url_for('list_regions') }}" class="logo-link">
+                        <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" class="h-10 w-auto transition-transform hover:scale-110">
+                    </a>
+                    <a href="{{ url_for('search_indicators') }}"
+                       class="text-[#49655A] border-2 border-[#49655A] rounded-full px-4 py-2 uppercase font-semibold text-sm hover:bg-[#49655A] hover:text-white transition-all w-full md:w-auto text-center">
+                        Accéder aux indicateurs
+                    </a>
+                    <a href="#"
+                       class="text-[#49655A] border-2 border-[#49655A] rounded-full px-4 py-2 uppercase font-semibold text-sm hover:bg-[#49655A] hover:text-white transition-all w-full md:w-auto text-center">
+                        Aide
+                    </a>
+                </nav>
+            </div>
         </div>
+    </header>
 
-        <!-- Menu de navigation -->
-        <div class="nav-links" id="nav-links">
-            <a href="{{ url_for('list_regions') }}" class="logo-link">
-                <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" style="width: 50px; height: auto;">
-            </a>
-            <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
-            <a href="#">Aide</a>
-        </div>
-    </div>
+    <!-- Contenu principal -->
+    <div class="container mx-auto px-4 py-8 mt-20">
+        <div id="loading" class="text-[#49655A] text-center text-sm mb-4" style="display:none;">Chargement...</div>
 
-    <div id="loading" style="display:none;">Chargement...</div> 
-        
-    {% if results %}
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col"></th>
-                    <th scope="col">Indicateur</th>
-                    <th scope="col">Sous domaine</th>
-                    <th scope="col">Définition</th>
-                    <th scope="col">Mode calcul</th>
-                    <th scope="col">Mode de collecte</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for hit in results %}
-                <tr>
-                    <th scope="row">{{ loop.index }}</th>
-                    <td><a href="{{ url_for('request_indicateur', region=hit['_source']['region'], indicateur_elastic=hit['_source']['indicateur'] ) }}">{{ hit['_source']['indicateur']|capitalize }}</a></td>
-                    <td>{{ hit['_source']['Sous_domaine']| capitalize }}</td>
-                    <td>{{ hit['_source']['Definition']| capitalize }}</td>
-                    <td>{{ hit['_source']['Mode_de_calcul']| capitalize }}</td>
-                    <td>{{ hit['_source']['Mode_de_collecte']| capitalize }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <!-- Pagination -->
-        <div class="pagination">
-            {% if page > 1 %}
-                <a href="{{ url_for('search', query=query, page=page-1) }}">Précédent</a>
-            {% endif %}
-        
-            {% for p in range(1, total_pages + 1) %}
-                {% if p == page %}
-                    <strong>{{ p }}</strong>
-                {% else %}
-                    <a href="{{ url_for('search', query=query, page=p) }}">{{ p }}</a>
+        {% if results %}
+            <div class="bg-white p-6 rounded-xl shadow-lg table-responsive">
+                <table class="w-full border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-[#49655A] text-white uppercase">
+                            <th class="p-4 text-left font-semibold">#</th>
+                            <th class="p-4 text-left font-semibold">Indicateur</th>
+                            <th class="p-4 text-left font-semibold">Sous domaine</th>
+                            <th class="p-4 text-left font-semibold">Définition</th>
+                            <th class="p-4 text-left font-semibold">Mode calcul</th>
+                            <th class="p-4 text-left font-semibold">Mode de collecte</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hit in results %}
+                        <tr class="border-b border-[#49655A]/10 hover:bg-[#d9e6db] transition-all">
+                            <th class="p-4 text-left font-medium text-[#49655A]">{{ loop.index }}</th>
+                            <td class="p-4">
+                                <a href="{{ url_for('request_indicateur', region=hit['_source']['region'], indicateur_elastic=hit['_source']['indicateur']) }}"
+                                   class="text-[#49655A] font-semibold hover:text-[#F39323] transition-all">
+                                    {{ hit['_source']['indicateur']|capitalize }}
+                                </a>
+                            </td>
+                            <td class="p-4 text-gray-700">{{ hit['_source']['Sous_domaine']|capitalize }}</td>
+                            <td class="p-4 text-gray-700">{{ hit['_source']['Definition']|capitalize }}</td>
+                            <td class="p-4 text-gray-700">{{ hit['_source']['Mode_de_calcul']|capitalize }}</td>
+                            <td class="p-4 text-gray-700">{{ hit['_source']['Mode_de_collecte']|capitalize }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex justify-center gap-2 mt-6">
+                {% if page > 1 %}
+                    <a href="{{ url_for('search', query=query, page=page-1) }}"
+                       class="bg-[#81ba70] text-white px-4 py-2 rounded hover:bg-[#edf3ec] transition-all text-sm">
+                        Précédent
+                    </a>
                 {% endif %}
-            {% endfor %}
-        
-            {% if page < total_pages %}
-                <a href="{{ url_for('search', query=query, page=page+1) }}">Suivant</a>
-            {% endif %}
-        </div>
-    {% else %}
-        <p>Aucun résultat trouvé. Essayez d'affiner votre recherche.</p>
-    {% endif %}
+                {% for p in range(1, total_pages + 1) %}
+                    {% if p == page %}
+                        <strong class="bg-[#49655A] text-white px-4 py-2 rounded text-sm">{{ p }}</strong>
+                    {% else %}
+                        <a href="{{ url_for('search', query=query, page=p) }}"
+                           class="bg-[#81ba70] text-white px-4 py-2 rounded hover:bg-[#edf3ec] transition-all text-sm">
+                            {{ p }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+                {% if page < total_pages %}
+                    <a href="{{ url_for('search', query=query, page=page+1) }}"
+                       class="bg-[#81ba70] text-white px-4 py-2 rounded hover:bg-[#edf3ec] transition-all text-sm">
+                        Suivant
+                    </a>
+                {% endif %}
+            </div>
+        {% else %}
+            <p class="text-center text-gray-600 text-sm mt-6">Aucun résultat trouvé. Essayez d'affiner votre recherche.</p>
+        {% endif %}
+    </div>
 
-       <!-- Pied de page ajouté -->
-       <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>À propos</h3>
-                <p>Plateforme de données régionales développée par <a href="https://www.anstat.ci/" target="_blank">ANSTAT</a>. Toutes les données sont basées sur les projections RGPH 2021.</p>
+   
+    <!-- Footer -->
+    <footer class="bg-[#49655A] text-white py-6 mt-8">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-4 md:mb-0">
+                <p class="text-sm font-semibold">© 2025 Base de données statistiques régionales</p>
+                <p class="text-xs">Développé par <a href="https://www.anstat.ci/" target="_blank" class="text-[#F39323] hover:underline">ANSTAT</a></p>
             </div>
-            <div class="footer-section">
-                <h3>Liens utiles</h3>
-                <ul>
-                    <li><a href="{{ url_for('list_regions') }}">Liste des régions</a></li>
-                    <li><a href="{{ url_for('search_indicators') }}">Indicateurs</a></li>
-                    <li><a href="#">Contactez-nous</a></li>
-                </ul>
+            <div class="flex space-x-6">
+                <a href="{{ url_for('list_regions') }}" class="text-sm hover:text-[#F39323] transition-colors">Liste des régions</a>
+                <a href="{{ url_for('search_indicators') }}" class="text-sm hover:text-[#F39323] transition-colors">Indicateurs</a>
+                <a href="#" class="text-sm hover:text-[#F39323] transition-colors">Contact</a>
             </div>
-            <div class="footer-section">
-                <h3>Suivez-nous</h3>
-                <div class="social-links">
-                    <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
-                    <a href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a>
-                </div>
+            <div class="mt-4 md:mt-0 flex space-x-4">
+                <a href="#" class="text-white hover:text-[#F39323] transition-colors"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.linkedin.com/company/anstat/" class="text-white hover:text-[#F39323] transition-colors"><i class="fab fa-linkedin"></i></a>
+                <a href="https://www.facebook.com/anstatci" class="text-white hover:text-[#F39323] transition-colors"><i class="fab fa-facebook"></i></a>
             </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 ANSTAT - Tous droits réservés</p>
         </div>
     </footer>
 
@@ -119,23 +142,24 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // Gestion du menu hamburger
-            const hamburger = document.querySelector(".hamburger");
-            const navLinks = document.querySelector("#nav-links");
+            const hamburger = document.getElementById("hamburger");
+            const navLinks = document.getElementById("nav-links");
 
             hamburger.addEventListener("click", function () {
-                navLinks.classList.toggle("active");
+                navLinks.classList.toggle("hidden");
+                navLinks.classList.toggle("flex");
             });
 
-            // Ferme le menu si on clique en dehors
             document.addEventListener("click", function (event) {
                 if (!hamburger.contains(event.target) && !navLinks.contains(event.target)) {
-                    navLinks.classList.remove("active");
+                    navLinks.classList.add("hidden");
+                    navLinks.classList.remove("flex");
                 }
             });
 
             // Gestion du chargement
-            document.querySelector('form')?.addEventListener('submit', function() {
-                document.getElementById('loading').style.display = 'block';
+            document.querySelector("form")?.addEventListener("submit", function() {
+                document.getElementById("loading").style.display = "block";
             });
         });
     </script>
