@@ -1,4 +1,109 @@
+/* === Réinitialisation et Styles Globaux === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(135deg, #f4f4f4, #e9ecef);
+    color: #333;
+}
+
+/* === Frame Container === */
+.frame-container {
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 30px;
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 2px solid #006B45;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.frame-container::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 2px solid #F39323;
+    border-radius: 18px;
+    z-index: -1;
+    animation: glow 4s infinite ease-in-out;
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 10px #F39323, 0 0 20px #F39323; }
+    50% { box-shadow: 0 0 15px #F39323, 0 0 25px #F39323; }
+}
+
+.frame-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 50px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* === Header === */
+.header-title {
+    text-align: center;
+    background: linear-gradient(45deg, #ffffff, #d9e6db);
+    padding: 20px 10px;
+    border-bottom: 3px solid #006B45;
+    border-radius: 15px 15px 0 0;
+}
+
+.header-title h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    font-size: 2.2rem;
+    color: #006B45;
+    margin: 0;
+    font-weight: 600;
+    text-shadow: 1px 1px 3px rgba(0, 107, 69, 0.3);
+}
+
+.logo-container {
+    position: relative;
+    display: inline-block;
+}
+
+.under-logo-link {
+    display: none;
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #F39323;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.logo-container:hover .under-logo-link {
+    display: block;
+}
+
+.logo {
+    height: 40px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.1);
+}
+
+/* === Header Secondary === */
 .header-secondary {
     background-color: #ffffff;
     display: flex;
@@ -10,8 +115,6 @@
     margin-bottom: 20px;
     transition: transform 0.3s ease;
     position: relative;
-    overflow: visible; /* Permet aux suggestions de dépasser */
-    z-index: 1000; /* Augmente pour être au-dessus des autres éléments, mais en dessous des suggestions */
 }
 
 .header-secondary:hover {
@@ -19,19 +122,29 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
+/* === Hamburger Menu === */
+.hamburger {
+    display: none;
+    font-size: 2rem;
+    color: #006B45;
+    cursor: pointer;
+    padding: 10px;
+}
+
 /* === Navigation === */
 .nav-links {
     display: flex;
     align-items: center;
     gap: 15px;
+    transition: all 0.3s ease;
 }
 
 .nav-links a {
     text-decoration: none;
-    color: #49655A;
+    color: #006B45;
     padding: 12px 22px;
     font-size: 1.1rem;
-    border: 2px solid #49655A;
+    border: 2px solid #006B45;
     border-radius: 8px;
     transition: all 0.3s ease;
     font-weight: 400;
@@ -40,7 +153,7 @@
 }
 
 .nav-links a:hover {
-    background: linear-gradient(45deg, #49655A, #49655A);
+    background: linear-gradient(45deg, #006B45, #004D32);
     color: #ffffff;
     transform: scale(1.05);
     box-shadow: 0 5px 15px rgba(0, 107, 69, 0.3);
@@ -69,29 +182,29 @@
     align-items: center;
     gap: 12px;
     position: relative;
-    z-index: 1000; /* Assure que la barre est au-dessus */
+    z-index: 1000;
 }
 
 .search-bar input[type="text"] {
     padding: 12px 18px;
     font-size: 1rem;
-    border: 2px solid #49655A;
+    border: 2px solid #006B45;
     border-radius: 10px;
     width: 320px;
     outline: none;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    font-family: 'Montserrat';
+    font-family: 'Montserrat', sans-serif;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .search-bar input[type="text"]:focus {
-    border-color: #49655A;
+    border-color: #004D32;
     box-shadow: 0 0 10px rgba(0, 107, 69, 0.5);
 }
 
 .search-bar button {
     padding: 12px 20px;
-    background: linear-gradient(45deg, #49655A, #49655A);
+    background: linear-gradient(45deg, #006B45, #004D32);
     color: #ffffff;
     border: none;
     border-radius: 10px;
@@ -102,7 +215,7 @@
 }
 
 .search-bar button:hover {
-    background: linear-gradient(45deg, #49655A, #003820);
+    background: linear-gradient(45deg, #004D32, #003820);
     transform: scale(1.05);
     box-shadow: 0 5px 15px rgba(0, 107, 69, 0.3);
 }
@@ -111,65 +224,19 @@
     transform: scale(0.95);
 }
 
-@media (max-width: 1024px) {
-    .header-secondary {
-        flex-direction: column; /* Empile les éléments en colonne */
-        align-items: center;
-        text-align: center;
-        padding: 10px;
-    }
-
-    .nav-links {
-        flex-direction: column; /* Les liens de navigation s'affichent en colonne */
-        width: 100%;
-        gap: 5px;
-    }
-
-    .search-bar {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .search-bar input[type="text"] {
-        width: 80%; /* Réduit la largeur de l'input */
-    }
-
-    .search-bar button {
-        padding: 10px 15px; /* Ajuste la taille du bouton */
-    }
-}
-
-@media (max-width: 768px) {
-    .nav-links a {
-        font-size: 0.9rem; /* Réduit la taille du texte */
-        padding: 10px 18px;
-    }
-
-    .search-bar input[type="text"] {
-        width: 100%;
-    }
-}
-
-.header-secondary,
-.nav-links,
-.search-bar {
-    max-width: 100%;
-}
-
-
 /* === Suggestions List === */
 .suggestions-list {
     position: absolute;
-    top: 100%; /* Juste en dessous de l'input */
+    top: 100%;
     left: 0;
-    width: 320px; /* Même largeur que l'input */
+    width: 100%;
     background: #ffffff;
-    border: 1px solid #49655A;
+    border: 1px solid #006B45;
     border-radius: 0 0 10px 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    max-height: 150px; /* Limite la hauteur pour éviter un chevauchement excessif */
+    max-height: 150px;
     overflow-y: auto;
-    z-index: 2000; /* Très haut pour être au-dessus de tout */
+    z-index: 2000;
 }
 
 .suggestions-list div {
@@ -180,141 +247,7 @@
 
 .suggestions-list div:hover {
     background-color: #d9e6db;
-    color: #49655A;
-}
-
-.header-title {
-    text-align: center;
-    background: linear-gradient(45deg, #ffffff, #d9e6db);
-    padding: 30px 10px;
-    border-bottom: 3px solid #49655A;
-    border-radius: 15px 15px 0 0;
-}
-
-.header-title h1 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 30px;
-    font-size: 2.8rem;
-    color:#49655A;
-    margin: 0;
-    font-weight: 600;
-    text-shadow: 1px 1px 3px rgba(0, 107, 69, 0.3);
-}
-
-.logo-container {
-    position: relative;
-    display: inline-block;
-}
-
-.under-logo-link {
-    display: none;
-    position: absolute;
-    bottom: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #F39323;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: bold;
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 5px 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.logo-container:hover .under-logo-link {
-    display: block;
-}
-
-.logo {
-    height: 60px;
-    width: auto;
-    transition: transform 0.3s ease;
-}
-
-.logo:hover {
-    transform: scale(1.1);
-}
-
-@media screen and (max-width: 1024px) {
-    .header-secondary {
-        flex-direction: column; /* Empile les éléments verticalement */
-        align-items: center;
-        text-align: center;
-    }
-
-    .nav-links {
-        gap: 10px; /* Réduit l'espacement entre les liens */
-    }
-
-    .search-bar {
-        justify-content: center; /* Centre la barre de recherche */
-    }
-
-    .container {
-        flex-direction: column;
-        align-items: center;
-        padding: 20px;
-    }
-
-    .right-column {
-        max-width: 100%;
-        min-height: auto;
-        max-height: none;
-        width: 100%;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .header-title h1 {
-        font-size: 2rem; /* Réduit la taille du texte */
-    }
-
-    .nav-links a {
-        font-size: 1rem;
-        padding: 10px 15px;
-    }
-
-    .search-bar input[type="text"] {
-        font-size: 0.9rem;
-        padding: 10px 15px;
-    }
-
-    .search-bar button {
-        font-size: 0.9rem;
-        padding: 10px 15px;
-    }
-
-    .container {
-        gap: 10px;
-        padding: 15px;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .header-title h1 {
-        font-size: 1.5rem;
-    }
-
-    .logo {
-        height: 45px;
-    }
-
-    .search-bar input[type="text"] {
-        width: 90%; /* Prend presque toute la largeur */
-    }
-
-    .nav-links {
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .nav-links a {
-        width: 100%; /* Les liens prennent toute la largeur */
-        text-align: center;
-    }
+    color: #006B45;
 }
 
 /* === Conteneur Principal === */
@@ -322,320 +255,10 @@
     display: flex;
     justify-content: space-between;
     padding: 30px 20px;
-    font-family: 'Montserrat';
     gap: 20px;
     position: relative;
-    z-index: 100; /* Plus bas que suggestions */
 }
 
-
-/* === Colonne de Droite === */
-.right-column {
-    flex: 1;
-    background-color: white;
-    max-width: 200px;
-    min-height: 100vh;
-    padding: 1px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    overflow-y: auto;
-    max-height: 550px;
-    box-sizing: border-box;
-    position: relative;
-    z-index: 10; /* Très bas par rapport à suggestions */
-}
-
-.scroll-indicator {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 14px;
-    color: #0C6B23;
-    animation: bounce 1.5s infinite;
-    min-height: 200px;
-}
-@media screen and (max-width: 1024px) {
-    .container {
-        flex-direction: column; /* Passe en colonne sur les écrans moyens */
-        align-items: center;
-        padding: 20px;
-    }
-
-    .right-column {
-        max-width: 80%;
-        min-height: auto;
-        max-height: none;
-        width: 100%;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .container {
-        padding: 15px;
-    }
-
-    .right-column {
-        max-width: 100%;
-        padding: 8px;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .container {
-        padding: 10px;
-        gap: 10px;
-    }
-
-    .right-column {
-        padding: 5px;
-        box-shadow: none; /* Supprime l'ombre pour alléger sur mobile */
-    }
-}
-
-
-@keyframes bounce {
-    0%, 100% {
-        transform: translate(-50%, 0);
-    }
-    50% {
-        transform: translate(-50%, 5px);
-    }
-}
-
-/* === Titre de la colonne droite === */
-.right-column h2 {
-    font-size: 16px;
-    margin-bottom: 15px;
-    color: white;
-    position: sticky;
-    top: 0;
-    background-color: #F39323;
-    z-index: 2;
-    padding: 12px 15px;
-    text-align: center;
-    border: 3px solid #edebeb;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Icônes et éléments de la liste */
-.small-icon {
-    font-size: 12px;
-}
-
-.region-item {
-    display: flex;
-    align-items: center;
-}
-
-.region-item i {
-    margin-right: 8px;
-    font-size: 14px;
-    color: #F39323; /* Mettre une couleur plus visible */
-}
-
-/* === Liste des régions === */
-.region-list {
-    list-style: none;
-    padding: 0;
-    font-size: 14px;
-    background-color: #fff;
-    overflow-y: auto;
-    max-height: 400px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.region-list li {
-    padding: 12px;
-    margin-bottom: 8px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.region-list li:hover {
-    background-color: #f8f8f8;
-    transform: scale(1.01);
-}
-
-.region-list li a {
-    text-decoration: none;
-    color: rgb(1, 15, 5);
-    display: block;
-    text-align: center;
-    font-weight: bold;
-}
-
-/* === Conteneur des graphiques === */
-.charts-row-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 20px;
-    box-sizing: border-box;
-    position: relative;
-    z-index: 100;
-}
-
-/* === Cartes de graphiques === */
-.chart-card {
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    width: calc(33.33% - 20px);
-    padding: 20px;
-    text-align: center;
-    box-sizing: border-box;
-    transition: transform 0.3s ease;
-}
-
-.chart-card:hover {
-    transform: translateY(-5px);
-}
-
-/* === Conteneur de graphique === */
-.chart-container {
-    width: 100%;
-    height: auto;
-    margin-bottom: 20px;
-}
-
-/* === Adaptation mobile et tablette === */
-@media screen and (max-width: 1024px) {
-    .charts-row-container {
-        justify-content: center;
-    }
-    
-    .chart-card {
-        width: calc(50% - 20px);
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .chart-card {
-        width: 100%;
-    }
-
-    .region-list {
-        max-height: 300px;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .region-list li {
-        padding: 10px;
-    }
-
-    .chart-card {
-        padding: 15px;
-    }
-}
-
-
-@media (max-width: 768px) {
-    .charts-row-container {
-        flex-direction: column;
-    }
-
-    .chart-card {
-        width: 100%;
-    }
-}
-
-/* === Indicateurs === */
-.right-section {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    margin-top: 10px;
-}
-
-.indicator-card {
-    background-color: #f8f9fa;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    min-width:50px;
-    max-width: 200px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    margin: 10px;
-    transition: transform 0.3s ease;
-}
-
-.indicator-card:hover {
-    transform: scale(1.05);
-}
-
-.card-title {
-    font-size: 14px;
-    font-weight: bold;
-    color: #49655A;
-    margin-bottom: 10px;
-}
-
-.card-value {
-    font-size: 16px;
-    font-weight: bold;
-    color: #0f0f0f;
-    margin-bottom: 5px;
-}
-
-.card-description {
-    font-size: 12px;
-    color: #555;
-}
-
-.clock-icon, .fa-baby, .fa-skull {
-    font-size: 1em;
-}
-
-/* === Carte de la Côte d'Ivoire === */
-.region {
-    stroke: #49655A;
-    stroke-width: 1.5;
-    transition: stroke 0.3s ease;
-}
-
-.region:hover {
-    stroke: #F39323;
-    stroke-width: 4;
-}
-
-.tooltip {
-    position: absolute;
-    background: linear-gradient(135deg, #ffffff, #f8f9fa);
-    padding: 8px;
-    border: 1px solid #49655A;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    pointer-events: none;
-    font-size: 0.9rem;
-    color: #333;
-    z-index: 1500; /* Au-dessus de tout sauf suggestions */
-}
-
-.subtitle {
-    font-size: 1rem;
-    color: #49655A;
-    margin-bottom: 10px;
-    font-weight: 500;
-    text-transform: uppercase;
-}
-
-.italic-text {
-    font-style: italic;
-    color: #0b0c0b; /* Vert foncé pour correspondre à votre palette, si désiré */
-    font-size: 12px; /* Ajustez la taille si nécessaire */
-    font-family: 'Montserrat', sans-serif; /* Assure la cohérence avec votre police actuelle */
-}
-
-/* Pour les indicateurs de la carte (cartographie) */
 /* === Colonne de Gauche === */
 .left-column {
     flex: 2;
@@ -643,13 +266,9 @@
     border-radius: 12px;
     box-shadow: 0 8px 15px rgba(23, 2, 251, 0.08);
     display: flex;
-    max-width: 400px;
     gap: 20px;
-    box-sizing: border-box;
-    position: relative;
     background-color: rgba(255, 255, 255, 0.95);
     transition: all 0.3s ease;
-    z-index: 100; /* Plus bas que suggestions */
 }
 
 .left-column:hover {
@@ -664,14 +283,7 @@
     background: linear-gradient(to bottom, rgba(245, 245, 245, 0.95), rgba(245, 245, 245, 0.85));
     z-index: -1;
     border-radius: 12px;
-    transition: opacity 0.3s ease;
 }
-@media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-    }
-}
-
 
 .left-column .left-section {
     flex: 3;
@@ -679,14 +291,12 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    color: #49655A;
+    color: #0C6B23;
     font-size: 18px;
     line-height: 1.6;
-    height: auto;
-    border-radius: 12px;
     padding: 25px;
     background-color: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(5px);
+    border-radius: 12px;
     border: 1px solid rgba(0, 64, 133, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -698,14 +308,283 @@
 
 .left-column .left-section p {
     margin: 10px 0;
-    color: #49655A;
+    color: #0C6B23;
     font-size: 16px;
     text-align: center;
 }
 
+/* === Colonne de Droite === */
+.right-column {
+    flex: 1;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    max-height: 550px;
+    position: relative;
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    color: #0C6B23;
+    animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(5px); }
+}
+
+.right-column h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: white;
+    position: sticky;
+    top: 0;
+    background-color: #F39323;
+    padding: 10px 15px;
+    text-align: center;
+    border: 4px solid #edebeb;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.region-list {
+    list-style: none;
+    padding: 0;
+    background-color: #fff;
+    overflow-y: auto;
+    max-height: 450px;
+}
+
+.region-list li {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.region-list li:hover {
+    background-color: #f7f7f7;
+    transform: scale(1.02);
+}
+
+.region-list li a {
+    text-decoration: none;
+    color: rgb(1, 15, 5);
+    display: block;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* === Cartes et Graphiques === */
+.charts-row-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+}
+
+.chart-card {
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    width: calc(33.33% - 20px);
+    padding: 20px;
+    text-align: center;
+}
+
+.chart-container {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* === Indicateurs === */
+.right-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.indicator-card {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    width: 200px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 10px;
+    transition: transform 0.3s ease;
+}
+
+.indicator-card:hover {
+    transform: scale(1.05);
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #0C6B23;
+    margin-bottom: 10px;
+}
+
+.card-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #0f0f0f;
+    margin-bottom: 5px;
+}
+
+.card-description {
+    font-size: 14px;
+    color: #555;
+}
+
+.clock-icon, .fa-baby, .fa-skull {
+    font-size: 1.5em;
+}
+
+/* === Carte de la Côte d'Ivoire === */
+.region {
+    stroke: #006B45;
+    stroke-width: 1.5;
+    transition: stroke 0.3s ease;
+}
+
+.region:hover {
+    stroke: #F39323;
+    stroke-width: 4;
+}
+
+.tooltip {
+    position: absolute;
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+    padding: 8px;
+    border: 1px solid #006B45;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+    font-size: 0.9rem;
+    color: #333;
+    z-index: 1500;
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: #006B45;
+    margin-bottom: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.italic-text {
+    font-style: italic;
+    color: #0b0c0b;
+    font-size: 12px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* === Media Queries pour Responsive === */
+@media (max-width: 1024px) {
+    .header-title h1 {
+        font-size: 1.8rem;
+        gap: 15px;
+    }
+
+    .search-bar input[type="text"] {
+        width: 250px;
+    }
+
+    .container {
+        flex-direction: column;
+        padding: 20px 10px;
+    }
+
+    .left-column, .right-column {
+        width: 100%;
+    }
+
+    .charts-row-container {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .chart-card {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
+
 @media (max-width: 768px) {
+    .header-title {
+        padding: 15px 5px;
+    }
+
+    .header-title h1 {
+        font-size: 1.5rem;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .header-secondary {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .hamburger {
+        display: block;
+    }
+
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background-color: #ffffff;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        padding: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        z-index: 999;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-links a {
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+        margin: 5px 0;
+    }
+
+    .nav-links .logo-link {
+        margin: 0;
+    }
+
+    .search-bar {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .search-bar input[type="text"] {
+        width: 100%;
+    }
+
     .left-column {
-        padding: 15px;
+        padding: 10px;
         gap: 15px;
     }
 
@@ -713,75 +592,39 @@
         padding: 15px;
         font-size: 16px;
     }
+
+    .right-column {
+        max-height: 400px;
+    }
+
+    .indicator-card {
+        width: 100%;
+        max-width: 200px;
+    }
 }
 
+@media (max-width: 480px) {
+    .header-title h1 {
+        font-size: 1.2rem;
+    }
 
-#indicators-list {
-    margin: 1px;
-}
-#indicators {
-    list-style: none;
-    padding: 0;
-}
+    .logo {
+        height: 30px;
+    }
 
-#indicators li:hover {
-    background-color: #f0f0f0
-}
-#indicators li.active {
-    font-weight: bold;
-    background-color: #e0e0e0;
-}
+    .search-bar button {
+        padding: 10px 15px;
+    }
 
-#indicators-list {
-    margin:0  0 10px -600px;
-    width: 200px; /* Largeur fixe pour la liste */
-    z-index: 2000;
-    height: 20px;
+    .left-column .left-section {
+        font-size: 14px;
+    }
 
+    .right-column h2 {
+        font-size: 18px;
+    }
+
+    .card-value {
+        font-size: 20px;
+    }
 }
-
-
-#indicators-list h3 {
-    margin:  10px ;
-    font-size: 16px;
-}
-
-#indicators {
-    list-style: none;
-    padding: 0;
-    max-height: 150px; /* Hauteur maximale avant défilement */
-    overflow-y: auto; /* Activer le défilement vertical */
-    border: 1px solid #ccc; /* Bordure optionnelle pour délimiter */
-    background-color: #f9f9f9; /* Fond clair pour lisibilité */
-}
-
-#indicators li {
-    cursor: pointer;
-    padding: 5px 10px;
-    color: #0a0a0a;
-    font-size: 14px; /* Taille de texte réduite */
-    font-weight: bold;
-}
-
-
-#indicators li:hover {
-    background-color: #f0f0f0;
-}
-
-#indicators li.active {
-    font-weight: bold;
-    background-color: #e0e0e0;
-}
-
-/* Optionnel : personnaliser la barre de défilement */
-#indicators::-webkit-scrollbar {
-    width: 8px;
-}
-#indicators::-webkit-scrollbar-thumb {
-    background-color: #49655A;
-    border-radius: 4px;
-}
-#indicators::-webkit-scrollbar-track {
-    background-color: #f1f1f1;
-}
-

@@ -1,138 +1,176 @@
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Base de données des statistiques régionales</title>
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/api.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://d3js.org/d3.v6.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { overflow-x: hidden; font-family: 'Montserrat', sans-serif; }
+        .container { max-width: 100%; box-sizing: border-box; }
+        .suggestions-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 50;
+            display: none;
+            border-radius: 0 0 0.5rem 0.5rem;
+            background: white;
+            border: 1px solid #49655A;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .suggestions-list div { padding: 8px; cursor: pointer; }
+        .suggestions-list div:hover { background: #d9e6db; color: #49655A; }
+        .logo-img { width: clamp(150px, 5vw, 250px); height: auto; }
+        #indicateursCheckbox::-webkit-scrollbar { width: 8px; }
+        #indicateursCheckbox::-webkit-scrollbar-thumb { background-color: #49655A; border-radius: 4px; }
+        #indicateursCheckbox::-webkit-scrollbar-track { background: #f1f1f1; }
+    </style>
 </head>
-<body>
-    <div class="header-title">
-        <h1>
-            <div class="logo-container">
-                <img src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="Logo" class="logo">
-                <a href="https://www.anstat.ci/" target="_blank" class="under-logo-link">Visitez notre site officiel</a>
+<body class="bg-gray-100">
+    <!-- Header -->
+    <header class="bg-white shadow-lg p-4 fixed top-0 left-0 w-full z-50">
+        <div class="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto">
+            <div class="flex items-center justify-between w-full md:w-auto">
+                <a href="{{ url_for('list_regions') }}" class="flex-shrink-0">
+                    <img src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="Logo" class="logo-img">
+                </a>
+                <button id="hamburger" class="md:hidden text-[#49655A] text-xl focus:outline-none">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-            Plateforme de données régionales
-        </h1>
-    </div>
-    <div class="header-secondary">
-        <div class="nav-links">
-            <a href="{{ url_for('list_regions') }}" class="logo-link">
-                <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Statistiques" style="width: 50px; height: auto;">
-            </a>
-            <a href="{{ url_for('search_indicators') }}">Accéder aux indicateurs</a>
-            <a href="#">AIDE</a>
+            <nav id="nav-links" class="flex-col md:flex-row md:flex items-center space-y-3 md:space-y-0 md:space-x-4 w-full md:w-auto mt-4 md:mt-0 hidden">
+                <a href="{{ url_for('search_indicators') }}"
+                   class="text-[#49655A] border-2 border-[#49655A] rounded-full px-4 py-2 uppercase font-semibold text-sm hover:bg-[#49655A] hover:text-white transition-all w-full md:w-auto text-center">
+                    Accéder aux indicateurs
+                </a>
+                <a href="{{ url_for('api') }}"
+                   class="text-[#49655A] border-2 border-[#49655A] rounded-full px-4 py-2 uppercase font-semibold text-sm hover:bg-[#49655A] hover:text-white transition-all w-full md:w-auto text-center">
+                    Demande API
+                </a>
+            </nav>
+            <div class="flex items-center space-x-4 mt-4 md:mt-0 w-full md:w-auto">
+                <form method="POST" action="{{ url_for('search') }}" class="flex items-center w-full max-w-lg" onsubmit="return submitSearch();">
+                    <div class="relative w-full">
+                        <input type="text" id="search-input" name="query" placeholder="Entrez votre recherche..."
+                               class="w-full px-4 py-2 bg-gray-50 border border-[#49655A] rounded-full focus:outline-none focus:ring-2 focus:ring-[#49655A] shadow-sm text-sm"
+                               required autocomplete="off">
+                        <div id="suggestions" class="suggestions-list"></div>
+                    </div>
+                    <button type="submit" id="search-button"
+                            class="bg-[#49655A] text-white px-4 py-2 rounded-full hover:bg-[#003820] transition-all font-semibold text-sm ml-2">
+                        Rechercher
+                    </button>
+                </form>
+            </div>
         </div>
-    
-        <div class="search-bar">
-            <form method="POST" action="{{ url_for('search') }}" onsubmit="return submitSearch();">
-                <input type="text" id="search-input" name="query" placeholder="Entrez votre recherche..." required autocomplete="off">
-                <div id="suggestions" class="suggestions-list"></div>
-                <button type="submit" id="search-button">Rechercher</button>
-            </form>
+    </header>
+
+    <!-- Contenu principal -->
+    <div class="container mx-auto px-4 py-8 mt-20">
+        <h1 class="text-xl font-semibold text-[#49655A] text-center mb-6 bg-[#49655A] text-white p-3 rounded-lg">Choisir des indicateurs</h1>
+
+        <!-- Champ de recherche -->
+        <input type="text" id="filtreIndicateur" placeholder="Rechercher un indicateur..." 
+               class="w-full px-4 py-2 mb-4 border border-[#49655A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#49655A] text-sm shadow-sm">
+
+        <!-- Conteneur des checkboxes -->
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+            <div class="max-h-96 overflow-y-auto" id="indicateursCheckbox">
+                <!-- Les checkboxes seront insérées ici -->
+            </div>
         </div>
-        
-    </div>
-    <h1>Choisir des indicateurs</h1>
 
-    <!-- Champ de recherche -->
-    <input type="text" id="filtreIndicateur" placeholder="Rechercher un indicateur..." />
-    
-    <div class="checkbox-container" id="indicateursCheckbox">
-        <!-- Les checkboxes seront insérées ici -->
+        <!-- Bouton et lien API -->
+        <button onclick="genererLien()" class="mt-4 bg-[#49655A] text-white px-4 py-2 rounded-lg hover:bg-[#F39323] transition-all font-semibold text-sm">Obtenir le lien</button>
+        <div id="lienApi" class="mt-4 bg-gray-50 p-4 rounded-lg border border-[#49655A]"></div>
     </div>
-    <button onclick="genererLien()">Obtenir le lien</button>
-    <div id="lienApi"></div>
 
-    
+    <!-- Footer -->
+    <footer class="bg-[#49655A] text-white py-6 mt-8">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-4 md:mb-0">
+                <p class="text-sm font-semibold">© 2025 Base de données statistiques régionales</p>
+                <p class="text-xs">Développé par <a href="https://www.anstat.ci/" target="_blank" class="text-[#F39323] hover:underline">ANSTAT</a></p>
+            </div>
+            <div class="flex space-x-6">
+                <a href="{{ url_for('list_regions') }}" class="text-sm hover:text-[#F39323] transition-colors">Liste des régions</a>
+                <a href="{{ url_for('search_indicators') }}" class="text-sm hover:text-[#F39323] transition-colors">Indicateurs</a>
+                <a href="#" class="text-sm hover:text-[#F39323] transition-colors">Contact</a>
+            </div>
+            <div class="mt-4 md:mt-0 flex space-x-4">
+                <a href="#" class="text-white hover:text-[#F39323] transition-colors"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.linkedin.com/company/anstat/" class="text-white hover:text-[#F39323] transition-colors"><i class="fab fa-linkedin"></i></a>
+                <a href="https://www.facebook.com/anstatci" class="text-white hover:text-[#F39323] transition-colors"><i class="fab fa-facebook"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
     <script>
         function genererLien() {
-            // Récupérer tous les indicateurs cochés
-            let indicateurs = $('input[name="indicateur"]:checked')
-                .map(function() { return encodeURIComponent(this.value); })
-                .get();
-        
+            let indicateurs = $('input[name="indicateur"]:checked').map(function() { return encodeURIComponent(this.value); }).get();
             if (indicateurs.length === 0) {
                 alert("Veuillez choisir au moins un indicateur.");
                 return;
             }
-        
-            // Construire le lien avec les indicateurs sélectionnés
             let lien = `${window.location.origin}/api/donnees?` + indicateurs.map(ind => `indicateur=${ind}`).join('&');
-        
-            // Afficher le lien et charger les données
             $("#lienApi").html(`
-                <p>Copiez ce lien pour accéder aux données :</p>
-                <input type="text" value="${lien}" id="lienInput" readonly style="width: 100%; padding: 5px; border: 1px solid #ccc;">
-                <button onclick="copierLien()" style="margin-top: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; cursor: pointer;">
-                    Copier le lien
-                </button>
-                <div id="aperçuDonnees" style="margin-top: 15px;"></div>
+                <p class="text-sm text-gray-600 mb-2">Copiez ce lien pour accéder aux données :</p>
+                <input type="text" value="${lien}" id="lienInput" readonly class="w-full p-2 border border-[#49655A] rounded-lg text-sm text-gray-700">
+                <button onclick="copierLien()" class="mt-2 bg-[#F39323] text-white px-4 py-2 rounded-lg hover:bg-[#e76f51] transition-all text-sm">Copier le lien</button>
+                <div id="aperçuDonnees" class="mt-4"></div>
             `);
-        
-            // Charger et afficher les données JSON
             $.get(lien, function(data) {
-                let html = "<h3>Aperçu des données JSON</h3>";
+                let html = "<h3 class='text-base font-semibold text-[#49655A] mb-2'>Aperçu des données JSON</h3>";
                 if (data.erreur) {
-                    html += `<p style="color: red;">Erreur : ${data.erreur}</p>`;
+                    html += `<p class="text-red-600 text-sm">Erreur : ${data.erreur}</p>`;
                 } else if (data.length === 0) {
-                    html += `<p>Aucune donnée trouvée pour ces indicateurs.</p>`;
+                    html += `<p class="text-gray-600 text-sm">Aucune donnée trouvée pour ces indicateurs.</p>`;
                 } else {
-                    // Filtrer les données en supprimant les clés avec des valeurs null
-                    let donneesFiltrees = data.map(obj => {
-                        return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== null));
-                    });
-        
-                    // Formater le JSON pour une lecture facile
+                    let donneesFiltrees = data.map(obj => Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== null)));
                     let formattedJson = JSON.stringify(donneesFiltrees, null, 2);
-                    html += `
-                        <pre style="background-color: #f5f5f5; padding: 10px; border: 1px solid #ddd; border-radius: 5px; overflow-x: auto; white-space: pre-wrap; max-height: 300px; overflow-y: auto;">${formattedJson}</pre>`;
+                    html += `<pre class="bg-white p-4 border border-[#49655A] rounded-lg overflow-x-auto whitespace-pre-wrap max-h-72 overflow-y-auto text-sm text-gray-700">${formattedJson}</pre>`;
                 }
                 $("#aperçuDonnees").html(html);
             }).fail(function(xhr, status, error) {
-                $("#aperçuDonnees").html(`<p style="color: red;">Erreur : Impossible de charger les données. Détails : ${error}</p>`);
+                $("#aperçuDonnees").html(`<p class="text-red-600 text-sm">Erreur : Impossible de charger les données. Détails : ${error}</p>`);
             });
         }
-        
+
         function copierLien() {
             let lienInput = document.getElementById("lienInput");
             lienInput.select();
             document.execCommand("copy");
             alert("Lien copié !");
         }
-        </script>  
-    
 
-    <script>
         $(document).ready(function() {
-            // Charger les indicateurs au chargement de la page
             $.get("/api/indicateurs", function(data) {
                 let html = '';
                 data.forEach(function(ind) {
-                    let indicateur = ind.indicateur || ""; // Utiliser une chaîne vide si ind.indicateur est nul ou indéfini
-                    html += `<div class="checkbox-item">
-                        <input type="checkbox" name="indicateur" value="${indicateur}" id="ind_${indicateur}">
-                        <label for="ind_${indicateur}">${indicateur}</label>
-                    </div>`;
+                    let indicateur = ind.indicateur || "";
+                    html += `
+                        <div class="checkbox-item inline-block p-2 m-1 text-[#49655A] font-medium rounded hover:bg-[#d9e6db] cursor-pointer text-sm">
+                            <input type="checkbox" name="indicateur" value="${indicateur}" id="ind_${indicateur}" class="mr-2 align-middle">
+                            <label for="ind_${indicateur}" class="align-middle cursor-pointer">${indicateur}</label>
+                        </div>`;
                 });
                 $("#indicateursCheckbox").html(html);
             }).fail(function(xhr, status, error) {
                 alert("Erreur lors du chargement des indicateurs : " + error);
             });
-        
-            // Filtrage des indicateurs en fonction du texte saisi
+
             $("#filtreIndicateur").on("keyup", function() {
                 let filtre = $(this).val().toLowerCase();
                 $(".checkbox-item").each(function() {
@@ -140,45 +178,69 @@
                     $(this).toggle(texte.includes(filtre));
                 });
             });
-        });
-        
 
-        function chargerDonnees() {
-            // Récupérer tous les indicateurs cochés
-            let indicateurs = $('input[name="indicateur"]:checked')
-                .map(function() { return this.value; })
-                .get();
-
-            if (indicateurs.length === 0) {
-                alert("Veuillez choisir au moins un indicateur.");
-                return;
-            }
-
-            // Construire les paramètres de la requête
-            let params = indicateurs.map(ind => `indicateur=${encodeURIComponent(ind)}`).join('&');
-            console.log(params)
-
-            $.get(`/api/donnees?${params}`, function(data) {
-                let html = "<h3>Données JSON pour les indicateurs sélectionnés</h3>";
-                if (data.erreur) {
-                    html += `<p style="color: red;">Erreur : ${data.erreur}</p>`;
-                } else if (data.length === 0) {
-                    html += `<p>Aucune donnée trouvée pour ces indicateurs.</p>`;
-                } else {
-                    // Filtrer les données en supprimant les clés avec des valeurs null
-                    let donneesFiltrees = data.map(obj => {
-                        return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== null));
-                    });
-
-                    // Formater le JSON pour une lecture facile
-                    let formattedJson = JSON.stringify(donneesFiltrees, null, 2);
-                    html += `
-                        <pre style="background-color: #f5f5f5; padding: 10px; border: 1px solid #ddd; border-radius: 5px; overflow-x: auto; white-space: pre-wrap;">${formattedJson}</pre>`;
-                }
-                $("#resultats").html(html);
-            }).fail(function(xhr, status, error) {
-                $("#resultats").html(`<p style="color: red;">Erreur : Impossible de charger les données. Détails : ${error}</p>`);
+            // Menu hamburger
+            const hamburger = document.getElementById('hamburger');
+            const navLinks = document.getElementById('nav-links');
+            hamburger.addEventListener('click', () => {
+                navLinks.classList.toggle('hidden');
+                navLinks.classList.toggle('flex');
             });
+            document.addEventListener('click', (event) => {
+                if (!hamburger.contains(event.target) && !navLinks.contains(event.target)) {
+                    navLinks.classList.add('hidden');
+                    navLinks.classList.remove('flex');
+                }
+            });
+
+            // Autocomplétion
+            const searchInput = document.getElementById('search-input');
+            const suggestionsContainer = document.getElementById('suggestions');
+            searchInput.addEventListener('input', function () {
+                const query = this.value.trim();
+                if (query.length < 2) {
+                    suggestionsContainer.innerHTML = '';
+                    suggestionsContainer.style.display = 'none';
+                    return;
+                }
+                fetch(`/autocomplete?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestionsContainer.innerHTML = '';
+                        if (data.length > 0) {
+                            suggestionsContainer.style.display = 'block';
+                            data.forEach(item => {
+                                const div = document.createElement('div');
+                                div.textContent = item;
+                                div.className = 'text-sm';
+                                div.onclick = () => {
+                                    searchInput.value = item;
+                                    suggestionsContainer.innerHTML = '';
+                                    suggestionsContainer.style.display = 'none';
+                                    window.location.href = `/search_indicators2/${encodeURIComponent(item)}`;
+                                };
+                                suggestionsContainer.appendChild(div);
+                            });
+                        } else {
+                            suggestionsContainer.style.display = 'none';
+                        }
+                    });
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!searchInput.contains(event.target) && !suggestionsContainer.contains(event.target)) {
+                    suggestionsContainer.innerHTML = '';
+                    suggestionsContainer.style.display = 'none';
+                }
+            });
+        });
+
+        function submitSearch() {
+            const query = $("#search-input").val().trim();
+            if (query) {
+                window.location.href = `/search_indicators2/${encodeURIComponent(query)}`;
+            }
+            return false;
         }
     </script>
 </body>

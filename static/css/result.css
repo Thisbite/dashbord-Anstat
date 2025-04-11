@@ -3,11 +3,14 @@
     --primary-color: #49655A;
     --secondary-color: #49655A;
     --secondary-color2: #bbcbbf;
-    --accent-color: #49655A;
+    --accent-color: #F39323; /* Ajusté pour cohérence avec l'exemple */
     --light-color: #f8f9fa;
     --text-color: black;
-    --font-family: 'Open Sans', sans-serif; /* Police standardisée ici */
+    --font-family: 'Open Sans', sans-serif;
     --border-radius: 5px;
+    --font-weight-regular: 400;
+    --font-weight-bold: 600;
+    --primary-hover-color: #004D32;
 }
 
 /* === Réinitialisation et Styles Globaux === */
@@ -18,21 +21,22 @@
 }
 
 body {
-    font-family: var(--font-family); /* Utilise la variable pour Open Sans */
+    font-family: var(--font-family);
     line-height: 1.6;
-    background-color: var(--light-color);
+    background: linear-gradient(135deg, #f4f4f4, #e9ecef); /* Inspiré de l'exemple */
     color: var(--text-color);
 }
 
 /* === Frame Container === */
 .frame-container {
+    width: 100%;
     max-width: 1400px;
     margin: 20px auto;
     padding: 30px;
     background: linear-gradient(135deg, #ffffff, var(--light-color));
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border: 2px solid var(--primary-color); /* Green border for a framed look */
+    border: 2px solid var(--primary-color);
     position: relative;
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -45,7 +49,7 @@ body {
     left: -5px;
     right: -5px;
     bottom: -5px;
-    border: 2px solid var(--accent-color); /* Orange outer glow */
+    border: 2px solid var(--accent-color);
     border-radius: 18px;
     z-index: -1;
     animation: glow 4s infinite ease-in-out;
@@ -64,7 +68,7 @@ body {
 /* === Header === */
 .header-title {
     text-align: center;
-    background: linear-gradient(45deg, #ffffff, var(--secondary-color2));
+    background: linear-gradient(45deg, #ffffff, #d9e6db);
     padding: 30px 10px;
     border-bottom: 3px solid var(--primary-color);
     border-radius: 15px 15px 0 0;
@@ -74,12 +78,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 30px;
+    gap: 20px;
     font-size: 2.8rem;
     color: var(--primary-color);
     margin: 0;
-    font-weight: var(--font-weight-bold); /* Utilise la variable pour la police */
+    font-weight: var(--font-weight-bold);
     text-shadow: 1px 1px 3px rgba(0, 107, 69, 0.3);
+    flex-wrap: wrap;
 }
 
 .logo {
@@ -95,19 +100,34 @@ body {
 .header-secondary {
     background-color: #ffffff;
     display: flex;
+    flex-wrap: wrap; /* Inspiré de l'exemple */
     justify-content: space-between;
     align-items: center;
     padding: 15px 20px;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
     margin-bottom: 20px;
-    transition: transform 0.3s ease;
-    font-family: var(--font-family); /* Open Sans pour cohérence */
+    position: relative;
+    z-index: 1000; /* Inspiré de l'exemple */
+    transition: transform 0.3s ease; /* Inspiré de l'exemple */
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .header-secondary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px); /* Inspiré de l'exemple */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); /* Inspiré de l'exemple */
+}
+
+/* === Hamburger === */
+.hamburger {
+    font-size: 24px; /* Inspiré de l'exemple */
+    color: var(--primary-color);
+    cursor: pointer;
+    display: none; /* Masqué par défaut, visible sur mobile */
+    padding: 10px;
 }
 
 /* === Navigation === */
@@ -125,10 +145,9 @@ body {
     border: 2px solid var(--primary-color);
     border-radius: 8px;
     transition: all 0.3s ease;
-    font-weight: var(--font-weight-regular); /* Utilise la variable pour Open Sans */
+    font-weight: var(--font-weight-regular);
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
 
 .nav-links a:hover {
@@ -160,6 +179,8 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
+    width: 100%;
+    max-width: 320px;
 }
 
 .search-bar input[type="text"] {
@@ -167,10 +188,10 @@ body {
     font-size: 1rem;
     border: 2px solid var(--primary-color);
     border-radius: 10px;
-    width: 320px;
+    width: 100%;
     outline: none;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    font-family: var(--font-family); /* Open Sans pour cohérence */
+    font-family: var(--font-family);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -187,9 +208,9 @@ body {
     border-radius: 10px;
     cursor: pointer;
     font-size: 1rem;
-    font-weight: var(--font-weight-bold); /* Utilise la variable pour Open Sans */
+    font-weight: var(--font-weight-bold);
     transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-    font-family: var(--font-family); /* Open Sans pour cohérence */
+    font-family: var(--font-family);
 }
 
 .search-bar button:hover {
@@ -198,67 +219,64 @@ body {
     box-shadow: 0 5px 15px rgba(0, 107, 69, 0.3);
 }
 
-.search-bar button:active {
-    transform: scale(0.95);
-}
-
-/* Styles de base */
+/* === Conteneur principal === */
 .container {
     display: flex;
     justify-content: space-between;
     gap: 20px;
     padding: 15px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
 }
 
-/* Colonne gauche */
 .container > div:first-child {
-    flex-basis: 20%;
+    flex: 1;
+    min-width: 200px;
     max-width: 250px;
     border: 1px solid var(--accent-color);
     padding: 10px;
     background-color: #fff;
     border-radius: var(--border-radius);
-    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
 
 .container > div:first-child h3 {
     color: var(--primary-color);
-    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
 
-/* Éléments déplaçables */
+/* === Éléments déplaçables === */
 .draggable-item {
-    display: inline-block;
     padding: 10px;
-    margin: 5px 0;
-    background-color: #e9ecef;
+    margin: 5px;
+    background-color: #f8f9fa;
     border: 1px solid var(--primary-color);
-    border-radius: 10px;
-    cursor: grab;
-    white-space: nowrap;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    font-family: var(--font-family); /* Open Sans pour cohérence */
+    border-radius: 5px;
+    cursor: move;
+    transition: transform 0.2s ease;
 }
 
 .draggable-item:hover {
-    background-color: var(--accent-color);
-    color: #fff;
+    transform: scale(1.05);
+    background-color: #d9e6db;
 }
 
-/* Conteneur principal pour aligner les zones de dépôt */
+/* === Zones de dépôt === */
 #droppable-container {
     display: flex;
     gap: 20px;
     justify-content: center;
     align-items: stretch;
     margin: 20px 0;
+    flex-wrap: wrap;
 }
 
-/* Zones de dépôt */
-#droppable-area-rows, #droppable-area-cols {
+#droppable-area-rows, #droppable-area-cols, #initial-list {
     flex: 1;
     padding: 20px;
-    min-width: 500px;
+    min-width: 0;
+    width: 100%;
+    max-width: 500px;
     min-height: 100px;
     border: 3px dashed var(--primary-color);
     border-radius: 15px;
@@ -269,10 +287,6 @@ body {
     gap: 10px;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    overflow-y: auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
 
 #droppable-area-rows:hover, #droppable-area-cols:hover {
@@ -280,12 +294,12 @@ body {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-#droppable-area-cols p.vertical {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
+#placeholder-rows, #placeholder-cols {
+    color: #888;
+    font-style: italic;
 }
 
-/* Conteneur des filtres */
+/* === Conteneur des filtres === */
 #filter-container {
     margin-top: 20px;
     padding: 20px;
@@ -293,45 +307,25 @@ body {
     border-radius: var(--border-radius);
     background-color: var(--light-color);
     display: flex;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
     gap: 15px;
-    overflow-y: auto;
     width: 100%;
     justify-content: flex-start;
     align-items: center;
-    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
 
-/* Style des labels */
-#filter-container label {
-    font-weight: var(--font-weight-bold); /* Utilise la variable pour Open Sans */
-    margin-right: 10px;
-    white-space: nowrap;
-}
-
-/* Style des sélecteurs */
-#filter-container select {
-    padding: 10px;
-    border: 1px solid #ced4da;
-    border-radius: var(--border-radius);
-    background-color: #fff;
-    font-size: 1em;
-    font-family: var(--font-family); /* Open Sans pour cohérence */
-    width: auto;
-}
-
-/* Conteneur tableau */
+/* === Conteneur tableau === */
 #table-container {
     margin-top: 20px;
     border: 2px solid #6c757d;
     padding: 15px;
     background-color: #fff;
     border-radius: var(--border-radius);
-    overflow-y: auto;
-    font-family: var(--font-family); /* Open Sans pour cohérence */
+    overflow-x: auto;
+    width: 100%;
 }
 
-/* Styles tableau */
+/* === Styles tableau === */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -341,7 +335,6 @@ th, td {
     border: 1px solid #ccc;
     padding: 10px;
     text-align: left;
-    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
 
 th {
@@ -353,7 +346,7 @@ tr:hover {
     background-color: #e0e0e0;
 }
 
-/* Bordure tricolore */
+/* === Bordure tricolore === */
 .parent-frame {
     border: 1px solid;
     border-image: linear-gradient(to right, var(--accent-color) 33%, #fff 33%, #fff 66%, var(--primary-color) 66%);
@@ -361,105 +354,347 @@ tr:hover {
     padding: 20px;
     border-radius: 10px;
     background-color: #fff;
-    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
 
-/* Titres */
+/* === Titres === */
 .titre-indicateur {
     text-align: center;
-    font-weight: var(--font-weight-bold); /* Utilise la variable pour Open Sans */
+    font-weight: var(--font-weight-bold);
     padding: 10px;
     border-radius: var(--border-radius);
-    background-color: var(--accent-color);
+    background-color: var(--primary-color);
     color: #fff;
     display: inline-block;
     margin: 20px auto;
     width: fit-content;
-    font-family: var(--font-family); /* Open Sans pour cohérence */
 }
 
-/* Boutons */
+/* === Boutons === */
 .download-buttons {
     display: flex;
-    gap: 15px; /* Espacement entre les boutons */
-    margin: 20px 0; /* Espacement global */
+    gap: 15px;
+    margin: 20px 0;
 }
 
 .download-buttons button {
-    background: none; /* Supprime le fond par défaut */
-    border: 2px solid #49655A; /* Bordure verte par défaut */
-    border-radius: 10px; /* Coins arrondis */
-    padding: 12px 16px; /* Taille du bouton */
+    background: none;
+
+    border-radius: 10px;
+    padding: 12px 16px;
     cursor: pointer;
-    font-size: 1.5rem; /* Taille des icônes */
-    transition: all 0.3s ease; /* Animation fluide */
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 50px; /* Largeur fixe pour uniformité */
-    height: 50px; /* Hauteur fixe pour uniformité */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Ombre légère */
+    width: 50px;
+    height: 50px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .download-buttons button:hover {
-    background: linear-gradient(45deg, #49655A, #004D32); /* Fond vert au survol */
-    border-color: #004D32; /* Bordure plus foncée au survol */
-    transform: scale(1.1); /* Zoom léger au survol */
-    box-shadow: 0 5px 15px rgba(0, 107, 69, 0.3); /* Ombre plus marquée */
+    background: linear-gradient(45deg, var(--primary-color), var(--primary-hover-color));
+    border-color: var(--primary-hover-color);
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(0, 107, 69, 0.3);
 }
 
-/* Icônes spécifiques pour chaque format */
-#download-xlsx i.fas.fa-file-excel {
-    color:#49655A; /* Vert pour Excel */
+.download-buttons button i {
+    color: var(--primary-color);
 }
 
-#download-xlsx:hover i.fas.fa-file-excel {
-    color: #ffffff; /* Blanc au survol */
-}
-
-#download-csv i.fas.fa-file-csv {
-    color: #49655A; /* Vert pour CSV */
-}
-
-#download-csv:hover i.fas.fa-file-csv {
-    color: #ffffff; /* Blanc au survol */
+.download-buttons button:hover i {
+    color: #ffffff;
 }
 
 #download-pdf i.fas.fa-file-pdf {
-    color: #F39323; /* Orange pour PDF */
+    color: var(--accent-color);
 }
 
 #download-pdf:hover i.fas.fa-file-pdf {
-    color: #ffffff; /* Blanc au survol */
-}
-
-/* Accessibilité : affichage du texte au survol ou au focus */
-.download-buttons button:focus,
-.download-buttons button:hover {
-    outline: none; /* Supprime le contour par défaut */
-    position: relative; /* Pour positionner le tooltip */
+    color: #ffffff;
 }
 
 .download-buttons button:focus::after,
 .download-buttons button:hover::after {
-    content: attr(title); /* Affiche le titre comme tooltip */
+    content: attr(title);
     position: absolute;
-    bottom: -30px; /* Position sous le bouton */
+    bottom: -30px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #49655A; /* Fond vert */
-    color: #ffffff; /* Texte blanc */
+    background-color: var(--primary-color);
+    color: #ffffff;
     padding: 5px 10px;
     border-radius: 4px;
     font-size: 0.8rem;
-    white-space: nowrap; /* Empêche le texte de casser */
-    z-index: 1001; /* Au-dessus de tout */
+    white-space: nowrap;
+    z-index: 1001;
 }
 
-#metadonnees {
-    background-color: var(--secondary-color);
+/* === Media Queries pour la réactivité === */
+@media (max-width: 1024px) {
+    .frame-container {
+        padding: 20px;
+    }
+
+    .header-title h1 {
+        font-size: 2rem;
+        gap: 15px;
+    }
+
+    .header-secondary {
+        padding: 10px;
+    }
+
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .container > div:first-child {
+        max-width: 100%;
+    }
+
+    #droppable-area-rows, #droppable-area-cols {
+        max-width: 100%;
+    }
 }
 
-#metadonnees:hover {
-    background-color: var(--accent-color);
+@media (max-width: 768px) {
+    .header-title h1 {
+        font-size: 1.8rem;
+    }
+
+    .logo {
+        height: 30px;
+    }
+
+    .hamburger {
+        display: block; /* Inspiré de l'exemple : hamburger visible sur mobile */
+    }
+
+    .header-secondary {
+        flex-wrap: wrap; /* Permet au contenu de s'adapter */
+    }
+
+    .nav-links {
+        display: none; /* Masqué par défaut sur mobile */
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #ffffff;
+        padding: 10px;
+        border-top: 1px solid var(--primary-color); /* Inspiré de l'exemple */
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Inspiré de l'exemple */
+        z-index: 1000; /* Inspiré de l'exemple */
+    }
+
+    .nav-links.active {
+        display: flex; /* Affiché quand active */
+    }
+
+    .nav-links a {
+        margin: 10px 0; /* Inspiré de l'exemple */
+        width: 100%;
+        text-align: left; /* Inspiré de l'exemple */
+        padding: 12px;
+        font-size: 1rem;
+    }
+
+    .nav-links .logo-link {
+        margin: 10px 0; /* Inspiré de l'exemple */
+    }
+
+    .search-bar {
+        flex-direction: column;
+        gap: 8px;
+        max-width: 100%;
+    }
+
+    .search-bar input[type="text"] {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    .search-bar button {
+        padding: 10px 15px;
+        width: 100%;
+    }
+
+    #droppable-container {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .frame-container {
+        padding: 15px;
+        margin: 10px;
+    }
+
+    .header-title h1 {
+        font-size: 1.5rem;
+        gap: 10px;
+    }
+
+    .nav-links a {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+
+    .hamburger {
+        font-size: 1.5rem; /* Ajustement pour petits écrans */
+    }
+
+    .search-bar input[type="text"] {
+        font-size: 0.8rem;
+    }
+
+    .search-bar button {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    #filter-container select {
+        width: 100%;
+    }
+
+    .download-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .download-buttons button {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+}
+
+/* === Pied de page === */
+.footer {
+    background: linear-gradient(135deg, #49655A, #2e3d35);
+    color: #ffffff;
+    padding: 40px 20px;
+    margin-top: 30px;
+    border-top: 3px solid #F39323;
+    font-family: 'Montserrat', sans-serif;
+    position: relative;
+    z-index: 100;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 20px;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 200px;
+}
+
+.footer-section h3 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #F39323;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.footer-section p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+}
+
+.footer-section ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+    color: #F39323;
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+}
+
+.social-links a {
+    color: #ffffff;
+    font-size: 1.2rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.social-links a:hover {
+    color: #F39323;
+    transform: scale(1.2);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 20px;
+    font-size: 0.85rem;
+}
+
+.footer-bottom p {
+    margin: 0;
+    color: #d9e6db;
+}
+
+/* === Media Queries pour le pied de page === */
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-section {
+        margin-bottom: 20px;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer {
+        padding: 20px 10px;
+    }
+
+    .footer-section h3 {
+        font-size: 1rem;
+    }
+
+    .footer-section p, .footer-section ul li a {
+        font-size: 0.8rem;
+    }
+
+    .social-links a {
+        font-size: 1rem;
+    }
 }
