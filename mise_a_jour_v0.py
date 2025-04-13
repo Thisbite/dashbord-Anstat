@@ -11,7 +11,7 @@ load_dotenv()
 
 # Utiliser les variables d'environnement pour MySQL
 host = os.getenv('MYSQL_HOST')
-database = os.getenv('MYSQL_DATABASE')
+database = os.getenv('MYSQL_DATABASE2')
 user = os.getenv('MYSQL_USER')
 password = os.getenv('MYSQL_PASSWORD')
 
