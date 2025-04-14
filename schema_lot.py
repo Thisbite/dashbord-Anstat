@@ -1,6 +1,5 @@
 from app import create_app, db
 from models import Annee, Indicateur, Modalite, Dimension, Donnee, DonneeModalite
-from sqlalchemy.exc import IntegrityError
 import pandas as pd
 
 def get_id_from_table(model, id_field, **kwargs):

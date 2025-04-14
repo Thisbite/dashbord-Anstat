@@ -1,6 +1,5 @@
 from app import create_app, db
-from models import Annee, Indicateur, Modalite, Dimension, Donnee, DonneeModalite
-from sqlalchemy.exc import IntegrityError
+from models import Annee,Indicateur, Modalite, Dimension, Donnee, DonneeModalite  # Changé Annees en Annee, Donnees en Donnee
 import pandas as pd
 
 def get_id_from_table(model, id_field, **kwargs):
@@ -17,10 +16,6 @@ def insert_from_excel(file_path):
 
         for sheet_name, df in excel_data.items():
             print(f"Traitement de la feuille : {sheet_name}")
-            batch_donnees = []  # Liste pour accumuler les objets Donnee
-            batch_relations = []  # Liste pour accumuler les relations DonneeModalite
-            batch_size = 100  # Taille du lot
-
             for index, row in df.iterrows():
                 try:
                     # Vérifier que les colonnes nécessaires existent
@@ -35,9 +30,9 @@ def insert_from_excel(file_path):
                     valeur = float(row["Valeur"])
 
                     # Vérifier ou créer l'année
-                    annee_id = get_id_from_table(Annee, "idAnnees", valAnnees=annee_val)
+                    annee_id = get_id_from_table(Annee, "idAnnees", valAnnees=annee_val)  # Changé Annees en Annee
                     if not annee_id:
-                        annee = Annee(idAnnees=f"AN{annee_val}", valAnnees=annee_val)
+                        annee = Annee(idAnnees=f"AN{annee_val}", valAnnees=annee_val)  # Changé Annees en Annee
                         db.session.add(annee)
                         db.session.commit()
                         annee_id = annee.idAnnees
@@ -47,15 +42,17 @@ def insert_from_excel(file_path):
                     if not indicateur_id:
                         raise ValueError(f"Indicateur introuvable : {indicateur_nom}. Veuillez l'ajouter manuellement.")
 
-                    # Créer l'objet Donnee
-                    donnee = Donnee(
+                    # Insérer la donnée
+                    donnee = Donnee(  # Changé Donnees en Donnee
                         f_idAnnees=annee_id,
                         f_idIndicateurs=indicateur_id,
                         valDonnees=valeur
                     )
-                    batch_donnees.append(donnee)
+                    db.session.add(donnee)
+                    db.session.commit()
+                    donnee_id = donnee.idDonnees
 
-                    # Préparer les relations DonneeModalite
+                    # Insérer les relations DonneeModalite
                     for i in range(len(modalites)):
                         nom_dim = dimensions[i].strip()
                         nom_mod = modalites[i].strip()
@@ -77,57 +74,13 @@ def insert_from_excel(file_path):
                             modalite_id = modalite.idModalites
 
                         # Créer la relation DonneeModalite
-                        relation = DonneeModalite(f_idDonnees=None, f_idModalites=modalite_id)  # f_idDonnees sera mis à jour après
-                        batch_relations.append({"relation": relation, "donnee": donnee})
+                        relation = DonneeModalite(f_idDonnees=donnee_id, f_idModalites=modalite_id)
+                        db.session.add(relation)
 
-                    # Traiter le lot si la taille est atteinte
-                    if len(batch_donnees) >= batch_size:
-                        try:
-                            # Insérer les Donnee
-                            for donnee in batch_donnees:
-                                db.session.add(donnee)
-                            db.session.commit()
-
-                            # Mettre à jour et insérer les relations DonneeModalite
-                            for rel in batch_relations:
-                                rel["relation"].f_idDonnees = rel["donnee"].idDonnees
-                                db.session.add(rel["relation"])
-                            db.session.commit()
-
-                            print(f"Batch de {len(batch_donnees)} lignes inséré avec succès")
-                            batch_donnees = []
-                            batch_relations = []
-                        except Exception as e:
-                            ligne_txt = f"[Feuille: {sheet_name} | Batch jusqu'à la ligne {index+2}] ERREUR: {str(e)}\n"
-                            erreurs.append(ligne_txt)
-                            db.session.rollback()
-                            batch_donnees = []
-                            batch_relations = []
+                    db.session.commit()
 
                 except Exception as e:
                     ligne_txt = f"[Feuille: {sheet_name} | Ligne: {index+2}] ERREUR: {str(e)} | Données: {row.to_dict()}\n"
-                    erreurs.append(ligne_txt)
-                    db.session.rollback()
-                    batch_donnees = []
-                    batch_relations = []
-
-            # Insérer le dernier lot
-            if batch_donnees:
-                try:
-                    # Insérer les Donnee
-                    for donnee in batch_donnees:
-                        db.session.add(donnee)
-                    db.session.commit()
-
-                    # Mettre à jour et insérer les relations DonneeModalite
-                    for rel in batch_relations:
-                        rel["relation"].f_idDonnees = rel["donnee"].idDonnees
-                        db.session.add(rel["relation"])
-                    db.session.commit()
-
-                    print(f"Dernier batch de {len(batch_donnees)} lignes inséré avec succès")
-                except Exception as e:
-                    ligne_txt = f"[Feuille: {sheet_name} | Dernier batch jusqu'à la ligne {index+2}] ERREUR: {str(e)}\n"
                     erreurs.append(ligne_txt)
                     db.session.rollback()
 
